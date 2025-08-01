@@ -53,10 +53,10 @@ public class UserController {
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequestDTO user) {
         try{
             return ResponseEntity.ok().body(userService.registerUser(user));
-        } catch (UserAlreadyExistsException | InvalidEmailException e) {
+        } catch (UserAlreadyExistsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-         catch (Exception e) {
+        catch (Exception e) {
             return ResponseEntity.badRequest().body("Неизвестная ошибка");
         }
     }
@@ -78,7 +78,7 @@ public class UserController {
             cookieService.addJwtCookie(response, token);
             return ResponseEntity.ok().body(loggedUser);
 
-        } catch (InvalidCredentialsException | InvalidEmailException e) {
+        } catch (InvalidCredentialsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
         catch (Exception e) {

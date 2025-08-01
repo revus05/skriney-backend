@@ -5,8 +5,6 @@ import com.example.skrineybackend.dto.RegisterRequestDTO;
 import com.example.skrineybackend.dto.UserDTO;
 import com.example.skrineybackend.entity.User;
 import com.example.skrineybackend.exeption.InvalidCredentialsException;
-import com.example.skrineybackend.exeption.InvalidEmailException;
-import com.example.skrineybackend.exeption.InvalidInputException;
 import com.example.skrineybackend.exeption.UserAlreadyExistsException;
 import com.example.skrineybackend.repository.UserRepo;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +20,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public UserDTO registerUser(RegisterRequestDTO requestBody) throws UserAlreadyExistsException, InvalidEmailException, InvalidInputException {
+    public UserDTO registerUser(RegisterRequestDTO requestBody) throws UserAlreadyExistsException {
         User foundUserWithEmail = userRepo.findByEmail(requestBody.getEmail());
         if (foundUserWithEmail != null) {
             throw new UserAlreadyExistsException("Пользователь с таким email уже существует");
@@ -43,7 +41,7 @@ public class UserService {
         return new UserDTO(userRepo.save(newUser));
     }
 
-    public UserDTO loginUser(LoginRequestDTO loginRequestDTO) throws InvalidEmailException, InvalidCredentialsException {
+    public UserDTO loginUser(LoginRequestDTO loginRequestDTO) throws InvalidCredentialsException {
         User foundUser = userRepo.findByEmail(loginRequestDTO.getEmail());
         if (foundUser == null || !passwordEncoder.matches(loginRequestDTO.getPassword(), foundUser.getPassword())) {
             throw new InvalidCredentialsException("Нет пользователя с введенными данными");
