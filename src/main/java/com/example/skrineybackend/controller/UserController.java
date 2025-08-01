@@ -4,12 +4,14 @@ import com.example.skrineybackend.dto.LoginRequestDTO;
 import com.example.skrineybackend.dto.RegisterRequestDTO;
 import com.example.skrineybackend.dto.UserDTO;
 import com.example.skrineybackend.exeption.InvalidCredentialsException;
-import com.example.skrineybackend.exeption.InvalidEmailException;
 import com.example.skrineybackend.exeption.UserAlreadyExistsException;
 import com.example.skrineybackend.service.CookieService;
 import com.example.skrineybackend.service.JwtService;
 import com.example.skrineybackend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,15 +42,26 @@ public class UserController {
     @Operation(
         summary = "Регистрация пользователя",
         description = "Создает нового пользователя",
-            responses = {
-                @ApiResponse(
-                    responseCode = "200",
-                    description = "Успешно"
-                ),
-                @ApiResponse(responseCode = "400", description = "Ошибка в теле запроса")
-            }
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Данные для регистрации пользователя",
+            content = @Content(
+                schema = @Schema(implementation = RegisterRequestDTO.class),
+                examples = @ExampleObject(
+                    name = "Пример запроса",
+                    value = "{\"username\":\"john_doe\",\"password\":\"securePassword123\",\"email\":\"john@example.com\"}"
+                )
+            )
+        ),
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Регистрация прошла успешно",
+                content = @Content(
+                    schema = @Schema(implementation = UserDTO.class)
+                )
+            )
+        }
     )
-    @ApiResponse(responseCode = "200", description = "Регистрация прошла успешно")
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequestDTO user) {
         try{
@@ -64,12 +77,24 @@ public class UserController {
     @Operation(
         summary = "Авторизация пользователя",
         description = "Авторизирует пользователя",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Данные для авторизации пользователя",
+            content = @Content(
+                schema = @Schema(implementation = LoginRequestDTO.class),
+                examples = @ExampleObject(
+                    name = "Пример запроса",
+                    value = "{\"email\":\"john@example.com\",\"password\":\"securePassword123\"}"
+                )
+            )
+        ),
         responses = {
-            @ApiResponse(responseCode = "200", description = "Успешно"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(
+                responseCode = "200",
+                description = "Авторизация прошла успешно",
+                content = @Content(schema = @Schema(implementation = UserDTO.class))
+            ),
         }
     )
-    @ApiResponse(responseCode = "200", description = "Авторизация прошла успешно")
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletResponse response) {
         try{
