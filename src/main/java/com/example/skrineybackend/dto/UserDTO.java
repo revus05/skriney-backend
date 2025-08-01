@@ -1,19 +1,39 @@
 package com.example.skrineybackend.dto;
 
 import com.example.skrineybackend.entity.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.Instant;
 
 @Setter
 @Getter
 public class UserDTO {
+    @Schema(description = "User ID", requiredMode = Schema.RequiredMode.REQUIRED)
     private String id;
+
+    @Schema(description = "User image URL", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String image;
+
+    @Schema(description = "Username", requiredMode = Schema.RequiredMode.REQUIRED)
     private String username;
+
+    @Schema(description = "Email address", requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
+
+    @Schema(description = "Creation timestamp", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
+    private Instant createdAt;
+
+    @Schema(description = "Last update timestamp", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
+    private Instant updatedAt;
 
     public UserDTO(User user) {
         this.id = user.getId();
+        this.image = user.getImage();
         this.username = user.getUsername();
         this.email = user.getEmail();
+        this.createdAt = user.getCreatedAt();
+        this.updatedAt = user.getUpdatedAt();
     }
 }
