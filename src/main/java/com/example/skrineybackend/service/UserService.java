@@ -22,7 +22,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User registerUser(RegisterRequestDTO requestBody) throws UserAlreadyExistsException, InvalidEmailException, InvalidInputException {
+    public UserDTO registerUser(RegisterRequestDTO requestBody) throws UserAlreadyExistsException, InvalidEmailException, InvalidInputException {
         User foundUserWithEmail = userRepo.findByEmail(requestBody.getEmail());
         if (foundUserWithEmail != null) {
             throw new UserAlreadyExistsException("Пользователь с таким email уже существует");
@@ -40,7 +40,7 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(requestBody.getPassword());
         newUser.setPassword(encodedPassword);
 
-        return userRepo.save(newUser);
+        return new UserDTO(userRepo.save(newUser));
     }
 
     public UserDTO loginUser(LoginRequestDTO loginRequestDTO) throws InvalidEmailException, InvalidCredentialsException {
