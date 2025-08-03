@@ -9,6 +9,7 @@ public class CookieService {
     public void addJwtCookie(HttpServletResponse response, String token) {
         Cookie jwtCookie = new Cookie("jwt", token);
         jwtCookie.setSecure(true);
+        jwtCookie.setHttpOnly(true);
         jwtCookie.setPath("/");
         jwtCookie.setMaxAge(86400);
 
