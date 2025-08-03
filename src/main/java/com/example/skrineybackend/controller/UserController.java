@@ -99,7 +99,7 @@ public class UserController {
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletResponse response) {
         try{
             UserDTO loggedUser = userService.loginUser(loginRequestDTO);
-            String token = jwtService.generateToken(loggedUser.getEmail());
+            String token = jwtService.generateToken(loggedUser.getUuid());
             cookieService.addJwtCookie(response, token);
             return ResponseEntity.ok().body(loggedUser);
 

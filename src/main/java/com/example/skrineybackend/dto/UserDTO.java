@@ -10,8 +10,8 @@ import java.time.Instant;
 @Setter
 @Getter
 public class UserDTO {
-    @Schema(description = "User ID", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String id;
+    @Schema(description = "User UUID", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String uuid;
 
     @Schema(description = "User image URL", requiredMode = Schema.RequiredMode.REQUIRED)
     private String image;
@@ -29,7 +29,7 @@ public class UserDTO {
     private Instant updatedAt;
 
     public UserDTO(User user) {
-        this.id = user.getId();
+        this.uuid = user.getUuid();
         this.image = user.getImage();
         this.username = user.getUsername();
         this.email = user.getEmail();
