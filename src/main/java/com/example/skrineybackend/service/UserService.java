@@ -21,15 +21,7 @@ public class UserService {
     }
 
     public UserDTO registerUser(RegisterRequestDTO requestBody) throws UserAlreadyExistsException {
-        User foundUserWithEmail = userRepo.findByEmail(requestBody.getEmail());
-        if (foundUserWithEmail != null) {
-            throw new UserAlreadyExistsException("Пользователь с таким email уже существует");
-        }
-
-        User foundUserWithUsername = userRepo.findByUsername(requestBody.getUsername());
-        if (foundUserWithUsername != null) {
-            throw new UserAlreadyExistsException("Имя пользователя занято");
-        }
+        checkUserExists(requestBody.getEmail(), requestBody.getUsername());
 
         String encodedPassword = passwordEncoder.encode(requestBody.getPassword());
         requestBody.setPassword(encodedPassword);
@@ -38,10 +30,22 @@ public class UserService {
     }
 
     public UserDTO loginUser(LoginRequestDTO loginRequestDTO) throws InvalidCredentialsException {
-        User foundUser = userRepo.findByEmail(loginRequestDTO.getEmail());
-        if (foundUser == null || !passwordEncoder.matches(loginRequestDTO.getPassword(), foundUser.getPassword())) {
-            throw new InvalidCredentialsException("Нет пользователя с введенными данными");
-        }
+        User foundUser = userRepo.findByEmail(loginRequestDTO.getEmail())
+            .filter(user -> passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPassword()))
+            .orElseThrow(() -> new InvalidCredentialsException("Нет пользователя с введенными данными"));
+
         return new UserDTO(foundUser);
+    }
+
+    private void checkUserExists(String email, String username) {
+        userRepo.findByEmail(email)
+            .ifPresent(user -> {
+                throw new UserAlreadyExistsException("Пользователь с таким email уже существует");
+            });
+
+        userRepo.findByUsername(username)
+            .ifPresent(user -> {
+                throw new UserAlreadyExistsException("Имя пользователя занято");
+            });
     }
 }
