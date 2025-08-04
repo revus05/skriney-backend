@@ -4,8 +4,8 @@ import com.example.skrineybackend.dto.LoginRequestDTO;
 import com.example.skrineybackend.dto.RegisterRequestDTO;
 import com.example.skrineybackend.dto.UserDTO;
 import com.example.skrineybackend.entity.User;
-import com.example.skrineybackend.exeption.InvalidCredentialsException;
-import com.example.skrineybackend.exeption.UserAlreadyExistsException;
+import com.example.skrineybackend.exception.InvalidCredentialsException;
+import com.example.skrineybackend.exception.UserAlreadyExistsException;
 import com.example.skrineybackend.repository.UserRepo;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,14 +31,10 @@ public class UserService {
             throw new UserAlreadyExistsException("Имя пользователя занято");
         }
 
-        User newUser = new User();
-        newUser.setUsername(requestBody.getUsername());
-        newUser.setEmail(requestBody.getEmail());
-
         String encodedPassword = passwordEncoder.encode(requestBody.getPassword());
-        newUser.setPassword(encodedPassword);
+        requestBody.setPassword(encodedPassword);
 
-        return new UserDTO(userRepo.save(newUser));
+        return new UserDTO(userRepo.save(new User(requestBody)));
     }
 
     public UserDTO loginUser(LoginRequestDTO loginRequestDTO) throws InvalidCredentialsException {

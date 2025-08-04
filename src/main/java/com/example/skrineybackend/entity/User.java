@@ -1,5 +1,6 @@
 package com.example.skrineybackend.entity;
 
+import com.example.skrineybackend.dto.RegisterRequestDTO;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -19,6 +20,14 @@ import java.util.List;
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
 public class User {
+    public User() {}
+
+    public User(RegisterRequestDTO requestBody) {
+        this.username = requestBody.getUsername();
+        this.email = requestBody.getEmail();
+        this.password = requestBody.getPassword();
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String uuid;

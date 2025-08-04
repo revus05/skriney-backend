@@ -2,9 +2,8 @@ package com.example.skrineybackend.controller;
 
 import com.example.skrineybackend.dto.LoginRequestDTO;
 import com.example.skrineybackend.dto.RegisterRequestDTO;
+import com.example.skrineybackend.dto.Response;
 import com.example.skrineybackend.dto.UserDTO;
-import com.example.skrineybackend.exeption.InvalidCredentialsException;
-import com.example.skrineybackend.exeption.UserAlreadyExistsException;
 import com.example.skrineybackend.service.CookieService;
 import com.example.skrineybackend.service.JwtService;
 import com.example.skrineybackend.service.UserService;
@@ -16,13 +15,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -55,7 +49,7 @@ public class UserController {
         responses = {
             @ApiResponse(
                 responseCode = "200",
-                description = "Регистрация прошла успешно",
+                description = "Пользователь успешно создан",
                 content = @Content(
                     schema = @Schema(implementation = UserDTO.class)
                 )
@@ -63,15 +57,8 @@ public class UserController {
         }
     )
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequestDTO user) {
-        try{
-            return ResponseEntity.ok().body(userService.registerUser(user));
-        } catch (UserAlreadyExistsException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-        catch (Exception e) {
-            return ResponseEntity.badRequest().body("Неизвестная ошибка");
-        }
+    public Response register(@Valid @RequestBody RegisterRequestDTO user) {
+        return new Response("Пользователь успешно создан", HttpStatus.OK, userService.registerUser(user));
     }
 
     @Operation(
@@ -90,35 +77,16 @@ public class UserController {
         responses = {
             @ApiResponse(
                 responseCode = "200",
-                description = "Авторизация прошла успешно",
+                description = "Пользователь успешно авторизован",
                 content = @Content(schema = @Schema(implementation = UserDTO.class))
             ),
         }
     )
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletResponse response) {
-        try{
-            UserDTO loggedUser = userService.loginUser(loginRequestDTO);
-            String token = jwtService.generateToken(loggedUser.getUuid());
-            cookieService.addJwtCookie(response, token);
-            return ResponseEntity.ok().body(loggedUser);
-
-        } catch (InvalidCredentialsException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-        catch (Exception e) {
-            return ResponseEntity.badRequest().body(e);
-        }
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return ResponseEntity.badRequest().body(errors);
+    public Response login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletResponse response) {
+        UserDTO loggedUser = userService.loginUser(loginRequestDTO);
+        String token = jwtService.generateToken(loggedUser.getUuid());
+        cookieService.addJwtCookie(response, token);
+        return new Response("Пользователь успешно авторизован", HttpStatus.OK, loggedUser);
     }
 }

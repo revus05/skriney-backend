@@ -44,6 +44,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String extractToken(HttpServletRequest request) {
         String cookieString = request.getHeader("Cookie");
+        if (cookieString == null) {
+            return null;
+        }
         String[] cookies = cookieString.split(";");
         for (String cookie : cookies) {
             if (cookie.contains(JWT_COOKIE_NAME + "=")) {
