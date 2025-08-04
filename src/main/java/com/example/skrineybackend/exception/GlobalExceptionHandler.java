@@ -25,7 +25,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     public Response handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
-        return new Response(ex.getMessage(), HttpStatus.CONFLICT);
+        Map<String, String> fields = new HashMap<>();
+        fields.put(ex.getField(), ex.getMessage());
+        return new Response("Запись с такими данными уже существует", HttpStatus.CONFLICT, fields);
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)

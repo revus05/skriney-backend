@@ -1,7 +1,13 @@
 package com.example.skrineybackend.exception;
 
+import lombok.Getter;
+
+@Getter
 public class UserAlreadyExistsException extends RuntimeException {
-    public UserAlreadyExistsException(String message) {
+    private final String field;
+
+    public UserAlreadyExistsException(String field, String message) {
         super(message);
+        this.field = field;
     }
 }

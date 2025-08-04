@@ -40,12 +40,12 @@ public class UserService {
     private void checkUserExists(String email, String username) {
         userRepo.findByEmail(email)
             .ifPresent(user -> {
-                throw new UserAlreadyExistsException("Пользователь с таким email уже существует");
+                throw new UserAlreadyExistsException("email", "Пользователь с таким email уже существует");
             });
 
         userRepo.findByUsername(username)
             .ifPresent(user -> {
-                throw new UserAlreadyExistsException("Имя пользователя занято");
+                throw new UserAlreadyExistsException("username", "Имя пользователя занято");
             });
     }
 }
