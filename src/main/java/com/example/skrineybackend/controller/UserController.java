@@ -16,7 +16,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/users")
@@ -48,7 +51,7 @@ public class UserController {
         ),
         responses = {
             @ApiResponse(
-                responseCode = "200",
+                responseCode = "201",
                 description = "Пользователь успешно создан",
                 content = @Content(
                     schema = @Schema(implementation = UserDTO.class)
@@ -58,7 +61,7 @@ public class UserController {
     )
     @PostMapping("/register")
     public Response register(@Valid @RequestBody RegisterRequestDTO user) {
-        return new Response("Пользователь успешно создан", HttpStatus.OK, userService.registerUser(user));
+        return new Response("Пользователь успешно создан", HttpStatus.CREATED, userService.registerUser(user));
     }
 
     @Operation(
