@@ -37,7 +37,7 @@ public class AccountController {
                 schema = @Schema(implementation = LoginRequestDTO.class),
                 examples = @ExampleObject(
                     name = "Пример запроса",
-                    value = "{\"name\":\"account name\"}"
+                    value = "{\"title\":\"account name\"}"
                 )
             )
         ),

@@ -16,13 +16,13 @@ public class CreateAccountRequestDTO {
     @Schema(description = "Account currency", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private Currency currency;
 
-    @Schema(description = "Account name", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Account title", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "Название счета обязательно")
     @Size(max = 64, message = "Название счета не может быть длиннее 64 символов")
-    private String name;
+    private String title;
 
     @Schema(description = "Account's card colour", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    private String colour;
+    private String color;
 
     @Schema(description = "Are account money used to calculate total user balance", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private boolean isInTotalBalance;

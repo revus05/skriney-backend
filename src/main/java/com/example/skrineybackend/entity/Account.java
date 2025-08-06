@@ -24,14 +24,14 @@ public class Account {
     public Account(CreateAccountRequestDTO requestBody) {
         this.balance = requestBody.getBalance();
         this.currency = requestBody.getCurrency();
-        this.name = requestBody.getName();
+        this.title = requestBody.getTitle();
         this.isInTotalBalance = requestBody.isInTotalBalance();
         this.changePercent = 0;
         this.description = requestBody.getDescription();
         this.image = requestBody.getImage();
 
-        if (requestBody.getColour() == null) {
-            this.colour = "blue";
+        if (requestBody.getColor() == null) {
+            this.color = "blue";
         }
         if (requestBody.getCurrency() == null) {
             this.currency = Currency.BYN;
@@ -49,10 +49,10 @@ public class Account {
     private Currency currency;
 
     @Column(nullable = false)
-    private String name;
+    private String title;
 
     @Column(nullable = false)
-    private String colour;
+    private String color;
 
     @Column(nullable = false)
     private boolean isInTotalBalance;

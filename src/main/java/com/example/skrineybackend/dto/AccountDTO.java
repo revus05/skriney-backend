@@ -21,10 +21,10 @@ public class AccountDTO {
     private Currency currency;
 
     @Schema(description = "Account name", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String name;
+    private String title;
 
-    @Schema(description = "Account's card colour", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    private String colour;
+    @Schema(description = "Account's card color", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private String color;
 
     @Schema(description = "Are account money used to calculate total user balance", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private boolean isInTotalBalance;
@@ -48,8 +48,8 @@ public class AccountDTO {
         this.uuid = account.getUuid();
         this.balance = account.getBalance();
         this.currency = account.getCurrency();
-        this.name = account.getName();
-        this.colour = account.getColour();
+        this.title = account.getTitle();
+        this.color = account.getColor();
         this.isInTotalBalance = account.isInTotalBalance();
         this.changePercent = account.getChangePercent();
         this.description = account.getDescription();
