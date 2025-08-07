@@ -1,10 +1,10 @@
 package com.example.skrineybackend.controller;
 
-import com.example.skrineybackend.dto.AccountDTO;
-import com.example.skrineybackend.dto.CreateAccountRequestDTO;
+import com.example.skrineybackend.dto.CategoryDTO;
+import com.example.skrineybackend.dto.CreateCategoryRequestDTO;
 import com.example.skrineybackend.dto.Response;
 import com.example.skrineybackend.dto.UserDTO;
-import com.example.skrineybackend.service.AccountService;
+import com.example.skrineybackend.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -22,40 +22,40 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/accounts")
-@Tag(name = "Счета", description = "Управление счетами пользователей")
-public class AccountController {
-    private final AccountService accountService;
+@RequestMapping("/categories")
+@Tag(name = "Категории", description = "Управление категориями транзакций пользователей")
+public class CategoryController {
+    private final CategoryService categoryService;
 
-    public AccountController(AccountService accountService) {
-        this.accountService = accountService;
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
     @Operation(
-        summary = "Создание счета",
-        description = "Создает счет для пользователя",
+        summary = "Создание категории",
+        description = "Создает категорию транзакции для пользователя",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = "Данные для создания счета",
+            description = "Данные для создания категории",
             content = @Content(
-                schema = @Schema(implementation = CreateAccountRequestDTO.class),
+                schema = @Schema(implementation = CreateCategoryRequestDTO.class),
                 examples = @ExampleObject(
                     name = "Пример запроса",
-                    value = "{\"title\":\"account name\"}"
+                    value = "{\"title\":\"category name\"}"
                 )
             )
         ),
         responses = {
             @ApiResponse(
                 responseCode = "201",
-                description = "Счет успешно создан",
+                description = "Категория успешно создана",
                 content = @Content(schema = @Schema(implementation = UserDTO.class))
             ),
         }
     )
     @PostMapping("/create")
-    public Response createAccount(@Valid @RequestBody CreateAccountRequestDTO requestBody) {
+    public Response createCategory(@Valid @RequestBody CreateCategoryRequestDTO requestBody) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        AccountDTO createdAccount = accountService.createAccount(requestBody, ((UserDetails) auth.getPrincipal()).getUsername());
-        return new Response("Счет успешно создан", HttpStatus.CREATED, createdAccount);
+        CategoryDTO createdCategory = categoryService.createCategory(requestBody, ((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Категория успешно создана", HttpStatus.CREATED, createdCategory);
     }
 }

@@ -20,7 +20,7 @@ public class AccountDTO {
     @Schema(description = "Account currency", requiredMode = Schema.RequiredMode.REQUIRED)
     private Currency currency;
 
-    @Schema(description = "Account name", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Account title", requiredMode = Schema.RequiredMode.REQUIRED)
     private String title;
 
     @Schema(description = "Account's card color", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
