@@ -1,10 +1,10 @@
 package com.example.skrineybackend.controller;
 
-import com.example.skrineybackend.dto.AccountDTO;
-import com.example.skrineybackend.dto.CreateAccountRequestDTO;
+import com.example.skrineybackend.dto.BankAccountDTO;
+import com.example.skrineybackend.dto.CreateBankAccountRequestDTO;
 import com.example.skrineybackend.dto.Response;
 import com.example.skrineybackend.dto.UserDTO;
-import com.example.skrineybackend.service.AccountService;
+import com.example.skrineybackend.service.BankAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -22,13 +22,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping("/bank-accounts")
 @Tag(name = "Счета", description = "Управление счетами пользователей")
-public class AccountController {
-    private final AccountService accountService;
+public class BankAccountController {
+    private final BankAccountService bankAccountService;
 
-    public AccountController(AccountService accountService) {
-        this.accountService = accountService;
+    public BankAccountController(BankAccountService bankAccountService) {
+        this.bankAccountService = bankAccountService;
     }
 
     @Operation(
@@ -37,10 +37,10 @@ public class AccountController {
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "Данные для создания счета",
             content = @Content(
-                schema = @Schema(implementation = CreateAccountRequestDTO.class),
+                schema = @Schema(implementation = CreateBankAccountRequestDTO.class),
                 examples = @ExampleObject(
                     name = "Пример запроса",
-                    value = "{\"title\":\"account name\"}"
+                    value = "{\"title\":\"bank account name\"}"
                 )
             )
         ),
@@ -53,9 +53,9 @@ public class AccountController {
         }
     )
     @PostMapping("/create")
-    public Response createAccount(@Valid @RequestBody CreateAccountRequestDTO requestBody) {
+    public Response createBankAccount(@Valid @RequestBody CreateBankAccountRequestDTO requestBody) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        AccountDTO createdAccount = accountService.createAccount(requestBody, ((UserDetails) auth.getPrincipal()).getUsername());
-        return new Response("Счет успешно создан", HttpStatus.CREATED, createdAccount);
+        BankAccountDTO createdBankAccount = bankAccountService.createBankAccount(requestBody, ((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Счет успешно создан", HttpStatus.CREATED, createdBankAccount);
     }
 }

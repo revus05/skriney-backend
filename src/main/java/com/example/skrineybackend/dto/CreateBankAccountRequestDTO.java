@@ -9,22 +9,22 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class CreateAccountRequestDTO {
-    @Schema(description = "Initial account balance", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+public class CreateBankAccountRequestDTO {
+    @Schema(description = "Initial bank account balance", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private double balance;
 
-    @Schema(description = "Account currency", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(description = "Bank account currency", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private Currency currency;
 
-    @Schema(description = "Account title", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Bank account title", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "Название счета обязательно")
     @Size(max = 64, message = "Название счета не может быть длиннее 64 символов")
     private String title;
 
-    @Schema(description = "Account's card colour", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(description = "Bank account's card color", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private String color;
 
-    @Schema(description = "Are account money used to calculate total user balance", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(description = "Are bank account money used to calculate total user balance", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private boolean isInTotalBalance;
 
     @Schema(description = "Optional user's description", requiredMode = Schema.RequiredMode.NOT_REQUIRED)

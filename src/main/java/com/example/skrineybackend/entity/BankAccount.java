@@ -1,6 +1,6 @@
 package com.example.skrineybackend.entity;
 
-import com.example.skrineybackend.dto.CreateAccountRequestDTO;
+import com.example.skrineybackend.dto.CreateBankAccountRequestDTO;
 import com.example.skrineybackend.enums.Currency;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
@@ -16,24 +16,24 @@ import java.time.Instant;
 @Hidden
 @Getter
 @Setter
-@Table(name = "accounts")
+@Table(name = "bank_accounts")
 @EntityListeners(AuditingEntityListener.class)
-public class Account {
-    public Account() {}
+public class BankAccount {
+    public BankAccount() {}
 
-    public Account(CreateAccountRequestDTO requestBody) {
-        this.balance = requestBody.getBalance();
-        this.currency = requestBody.getCurrency();
-        this.title = requestBody.getTitle();
-        this.isInTotalBalance = requestBody.isInTotalBalance();
+    public BankAccount(CreateBankAccountRequestDTO createBankAccountRequestDTO) {
+        this.balance = createBankAccountRequestDTO.getBalance();
+        this.currency = createBankAccountRequestDTO.getCurrency();
+        this.title = createBankAccountRequestDTO.getTitle();
+        this.isInTotalBalance = createBankAccountRequestDTO.isInTotalBalance();
         this.changePercent = 0;
-        this.description = requestBody.getDescription();
-        this.image = requestBody.getImage();
+        this.description = createBankAccountRequestDTO.getDescription();
+        this.image = createBankAccountRequestDTO.getImage();
 
-        if (requestBody.getColor() == null) {
+        if (createBankAccountRequestDTO.getColor() == null) {
             this.color = "blue";
         }
-        if (requestBody.getCurrency() == null) {
+        if (createBankAccountRequestDTO.getCurrency() == null) {
             this.currency = Currency.BYN;
         }
     }

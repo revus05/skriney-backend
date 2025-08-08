@@ -53,9 +53,9 @@ public class CategoryController {
         }
     )
     @PostMapping("/create")
-    public Response createCategory(@Valid @RequestBody CreateCategoryRequestDTO requestBody) {
+    public Response createCategory(@Valid @RequestBody CreateCategoryRequestDTO createCategoryRequestDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        CategoryDTO createdCategory = categoryService.createCategory(requestBody, ((UserDetails) auth.getPrincipal()).getUsername());
+        CategoryDTO createdCategory = categoryService.createCategory(createCategoryRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Категория успешно создана", HttpStatus.CREATED, createdCategory);
     }
 }

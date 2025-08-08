@@ -1,9 +1,9 @@
 package com.example.skrineybackend.repository;
 
-import com.example.skrineybackend.entity.Account;
+import com.example.skrineybackend.entity.BankAccount;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AccountRepo extends CrudRepository<Account, String> {
+public interface BankAccountRepo extends CrudRepository<BankAccount, String> {
 }

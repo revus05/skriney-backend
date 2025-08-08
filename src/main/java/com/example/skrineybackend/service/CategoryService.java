@@ -19,10 +19,10 @@ public class CategoryService {
         this.userRepo = userRepo;
     }
 
-    public CategoryDTO createCategory(CreateCategoryRequestDTO requestBody, String userUuid) throws NoUserFoundException {
+    public CategoryDTO createCategory(CreateCategoryRequestDTO createCategoryRequestDTO, String userUuid) throws NoUserFoundException {
         User user = userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
 
-        Category category = new Category(requestBody);
+        Category category = new Category(createCategoryRequestDTO);
         category.setUser(user);
 
         return new CategoryDTO(categoryRepo.save(category));

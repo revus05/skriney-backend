@@ -1,6 +1,6 @@
 package com.example.skrineybackend.controller;
 
-import com.example.skrineybackend.dto.SignUpUserRequest;
+import com.example.skrineybackend.dto.SignUpUserRequestDTO;
 import com.example.skrineybackend.dto.UserDTO;
 import com.example.skrineybackend.entity.User;
 import com.example.skrineybackend.service.UserService;
@@ -36,7 +36,7 @@ public class UserControllerTest {
 
     @Test
     void signUp_User_ValidRequest_ReturnsSuccessResponse() throws Exception {
-        SignUpUserRequest requestBody = new SignUpUserRequest(
+        SignUpUserRequestDTO requestBody = new SignUpUserRequestDTO(
             "testusername",
             "testemail@gmail.com",
             "testpassword"
@@ -45,7 +45,7 @@ public class UserControllerTest {
         String requestBodyJsonAuto = new ObjectMapper().writeValueAsString(requestBody);
 
         UserDTO mockUser = new UserDTO(new User(requestBody));
-        when(userService.signUpUser(any(SignUpUserRequest.class))).thenReturn(mockUser);
+        when(userService.signUpUser(any(SignUpUserRequestDTO.class))).thenReturn(mockUser);
 
         mockMvc.perform(post("/users/sign-up")
             .contentType(MediaType.APPLICATION_JSON)

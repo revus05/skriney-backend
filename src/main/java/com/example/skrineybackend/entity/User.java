@@ -1,6 +1,6 @@
 package com.example.skrineybackend.entity;
 
-import com.example.skrineybackend.dto.SignUpUserRequest;
+import com.example.skrineybackend.dto.SignUpUserRequestDTO;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -22,7 +22,7 @@ import java.util.List;
 public class User {
     public User() {}
 
-    public User(SignUpUserRequest requestBody) {
+    public User(SignUpUserRequestDTO requestBody) {
         this.username = requestBody.getUsername();
         this.email = requestBody.getEmail();
         this.password = requestBody.getPassword();
@@ -52,7 +52,7 @@ public class User {
     private Instant updatedAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Account> accounts = new ArrayList<>();
+    private List<BankAccount> bankAccounts = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> categories = new ArrayList<>();

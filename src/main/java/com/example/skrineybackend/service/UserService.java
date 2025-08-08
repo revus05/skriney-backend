@@ -1,7 +1,7 @@
 package com.example.skrineybackend.service;
 
-import com.example.skrineybackend.dto.SignUpUserRequest;
-import com.example.skrineybackend.dto.SingInUserRequest;
+import com.example.skrineybackend.dto.SignInUserRequestDTO;
+import com.example.skrineybackend.dto.SignUpUserRequestDTO;
 import com.example.skrineybackend.dto.UserDTO;
 import com.example.skrineybackend.entity.User;
 import com.example.skrineybackend.exception.InvalidCredentialsException;
@@ -20,18 +20,18 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public UserDTO signUpUser(SignUpUserRequest signUpUserRequest) throws UserAlreadyExistsException {
-        checkUserExists(signUpUserRequest.getEmail(), signUpUserRequest.getUsername());
+    public UserDTO signUpUser(SignUpUserRequestDTO signUpUserRequestDTO) throws UserAlreadyExistsException {
+        checkUserExists(signUpUserRequestDTO.getEmail(), signUpUserRequestDTO.getUsername());
 
-        String encodedPassword = passwordEncoder.encode(signUpUserRequest.getPassword());
-        signUpUserRequest.setPassword(encodedPassword);
+        String encodedPassword = passwordEncoder.encode(signUpUserRequestDTO.getPassword());
+        signUpUserRequestDTO.setPassword(encodedPassword);
 
-        return new UserDTO(userRepo.save(new User(signUpUserRequest)));
+        return new UserDTO(userRepo.save(new User(signUpUserRequestDTO)));
     }
 
-    public UserDTO signInUser(SingInUserRequest singInUserRequest) throws InvalidCredentialsException {
-        User foundUser = userRepo.findByEmail(singInUserRequest.getEmail())
-            .filter(user -> passwordEncoder.matches(singInUserRequest.getPassword(), user.getPassword()))
+    public UserDTO signInUser(SignInUserRequestDTO signInUserRequestDTO) throws InvalidCredentialsException {
+        User foundUser = userRepo.findByEmail(signInUserRequestDTO.getEmail())
+            .filter(user -> passwordEncoder.matches(signInUserRequestDTO.getPassword(), user.getPassword()))
             .orElseThrow(() -> new InvalidCredentialsException("Нет пользователя с введенными данными"));
 
         return new UserDTO(foundUser);
