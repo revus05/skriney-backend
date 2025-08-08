@@ -1,6 +1,6 @@
 package com.example.skrineybackend.entity;
 
-import com.example.skrineybackend.dto.RegisterRequestDTO;
+import com.example.skrineybackend.dto.SignUpUserRequest;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -22,7 +22,7 @@ import java.util.List;
 public class User {
     public User() {}
 
-    public User(RegisterRequestDTO requestBody) {
+    public User(SignUpUserRequest requestBody) {
         this.username = requestBody.getUsername();
         this.email = requestBody.getEmail();
         this.password = requestBody.getPassword();

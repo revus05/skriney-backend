@@ -1,7 +1,7 @@
 package com.example.skrineybackend.service;
 
-import com.example.skrineybackend.dto.LoginRequestDTO;
-import com.example.skrineybackend.dto.RegisterRequestDTO;
+import com.example.skrineybackend.dto.SignUpUserRequest;
+import com.example.skrineybackend.dto.SingInUserRequest;
 import com.example.skrineybackend.dto.UserDTO;
 import com.example.skrineybackend.entity.User;
 import com.example.skrineybackend.exception.InvalidCredentialsException;
@@ -20,18 +20,18 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public UserDTO registerUser(RegisterRequestDTO requestBody) throws UserAlreadyExistsException {
-        checkUserExists(requestBody.getEmail(), requestBody.getUsername());
+    public UserDTO signUpUser(SignUpUserRequest signUpUserRequest) throws UserAlreadyExistsException {
+        checkUserExists(signUpUserRequest.getEmail(), signUpUserRequest.getUsername());
 
-        String encodedPassword = passwordEncoder.encode(requestBody.getPassword());
-        requestBody.setPassword(encodedPassword);
+        String encodedPassword = passwordEncoder.encode(signUpUserRequest.getPassword());
+        signUpUserRequest.setPassword(encodedPassword);
 
-        return new UserDTO(userRepo.save(new User(requestBody)));
+        return new UserDTO(userRepo.save(new User(signUpUserRequest)));
     }
 
-    public UserDTO loginUser(LoginRequestDTO loginRequestDTO) throws InvalidCredentialsException {
-        User foundUser = userRepo.findByEmail(loginRequestDTO.getEmail())
-            .filter(user -> passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPassword()))
+    public UserDTO signInUser(SingInUserRequest singInUserRequest) throws InvalidCredentialsException {
+        User foundUser = userRepo.findByEmail(singInUserRequest.getEmail())
+            .filter(user -> passwordEncoder.matches(singInUserRequest.getPassword(), user.getPassword()))
             .orElseThrow(() -> new InvalidCredentialsException("Нет пользователя с введенными данными"));
 
         return new UserDTO(foundUser);

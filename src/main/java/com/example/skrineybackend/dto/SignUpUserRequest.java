@@ -9,8 +9,8 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class RegisterRequestDTO {
-    public RegisterRequestDTO(String username, String email, String password) {
+public class SignUpUserRequest {
+    public SignUpUserRequest(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;

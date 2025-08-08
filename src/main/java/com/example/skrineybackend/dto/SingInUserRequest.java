@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class LoginRequestDTO {
+public class SingInUserRequest {
     @Schema(description = "Email address", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "Email обязателен")
     @Email(message = "Email должен быть валидным")

@@ -1,8 +1,8 @@
 package com.example.skrineybackend.controller;
 
-import com.example.skrineybackend.dto.LoginRequestDTO;
-import com.example.skrineybackend.dto.RegisterRequestDTO;
 import com.example.skrineybackend.dto.Response;
+import com.example.skrineybackend.dto.SignUpUserRequest;
+import com.example.skrineybackend.dto.SingInUserRequest;
 import com.example.skrineybackend.dto.UserDTO;
 import com.example.skrineybackend.service.CookieService;
 import com.example.skrineybackend.service.JwtService;
@@ -42,7 +42,7 @@ public class UserController {
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "Данные для регистрации пользователя",
             content = @Content(
-                schema = @Schema(implementation = RegisterRequestDTO.class),
+                schema = @Schema(implementation = SignUpUserRequest.class),
                 examples = @ExampleObject(
                     name = "Пример запроса",
                     value = "{\"username\":\"john_doe\",\"password\":\"securePassword123\",\"email\":\"john@example.com\"}"
@@ -59,18 +59,18 @@ public class UserController {
             )
         }
     )
-    @PostMapping("/register")
-    public Response register(@Valid @RequestBody RegisterRequestDTO user) {
-        return new Response("Пользователь успешно создан", HttpStatus.CREATED, userService.registerUser(user));
+    @PostMapping("/sign-up")
+    public Response signUpUser(@Valid @RequestBody SignUpUserRequest signUpUserRequest) {
+        return new Response("Пользователь успешно создан", HttpStatus.CREATED, userService.signUpUser(signUpUserRequest));
     }
 
     @Operation(
         summary = "Авторизация пользователя",
-        description = "Авторизирует пользователя",
+        description = "Авторизует пользователя",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "Данные для авторизации пользователя",
             content = @Content(
-                schema = @Schema(implementation = LoginRequestDTO.class),
+                schema = @Schema(implementation = SingInUserRequest.class),
                 examples = @ExampleObject(
                     name = "Пример запроса",
                     value = "{\"email\":\"john@example.com\",\"password\":\"securePassword123\"}"
@@ -85,9 +85,9 @@ public class UserController {
             ),
         }
     )
-    @PostMapping("/login")
-    public Response login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletResponse response) {
-        UserDTO loggedUser = userService.loginUser(loginRequestDTO);
+    @PostMapping("/sign-in")
+    public Response signInUser(@Valid @RequestBody SingInUserRequest singInUserRequest, HttpServletResponse response) {
+        UserDTO loggedUser = userService.signInUser(singInUserRequest);
         String token = jwtService.generateToken(loggedUser.getUuid());
         cookieService.addJwtCookie(response, token);
         return new Response("Пользователь успешно авторизован", HttpStatus.OK, loggedUser);
