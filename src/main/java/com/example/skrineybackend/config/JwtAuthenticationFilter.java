@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (cookieString == null) {
             return null;
         }
-        String[] cookies = cookieString.split(";");
+        String[] cookies = cookieString.split("; ");
         for (String cookie : cookies) {
             if (cookie.contains(JWT_COOKIE_NAME + "=")) {
                 return cookie.substring((JWT_COOKIE_NAME + "=").length());

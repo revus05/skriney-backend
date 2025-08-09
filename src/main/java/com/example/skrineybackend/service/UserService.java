@@ -37,15 +37,22 @@ public class UserService {
         return new UserDTO(foundUser);
     }
 
+    public UserDTO getMe(String userUuid) throws InvalidCredentialsException {
+        User foundUser = userRepo.findById(userUuid)
+            .orElseThrow(() -> new InvalidCredentialsException("Нет пользователя для такого uuid"));
+
+        return new UserDTO(foundUser);
+    }
+
     private void checkUserExists(String email, String username) {
+        userRepo.findByUsername(username)
+                .ifPresent(user -> {
+                    throw new UserAlreadyExistsException("username", "Имя пользователя занято");
+                });
+
         userRepo.findByEmail(email)
             .ifPresent(user -> {
                 throw new UserAlreadyExistsException("email", "Пользователь с таким email уже существует");
-            });
-
-        userRepo.findByUsername(username)
-            .ifPresent(user -> {
-                throw new UserAlreadyExistsException("username", "Имя пользователя занято");
             });
     }
 }

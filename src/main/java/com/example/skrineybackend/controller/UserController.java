@@ -16,10 +16,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
@@ -90,6 +90,24 @@ public class UserController {
         UserDTO loggedUser = userService.signInUser(signInUserRequestDTO);
         String token = jwtService.generateToken(loggedUser.getUuid());
         cookieService.addJwtCookie(response, token);
+        return new Response("Пользователь успешно авторизован", HttpStatus.OK, loggedUser);
+    }
+
+    @Operation(
+        summary = "Авторизация пользователя по jwt",
+        description = "Авторизует пользователя по jwt",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Пользователь успешно авторизован",
+                content = @Content(schema = @Schema(implementation = UserDTO.class))
+            ),
+        }
+    )
+    @GetMapping("/me")
+    public Response getMeWithJwt() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDTO loggedUser = userService.getMe(((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Пользователь успешно авторизован", HttpStatus.OK, loggedUser);
     }
 }
