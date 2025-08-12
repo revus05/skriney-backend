@@ -1,9 +1,6 @@
 package com.example.skrineybackend.controller;
 
-import com.example.skrineybackend.dto.CategoryDTO;
-import com.example.skrineybackend.dto.CreateCategoryRequestDTO;
-import com.example.skrineybackend.dto.Response;
-import com.example.skrineybackend.dto.UserDTO;
+import com.example.skrineybackend.dto.*;
 import com.example.skrineybackend.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -77,5 +74,33 @@ public class CategoryController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         List<CategoryDTO> categories = categoryService.getCategories(((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Категории получены успешно", HttpStatus.OK, categories);
+    }
+
+    @Operation(
+        summary = "Удаление категории",
+        description = "Удаляет категорию транзакции у пользователя",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Данные для удаления категории",
+            content = @Content(
+                schema = @Schema(implementation = DeleteCategoryRequestDTO.class),
+                examples = @ExampleObject(
+                    name = "Пример запроса",
+                    value = "{\"uuid\":\"bcbfe240-a61b-4e21-94f0-188bddf4a04e\"}"
+                )
+            )
+        ),
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Категория успешно удалена",
+                content = @Content(schema = @Schema(implementation = CategoryDTO.class))
+            ),
+        }
+    )
+    @DeleteMapping("/delete")
+    public Response deleteCategories(@Valid @RequestBody DeleteCategoryRequestDTO deleteCategoryRequestDTO) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CategoryDTO deletedCategory = categoryService.deleteCategory(deleteCategoryRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Категория успешно удалена", HttpStatus.OK, deletedCategory);
     }
 }

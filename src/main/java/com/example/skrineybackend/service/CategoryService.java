@@ -2,8 +2,10 @@ package com.example.skrineybackend.service;
 
 import com.example.skrineybackend.dto.CategoryDTO;
 import com.example.skrineybackend.dto.CreateCategoryRequestDTO;
+import com.example.skrineybackend.dto.DeleteCategoryRequestDTO;
 import com.example.skrineybackend.entity.Category;
 import com.example.skrineybackend.entity.User;
+import com.example.skrineybackend.exception.NoCategoryFoundException;
 import com.example.skrineybackend.exception.NoUserFoundException;
 import com.example.skrineybackend.repository.CategoryRepo;
 import com.example.skrineybackend.repository.UserRepo;
@@ -35,4 +37,17 @@ public class CategoryService {
 
         return categoryRepo.findAllByUser_Uuid(userUuid).stream().map(CategoryDTO::new).toList();
     }
+
+    public CategoryDTO deleteCategory(DeleteCategoryRequestDTO deleteCategoryRequestDTO, String userUuid) throws NoUserFoundException, NoCategoryFoundException {
+        userRepo.findById(userUuid)
+                .orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+
+        Category category = categoryRepo.findByUuidAndUser_Uuid(deleteCategoryRequestDTO.getUuid(), userUuid)
+                .orElseThrow(() -> new NoCategoryFoundException("Категория не найдена или не принадлежит пользователю"));
+
+        categoryRepo.delete(category);
+
+        return new CategoryDTO(category);
+    }
+
 }
