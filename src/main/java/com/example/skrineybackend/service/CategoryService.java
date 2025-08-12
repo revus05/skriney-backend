@@ -9,6 +9,8 @@ import com.example.skrineybackend.repository.CategoryRepo;
 import com.example.skrineybackend.repository.UserRepo;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CategoryService {
     private final CategoryRepo categoryRepo;
@@ -26,5 +28,11 @@ public class CategoryService {
         category.setUser(user);
 
         return new CategoryDTO(categoryRepo.save(category));
+    }
+
+    public List<CategoryDTO> getCategories(String userUuid) throws NoUserFoundException {
+        userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+
+        return categoryRepo.findAllByUser_Uuid(userUuid).stream().map(CategoryDTO::new).toList();
     }
 }

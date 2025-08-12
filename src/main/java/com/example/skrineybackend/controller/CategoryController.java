@@ -6,6 +6,7 @@ import com.example.skrineybackend.dto.Response;
 import com.example.skrineybackend.dto.UserDTO;
 import com.example.skrineybackend.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,10 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
@@ -57,5 +57,25 @@ public class CategoryController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CategoryDTO createdCategory = categoryService.createCategory(createCategoryRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Категория успешно создана", HttpStatus.CREATED, createdCategory);
+    }
+
+    @Operation(
+        summary = "Получение категорий",
+        description = "Получение всех категорий пользователя",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Категории получены успешно",
+                content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = CategoryDTO.class))
+                )
+            ),
+        }
+    )
+    @GetMapping()
+    public Response getCategories() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<CategoryDTO> categories = categoryService.getCategories(((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Категории получены успешно", HttpStatus.OK, categories);
     }
 }
