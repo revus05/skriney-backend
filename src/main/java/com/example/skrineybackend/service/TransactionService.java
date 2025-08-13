@@ -1,0 +1,42 @@
+package com.example.skrineybackend.service;
+
+import com.example.skrineybackend.dto.CreateTransactionRequestDTO;
+import com.example.skrineybackend.dto.TransactionDTO;
+import com.example.skrineybackend.entity.BankAccount;
+import com.example.skrineybackend.entity.Category;
+import com.example.skrineybackend.entity.Transaction;
+import com.example.skrineybackend.exception.NoBankAccountFoundException;
+import com.example.skrineybackend.exception.NoCategoryFoundException;
+import com.example.skrineybackend.exception.NoUserFoundException;
+import com.example.skrineybackend.repository.BankAccountRepo;
+import com.example.skrineybackend.repository.CategoryRepo;
+import com.example.skrineybackend.repository.TransactionRepo;
+import com.example.skrineybackend.repository.UserRepo;
+import org.springframework.stereotype.Service;
+
+@Service
+public class TransactionService {
+    private final TransactionRepo transactionRepo;
+    private final UserRepo userRepo;
+    private final BankAccountRepo bankAccountRepo;
+    private final CategoryRepo categoryRepo;
+
+    public TransactionService(TransactionRepo transactionRepo, UserRepo userRepo, BankAccountRepo bankAccountRepo, CategoryRepo categoryRepo) {
+        this.transactionRepo = transactionRepo;
+        this.userRepo = userRepo;
+        this.bankAccountRepo = bankAccountRepo;
+        this.categoryRepo = categoryRepo;
+    }
+
+    public TransactionDTO createTransaction(CreateTransactionRequestDTO createTransactionRequestDTO, String userUuid) throws NoUserFoundException {
+        userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+
+        BankAccount bankAccount = bankAccountRepo.findByUuidAndUser_Uuid(createTransactionRequestDTO.getBankAccountUuid(), userUuid)
+                .orElseThrow(() -> new NoBankAccountFoundException("Нет такого счета у пользователя"));
+
+        Category category = categoryRepo.findByUuidAndUser_Uuid(createTransactionRequestDTO.getCategoryUuid(), userUuid)
+                .orElseThrow(() -> new NoCategoryFoundException("Категория не найдена или не принадлежит пользователю"));
+
+        return new TransactionDTO(transactionRepo.save(new Transaction(createTransactionRequestDTO, bankAccount, category)));
+    }
+}
