@@ -3,4 +3,8 @@ package com.example.skrineybackend.repository;
 import com.example.skrineybackend.entity.Transaction;
 import org.springframework.data.repository.CrudRepository;
 
-public interface TransactionRepo extends CrudRepository<Transaction, String> { }
+import java.util.List;
+
+public interface TransactionRepo extends CrudRepository<Transaction, String> {
+    List<Transaction> findByBankAccount_User_Uuid(String userUuid);
+}

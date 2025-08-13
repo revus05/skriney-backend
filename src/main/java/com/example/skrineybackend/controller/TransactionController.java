@@ -10,10 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/transactions")
@@ -30,5 +29,12 @@ public class TransactionController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         TransactionDTO createdTransaction = transactionService.createTransaction(createTransactionRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Транзакция успешно создана", HttpStatus.CREATED, createdTransaction);
+    }
+
+    @GetMapping()
+    public Response getTransactions() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<TransactionDTO> transactions = transactionService.getTransactions(((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Транзакции успешно получены", HttpStatus.OK, transactions);
     }
 }

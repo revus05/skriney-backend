@@ -14,6 +14,8 @@ import com.example.skrineybackend.repository.TransactionRepo;
 import com.example.skrineybackend.repository.UserRepo;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TransactionService {
     private final TransactionRepo transactionRepo;
@@ -28,7 +30,7 @@ public class TransactionService {
         this.categoryRepo = categoryRepo;
     }
 
-    public TransactionDTO createTransaction(CreateTransactionRequestDTO createTransactionRequestDTO, String userUuid) throws NoUserFoundException {
+    public TransactionDTO createTransaction(CreateTransactionRequestDTO createTransactionRequestDTO, String userUuid) throws NoUserFoundException, NoBankAccountFoundException, NoCategoryFoundException {
         userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
 
         BankAccount bankAccount = bankAccountRepo.findByUuidAndUser_Uuid(createTransactionRequestDTO.getBankAccountUuid(), userUuid)
@@ -38,5 +40,15 @@ public class TransactionService {
                 .orElseThrow(() -> new NoCategoryFoundException("Категория не найдена или не принадлежит пользователю"));
 
         return new TransactionDTO(transactionRepo.save(new Transaction(createTransactionRequestDTO, bankAccount, category)));
+    }
+
+    public List<TransactionDTO> getTransactions(String userUuid) throws NoUserFoundException {
+        userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+
+        List<Transaction> transactions = transactionRepo.findByBankAccount_User_Uuid(userUuid);
+
+        return transactions.stream()
+            .map(TransactionDTO::new)
+            .toList();
     }
 }
