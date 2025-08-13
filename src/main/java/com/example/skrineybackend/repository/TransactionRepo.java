@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface TransactionRepo extends CrudRepository<Transaction, String> {
     List<Transaction> findByBankAccount_User_Uuid(String userUuid);
+    Transaction findByUuidAndBankAccount_User_Uuid(String uuid, String userUuid);
 }

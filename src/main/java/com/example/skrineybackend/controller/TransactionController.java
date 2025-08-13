@@ -1,6 +1,7 @@
 package com.example.skrineybackend.controller;
 
 import com.example.skrineybackend.dto.CreateTransactionRequestDTO;
+import com.example.skrineybackend.dto.DeleteTransactionRequestDTO;
 import com.example.skrineybackend.dto.Response;
 import com.example.skrineybackend.dto.TransactionDTO;
 import com.example.skrineybackend.service.TransactionService;
@@ -36,5 +37,12 @@ public class TransactionController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         List<TransactionDTO> transactions = transactionService.getTransactions(((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Транзакции успешно получены", HttpStatus.OK, transactions);
+    }
+
+    @DeleteMapping("/delete")
+    public Response deleteTransaction(@Valid @RequestBody DeleteTransactionRequestDTO deleteTransactionRequestDTO) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        TransactionDTO deletedTransaction = transactionService.deleteTransaction(deleteTransactionRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Транзакция успешно удалена", HttpStatus.CREATED, deletedTransaction);
     }
 }
