@@ -107,6 +107,6 @@ public class TransactionController {
     public Response deleteTransaction(@Valid @RequestBody DeleteTransactionRequestDTO deleteTransactionRequestDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         TransactionDTO deletedTransaction = transactionService.deleteTransaction(deleteTransactionRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
-        return new Response("Транзакция успешно удалена", HttpStatus.CREATED, deletedTransaction);
+        return new Response("Транзакция успешно удалена", HttpStatus.OK, deletedTransaction);
     }
 }
