@@ -9,6 +9,8 @@ import com.example.skrineybackend.repository.BankAccountRepo;
 import com.example.skrineybackend.repository.UserRepo;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BankAccountService {
     private final BankAccountRepo bankAccountRepo;
@@ -26,5 +28,11 @@ public class BankAccountService {
         bankAccount.setUser(user);
 
         return new BankAccountDTO(bankAccountRepo.save(bankAccount));
+    }
+
+    public List<BankAccountDTO> getBankAccounts(String userUuid) throws NoUserFoundException {
+        userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+
+        return bankAccountRepo.findAllByUser_Uuid(userUuid).stream().map(BankAccountDTO::new).toList();
     }
 }

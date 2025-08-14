@@ -30,6 +30,16 @@ public class GlobalExceptionHandler {
         return new Response("Запись с такими данными уже существует", HttpStatus.CONFLICT, fields);
     }
 
+    @ExceptionHandler(NoBankAccountFoundException.class)
+    public Response handleNoBankAccountFoundException(NoBankAccountFoundException ex) {
+        return new Response(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NoCategoryFoundException.class)
+    public Response handleNoCategoryFoundException(NoCategoryFoundException ex) {
+        return new Response(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(InvalidCredentialsException.class)
     public Response handleInvalidCredentialsException(InvalidCredentialsException ex) {
         return new Response(ex.getMessage(), HttpStatus.UNAUTHORIZED);

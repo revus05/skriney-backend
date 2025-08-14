@@ -6,6 +6,7 @@ import com.example.skrineybackend.dto.Response;
 import com.example.skrineybackend.dto.UserDTO;
 import com.example.skrineybackend.service.BankAccountService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,10 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/bank-accounts")
@@ -57,5 +57,25 @@ public class BankAccountController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         BankAccountDTO createdBankAccount = bankAccountService.createBankAccount(requestBody, ((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Счет успешно создан", HttpStatus.CREATED, createdBankAccount);
+    }
+
+    @Operation(
+        summary = "Получение счетов пользователя",
+        description = "Получение всех счетов пользователя",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Счета пользователя успешно получены",
+                content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = BankAccountDTO.class))
+                )
+            ),
+        }
+    )
+    @GetMapping()
+    public Response getBankAccount() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<BankAccountDTO> bankAccounts = bankAccountService.getBankAccounts(((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Счета пользователя успешно получены", HttpStatus.OK, bankAccounts);
     }
 }
