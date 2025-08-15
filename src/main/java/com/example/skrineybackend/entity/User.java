@@ -26,6 +26,10 @@ public class User {
         this.username = requestBody.getUsername();
         this.email = requestBody.getEmail();
         this.password = requestBody.getPassword();
+
+        UserSettings settings = new UserSettings();
+        settings.setUser(this);
+        this.settings = settings;
     }
 
     @Id
@@ -56,4 +60,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> categories = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserSettings settings;
 }

@@ -1,12 +1,10 @@
 package com.example.skrineybackend.controller;
 
-import com.example.skrineybackend.dto.Response;
-import com.example.skrineybackend.dto.SignInUserRequestDTO;
-import com.example.skrineybackend.dto.SignUpUserRequestDTO;
-import com.example.skrineybackend.dto.UserDTO;
+import com.example.skrineybackend.dto.*;
 import com.example.skrineybackend.service.CookieService;
 import com.example.skrineybackend.service.JwtService;
 import com.example.skrineybackend.service.UserService;
+import com.example.skrineybackend.service.UserSettingsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -29,11 +27,13 @@ public class UserController {
     private final UserService userService;
     private final JwtService jwtService;
     private final CookieService cookieService;
+    private final UserSettingsService userSettingsService;
 
-    public UserController(UserService userService, JwtService jwtService, CookieService cookieService) {
+    public UserController(UserService userService, JwtService jwtService, CookieService cookieService, UserSettingsService userSettingsService) {
         this.userService = userService;
         this.jwtService = jwtService;
         this.cookieService = cookieService;
+        this.userSettingsService = userSettingsService;
     }
 
     @Operation(
@@ -109,5 +109,51 @@ public class UserController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDTO loggedUser = userService.getMe(((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Пользователь успешно авторизован", HttpStatus.OK, loggedUser);
+    }
+
+    @Operation(
+        summary = "Обновление валюты по умолчанию",
+        description = "Обновляет валюту по умолчанию у пользователя",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Новая валюта по умолчанию",
+            content = @Content(
+                schema = @Schema(implementation = UpdateDefaultCurrencyRequestDTO.class),
+                examples = @ExampleObject(
+                    name = "Пример запроса",
+                    value = "{\"currency\": \"BYN\"}"
+                )
+            )
+        ),
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Валюта по умолчанию успешно обновлена",
+                content = @Content(schema = @Schema(implementation = UserSettingsDTO.class))
+            ),
+        }
+    )
+    @PostMapping("/update-default-currency")
+    public Response updateDefaultCurrency(@Valid @RequestBody UpdateDefaultCurrencyRequestDTO updateDefaultCurrencyRequestDTO) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserSettingsDTO updatedUserSettings = userSettingsService.updateDefaultCurrency(updateDefaultCurrencyRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Валюта по умолчанию успешно обновлена",  HttpStatus.OK, updatedUserSettings);
+    }
+
+    @Operation(
+        summary = "Получение настроек пользователя",
+        description = "Возвращает настройки пользователя",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Настройки пользователя успешно получены",
+                content = @Content(schema = @Schema(implementation = UserSettingsDTO.class))
+            ),
+        }
+    )
+    @GetMapping("/settings")
+    public Response getUserSettings() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserSettingsDTO updatedUserSettings = userSettingsService.getUserSettings(((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Настройки пользователя успешно получены",  HttpStatus.OK, updatedUserSettings);
     }
 }

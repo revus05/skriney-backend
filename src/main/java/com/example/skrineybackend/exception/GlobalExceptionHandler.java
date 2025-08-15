@@ -45,6 +45,11 @@ public class GlobalExceptionHandler {
         return new Response(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(NoUserSettingsFoundException.class)
+    public Response handleNoUserSettingsFoundException(NoUserSettingsFoundException ex) {
+        return new Response(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(NoUserFoundException.class)
     public Response handleNoUserFoundException(NoUserFoundException ex) {
         return new Response(ex.getMessage(), HttpStatus.UNAUTHORIZED);
