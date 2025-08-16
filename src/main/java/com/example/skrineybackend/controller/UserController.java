@@ -140,6 +140,34 @@ public class UserController {
     }
 
     @Operation(
+        summary = "Обновление категории по умолчанию",
+        description = "Обновляет категорию по умолчанию у пользователя",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Новая категория по умолчанию",
+            content = @Content(
+                schema = @Schema(implementation = UpdateDefaultCategoryRequestDTO.class),
+                examples = @ExampleObject(
+                    name = "Пример запроса",
+                    value = "{\"uuid\": \"9be5a6db-e01f-4a9b-8243-4b1fe9f37213\"}"
+                )
+            )
+        ),
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Категория по умолчанию успешно обновлена",
+                content = @Content(schema = @Schema(implementation = UserSettingsDTO.class))
+            ),
+        }
+    )
+    @PostMapping("/update-default-category")
+    public Response updateDefaultCategory(@Valid @RequestBody UpdateDefaultCategoryRequestDTO updateDefaultCategoryRequestDTO) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserSettingsDTO updatedUserSettings = userSettingsService.updateDefaultCategory(updateDefaultCategoryRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Категория по умолчанию успешно обновлена",  HttpStatus.OK, updatedUserSettings);
+    }
+
+    @Operation(
         summary = "Получение настроек пользователя",
         description = "Возвращает настройки пользователя",
         responses = {

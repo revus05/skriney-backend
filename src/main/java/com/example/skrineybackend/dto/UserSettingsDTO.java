@@ -13,6 +13,7 @@ public class UserSettingsDTO {
     public UserSettingsDTO(UserSettings userSettings) {
         this.defaultCurrency = userSettings.getDefaultCurrency();
         this.userTheme = userSettings.getUserTheme();
+        this.defaultCategory = new CategoryDTO(userSettings.getDefaultCategory());
     }
 
     @Schema(description = "User's ui theme", requiredMode = Schema.RequiredMode.REQUIRED)
@@ -20,4 +21,8 @@ public class UserSettingsDTO {
 
     @Schema(description = "User's default currency", requiredMode = Schema.RequiredMode.REQUIRED)
     private Currency defaultCurrency;
+
+
+    @Schema(description = "User's default category", requiredMode = Schema.RequiredMode.REQUIRED)
+    private CategoryDTO defaultCategory;
 }

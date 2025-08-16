@@ -23,6 +23,10 @@ public class UserSettings {
     @Column(nullable = false)
     private Currency defaultCurrency = Currency.USD;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "default_category_id")
+    private Category defaultCategory;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
