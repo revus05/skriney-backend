@@ -22,6 +22,9 @@ public class UserDTO {
     @Schema(description = "Email address", requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
 
+    @Schema(description = "User settings", requiredMode = Schema.RequiredMode.REQUIRED)
+    private UserSettingsDTO userSettings;
+
     @Schema(description = "Creation timestamp", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
     private Instant createdAt;
 
@@ -33,6 +36,7 @@ public class UserDTO {
         this.image = user.getImage();
         this.username = user.getUsername();
         this.email = user.getEmail();
+        this.userSettings = new UserSettingsDTO(user.getSettings());
         this.createdAt = user.getCreatedAt();
         this.updatedAt = user.getUpdatedAt();
     }

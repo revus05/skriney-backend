@@ -22,7 +22,6 @@ public class UserSettingsDTO {
     @Schema(description = "User's default currency", requiredMode = Schema.RequiredMode.REQUIRED)
     private Currency defaultCurrency;
 
-
     @Schema(description = "User's default category", requiredMode = Schema.RequiredMode.REQUIRED)
     private CategoryDTO defaultCategory;
 }
