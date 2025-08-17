@@ -168,6 +168,34 @@ public class UserController {
     }
 
     @Operation(
+        summary = "Обновление темы пользователя",
+        description = "Обновляет тему пользователя",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Новая тема пользователя",
+            content = @Content(
+                schema = @Schema(implementation = UpdateThemeRequestDTO.class),
+                examples = @ExampleObject(
+                    name = "Пример запроса",
+                    value = "{\"theme\": \"LIGHT\"}"
+                )
+            )
+        ),
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Тема успешно обновлена",
+                content = @Content(schema = @Schema(implementation = UserSettingsDTO.class))
+            ),
+        }
+    )
+    @PostMapping("/update-theme")
+    public Response updateTheme(@Valid @RequestBody UpdateThemeRequestDTO updateThemeRequestDTO) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserSettingsDTO updatedUserSettings = userSettingsService.updateTheme(updateThemeRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Тема успешно обновлена",  HttpStatus.OK, updatedUserSettings);
+    }
+
+    @Operation(
         summary = "Получение настроек пользователя",
         description = "Возвращает настройки пользователя",
         responses = {

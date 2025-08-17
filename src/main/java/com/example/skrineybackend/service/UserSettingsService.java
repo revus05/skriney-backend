@@ -2,6 +2,7 @@ package com.example.skrineybackend.service;
 
 import com.example.skrineybackend.dto.UpdateDefaultCategoryRequestDTO;
 import com.example.skrineybackend.dto.UpdateDefaultCurrencyRequestDTO;
+import com.example.skrineybackend.dto.UpdateThemeRequestDTO;
 import com.example.skrineybackend.dto.UserSettingsDTO;
 import com.example.skrineybackend.entity.Category;
 import com.example.skrineybackend.entity.UserSettings;
@@ -49,6 +50,16 @@ public class UserSettingsService {
         Category category = categoryRepo.findById(updateDefaultCategoryRequestDTO.getUuid()).orElseThrow(() -> new NoCategoryFoundException("Категория не найдена или не принадлежит пользователю"));
 
         userSettings.setDefaultCategory(category);
+        userSettingsRepo.save(userSettings);
+
+        return new UserSettingsDTO(userSettings);
+    }
+
+    public UserSettingsDTO updateTheme(UpdateThemeRequestDTO updateThemeRequestDTO, String userUuid) throws NoUserFoundException, NoUserSettingsFoundException {
+        userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+        UserSettings userSettings = userSettingsRepo.findByUserUuid(userUuid).orElseThrow(() -> new NoUserSettingsFoundException("Нет настроек для пользователя"));
+
+        userSettings.setUserTheme(updateThemeRequestDTO.getTheme());
         userSettingsRepo.save(userSettings);
 
         return new UserSettingsDTO(userSettings);
