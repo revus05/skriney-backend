@@ -2,8 +2,10 @@ package com.example.skrineybackend.service;
 
 import com.example.skrineybackend.dto.BankAccountDTO;
 import com.example.skrineybackend.dto.CreateBankAccountRequestDTO;
+import com.example.skrineybackend.dto.DeleteBankAccountRequestDTO;
 import com.example.skrineybackend.entity.BankAccount;
 import com.example.skrineybackend.entity.User;
+import com.example.skrineybackend.exception.NoBankAccountFoundException;
 import com.example.skrineybackend.exception.NoUserFoundException;
 import com.example.skrineybackend.repository.BankAccountRepo;
 import com.example.skrineybackend.repository.UserRepo;
@@ -28,6 +30,15 @@ public class BankAccountService {
         bankAccount.setUser(user);
 
         return new BankAccountDTO(bankAccountRepo.save(bankAccount));
+    }
+
+    public BankAccountDTO deleteBankAccount(DeleteBankAccountRequestDTO requestBody, String userUuid) throws NoUserFoundException {
+        userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+
+        BankAccount deleteBankAccount = bankAccountRepo.findByUuidAndUser_Uuid(requestBody.getUuid(), userUuid).orElseThrow(() -> new NoBankAccountFoundException("Нет такого счета у пользователя"));
+        bankAccountRepo.delete(deleteBankAccount);
+
+        return new BankAccountDTO(deleteBankAccount);
     }
 
     public List<BankAccountDTO> getBankAccounts(String userUuid) throws NoUserFoundException {

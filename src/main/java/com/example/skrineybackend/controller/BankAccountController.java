@@ -2,8 +2,8 @@ package com.example.skrineybackend.controller;
 
 import com.example.skrineybackend.dto.BankAccountDTO;
 import com.example.skrineybackend.dto.CreateBankAccountRequestDTO;
+import com.example.skrineybackend.dto.DeleteBankAccountRequestDTO;
 import com.example.skrineybackend.dto.Response;
-import com.example.skrineybackend.dto.UserDTO;
 import com.example.skrineybackend.service.BankAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -48,7 +48,7 @@ public class BankAccountController {
             @ApiResponse(
                 responseCode = "201",
                 description = "Счет успешно создан",
-                content = @Content(schema = @Schema(implementation = UserDTO.class))
+                content = @Content(schema = @Schema(implementation = BankAccountDTO.class))
             ),
         }
     )
@@ -57,6 +57,34 @@ public class BankAccountController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         BankAccountDTO createdBankAccount = bankAccountService.createBankAccount(requestBody, ((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Счет успешно создан", HttpStatus.CREATED, createdBankAccount);
+    }
+
+    @Operation(
+        summary = "Удаление счета",
+        description = "Удаляет счет пользователя",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Данные для удаления счета",
+            content = @Content(
+                schema = @Schema(implementation = DeleteBankAccountRequestDTO.class),
+                examples = @ExampleObject(
+                    name = "Пример запроса",
+                    value = "{\"uuid\":\"dc10e980-6546-4ab8-984e-651b91735960\"}"
+                )
+            )
+        ),
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Счет успешно удален",
+                content = @Content(schema = @Schema(implementation = BankAccountDTO.class))
+            ),
+        }
+    )
+    @DeleteMapping("/delete")
+    public Response deleteBankAccount(@Valid @RequestBody DeleteBankAccountRequestDTO requestBody) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        BankAccountDTO deletedBankAccount = bankAccountService.deleteBankAccount(requestBody, ((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Счет успешно удален", HttpStatus.OK, deletedBankAccount);
     }
 
     @Operation(
