@@ -1,13 +1,14 @@
 package com.example.skrineybackend.service;
 
-import com.example.skrineybackend.dto.CreateTransactionRequestDTO;
-import com.example.skrineybackend.dto.DeleteTransactionRequestDTO;
-import com.example.skrineybackend.dto.TransactionDTO;
+import com.example.skrineybackend.dto.transaction.CreateTransactionRequestDTO;
+import com.example.skrineybackend.dto.transaction.DeleteTransactionRequestDTO;
+import com.example.skrineybackend.dto.transaction.TransactionDTO;
 import com.example.skrineybackend.entity.BankAccount;
 import com.example.skrineybackend.entity.Category;
 import com.example.skrineybackend.entity.Transaction;
 import com.example.skrineybackend.exception.NoBankAccountFoundException;
 import com.example.skrineybackend.exception.NoCategoryFoundException;
+import com.example.skrineybackend.exception.NoTransactionFoundException;
 import com.example.skrineybackend.exception.NoUserFoundException;
 import com.example.skrineybackend.repository.BankAccountRepo;
 import com.example.skrineybackend.repository.CategoryRepo;
@@ -53,10 +54,11 @@ public class TransactionService {
             .toList();
     }
 
-    public TransactionDTO deleteTransaction(DeleteTransactionRequestDTO deleteTransactionRequestDTO, String userUuid) throws NoUserFoundException {
+    public TransactionDTO deleteTransaction(DeleteTransactionRequestDTO deleteTransactionRequestDTO, String userUuid) throws NoUserFoundException, NoTransactionFoundException {
         userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
 
-        Transaction deleteTransaction = transactionRepo.findByUuidAndBankAccount_User_Uuid(deleteTransactionRequestDTO.getUuid(), userUuid);
+        Transaction deleteTransaction = transactionRepo.findByUuidAndBankAccount_User_Uuid(deleteTransactionRequestDTO.getUuid(), userUuid)
+                .orElseThrow(() -> new NoTransactionFoundException("Нет такой транзакции"));
 
         transactionRepo.delete(deleteTransaction);
 

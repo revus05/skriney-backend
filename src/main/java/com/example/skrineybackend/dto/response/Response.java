@@ -1,4 +1,4 @@
-package com.example.skrineybackend.dto;
+package com.example.skrineybackend.dto.response;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatusCode;

@@ -1,8 +1,8 @@
 package com.example.skrineybackend.service;
 
-import com.example.skrineybackend.dto.CategoryDTO;
-import com.example.skrineybackend.dto.CreateCategoryRequestDTO;
-import com.example.skrineybackend.dto.DeleteCategoryRequestDTO;
+import com.example.skrineybackend.dto.category.CategoryDTO;
+import com.example.skrineybackend.dto.category.CreateCategoryRequestDTO;
+import com.example.skrineybackend.dto.category.DeleteCategoryRequestDTO;
 import com.example.skrineybackend.entity.Category;
 import com.example.skrineybackend.entity.User;
 import com.example.skrineybackend.exception.NoCategoryFoundException;

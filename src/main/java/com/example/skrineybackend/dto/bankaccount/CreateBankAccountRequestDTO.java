@@ -1,8 +1,9 @@
-package com.example.skrineybackend.dto;
+package com.example.skrineybackend.dto.bankaccount;
 
 import com.example.skrineybackend.enums.Currency;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +14,8 @@ public class CreateBankAccountRequestDTO {
     @Schema(description = "Initial bank account balance", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private double balance;
 
-    @Schema(description = "Bank account currency", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(description = "Bank account currency", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "Валюта обязательна")
     private Currency currency;
 
     @Schema(description = "Bank account title", requiredMode = Schema.RequiredMode.REQUIRED)

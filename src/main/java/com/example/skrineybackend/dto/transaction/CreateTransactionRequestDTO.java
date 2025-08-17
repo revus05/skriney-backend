@@ -1,4 +1,4 @@
-package com.example.skrineybackend.dto;
+package com.example.skrineybackend.dto.transaction;
 
 import com.example.skrineybackend.enums.Currency;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,7 +15,7 @@ public class CreateTransactionRequestDTO {
     @NotNull(message = "Сумма транзакции обязательна")
     private double sum;
 
-    @Schema(description = "Transaction category", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(description = "Transaction category", requiredMode = Schema.RequiredMode.REQUIRED)
     private Currency currency;
 
     @Schema(description = "Optional user description", requiredMode = Schema.RequiredMode.NOT_REQUIRED)

@@ -1,4 +1,4 @@
-package com.example.skrineybackend.dto;
+package com.example.skrineybackend.dto.transaction;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -9,6 +9,6 @@ import lombok.Setter;
 @Getter
 public class DeleteTransactionRequestDTO {
     @Schema(description = "Delete transaction uuid", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotBlank(message = "UUid транзакции обязательно")
+    @NotBlank(message = "Uuid транзакции обязательно")
     private String uuid;
 }

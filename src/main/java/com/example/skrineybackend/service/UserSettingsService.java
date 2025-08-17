@@ -1,9 +1,9 @@
 package com.example.skrineybackend.service;
 
-import com.example.skrineybackend.dto.UpdateDefaultCategoryRequestDTO;
-import com.example.skrineybackend.dto.UpdateDefaultCurrencyRequestDTO;
-import com.example.skrineybackend.dto.UpdateThemeRequestDTO;
-import com.example.skrineybackend.dto.UserSettingsDTO;
+import com.example.skrineybackend.dto.usersettings.UpdateDefaultCategoryRequestDTO;
+import com.example.skrineybackend.dto.usersettings.UpdateDefaultCurrencyRequestDTO;
+import com.example.skrineybackend.dto.usersettings.UpdateThemeRequestDTO;
+import com.example.skrineybackend.dto.usersettings.UserSettingsDTO;
 import com.example.skrineybackend.entity.Category;
 import com.example.skrineybackend.entity.UserSettings;
 import com.example.skrineybackend.exception.NoCategoryFoundException;
@@ -24,13 +24,6 @@ public class UserSettingsService {
         this.userSettingsRepo = userSettingsRepo;
         this.userRepo = userRepo;
         this.categoryRepo = categoryRepo;
-    }
-
-    public UserSettingsDTO getUserSettings(String userUuid) throws NoUserFoundException, NoUserSettingsFoundException {
-        userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
-        UserSettings userSettings = userSettingsRepo.findByUserUuid(userUuid).orElseThrow(() -> new NoUserSettingsFoundException("Нет настроек для пользователя"));
-
-        return new UserSettingsDTO(userSettings);
     }
 
     public UserSettingsDTO updateDefaultCurrency(UpdateDefaultCurrencyRequestDTO updateDefaultCurrencyRequestDTO, String userUuid) throws NoUserFoundException, NoUserSettingsFoundException {

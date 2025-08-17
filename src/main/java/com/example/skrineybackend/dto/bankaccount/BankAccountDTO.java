@@ -1,4 +1,4 @@
-package com.example.skrineybackend.dto;
+package com.example.skrineybackend.dto.bankaccount;
 
 import com.example.skrineybackend.entity.BankAccount;
 import com.example.skrineybackend.enums.Currency;
@@ -11,37 +11,37 @@ import java.time.Instant;
 @Setter
 @Getter
 public class BankAccountDTO {
-    @Schema(description = "Bank Account UUID", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Bank Account uuid")
     private String uuid;
 
-    @Schema(description = "Money on the bank account", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Money on the bank account")
     private double balance;
 
-    @Schema(description = "Bank Account currency", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Bank Account currency")
     private Currency currency;
 
-    @Schema(description = "Bank Account title", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Bank Account title")
     private String title;
 
-    @Schema(description = "Bank Account's card color", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(description = "Bank Account's card color")
     private String color;
 
-    @Schema(description = "Are bank account money used to calculate total user balance", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(description = "Are bank account money used to calculate total user balance")
     private boolean isInTotalBalance;
 
-    @Schema(description = "Percent of balance change", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Percent of balance change")
     private double changePercent;
 
-    @Schema(description = "Optional user's description", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(description = "Optional user's description")
     private String description;
 
-    @Schema(description = "Optional user's image", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(description = "Optional user's image")
     private String image;
 
-    @Schema(description = "Creation timestamp", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Creation timestamp", type = "string", format = "date-time")
     private Instant createdAt;
 
-    @Schema(description = "Last update timestamp", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Last update timestamp", type = "string", format = "date-time")
     private Instant updatedAt;
 
     public BankAccountDTO(BankAccount bankAccount) {

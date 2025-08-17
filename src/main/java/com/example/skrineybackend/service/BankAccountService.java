@@ -1,8 +1,8 @@
 package com.example.skrineybackend.service;
 
-import com.example.skrineybackend.dto.BankAccountDTO;
-import com.example.skrineybackend.dto.CreateBankAccountRequestDTO;
-import com.example.skrineybackend.dto.DeleteBankAccountRequestDTO;
+import com.example.skrineybackend.dto.bankaccount.BankAccountDTO;
+import com.example.skrineybackend.dto.bankaccount.CreateBankAccountRequestDTO;
+import com.example.skrineybackend.dto.bankaccount.DeleteBankAccountRequestDTO;
 import com.example.skrineybackend.entity.BankAccount;
 import com.example.skrineybackend.entity.User;
 import com.example.skrineybackend.exception.NoBankAccountFoundException;

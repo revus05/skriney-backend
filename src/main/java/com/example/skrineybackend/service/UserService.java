@@ -1,8 +1,8 @@
 package com.example.skrineybackend.service;
 
-import com.example.skrineybackend.dto.SignInUserRequestDTO;
-import com.example.skrineybackend.dto.SignUpUserRequestDTO;
-import com.example.skrineybackend.dto.UserDTO;
+import com.example.skrineybackend.dto.user.SignInUserRequestDTO;
+import com.example.skrineybackend.dto.user.SignUpUserRequestDTO;
+import com.example.skrineybackend.dto.user.UserDTO;
 import com.example.skrineybackend.entity.User;
 import com.example.skrineybackend.exception.InvalidCredentialsException;
 import com.example.skrineybackend.exception.UserAlreadyExistsException;

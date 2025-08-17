@@ -1,6 +1,6 @@
 package com.example.skrineybackend.entity;
 
-import com.example.skrineybackend.dto.CreateCategoryRequestDTO;
+import com.example.skrineybackend.dto.category.CreateCategoryRequestDTO;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,13 +20,6 @@ import java.util.List;
 @Table(name = "categories")
 @EntityListeners(AuditingEntityListener.class)
 public class Category {
-    public Category() {}
-
-    public Category(CreateCategoryRequestDTO requestBody) {
-        this.title = requestBody.getTitle();
-        this.emoji = requestBody.getEmoji();
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String uuid;
@@ -51,4 +44,11 @@ public class Category {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions = new ArrayList<>();
+
+    public Category() {}
+
+    public Category(CreateCategoryRequestDTO requestBody) {
+        this.title = requestBody.getTitle();
+        this.emoji = requestBody.getEmoji();
+    }
 }

@@ -1,7 +1,7 @@
 package com.example.skrineybackend.controller;
 
-import com.example.skrineybackend.dto.SignUpUserRequestDTO;
-import com.example.skrineybackend.dto.UserDTO;
+import com.example.skrineybackend.dto.user.SignUpUserRequestDTO;
+import com.example.skrineybackend.dto.user.UserDTO;
 import com.example.skrineybackend.entity.User;
 import com.example.skrineybackend.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;

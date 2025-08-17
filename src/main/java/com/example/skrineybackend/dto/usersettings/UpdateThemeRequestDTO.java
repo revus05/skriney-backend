@@ -1,4 +1,4 @@
-package com.example.skrineybackend.dto;
+package com.example.skrineybackend.dto.usersettings;
 
 import com.example.skrineybackend.enums.UserTheme;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -1,6 +1,6 @@
 package com.example.skrineybackend.entity;
 
-import com.example.skrineybackend.dto.CreateTransactionRequestDTO;
+import com.example.skrineybackend.dto.transaction.CreateTransactionRequestDTO;
 import com.example.skrineybackend.enums.Currency;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
@@ -19,16 +19,6 @@ import java.time.Instant;
 @Table(name = "transactions")
 @EntityListeners(AuditingEntityListener.class)
 public class Transaction {
-    public Transaction() {}
-
-    public Transaction(CreateTransactionRequestDTO createTransactionRequestDTO, BankAccount bankAccount, Category category) {
-        this.sum = createTransactionRequestDTO.getSum();
-        this.currency = Currency.BYN;
-        this.description = createTransactionRequestDTO.getDescription();
-        this.bankAccount = bankAccount;
-        this.category = category;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String uuid;
@@ -57,4 +47,14 @@ public class Transaction {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    public Transaction() {}
+
+    public Transaction(CreateTransactionRequestDTO createTransactionRequestDTO, BankAccount bankAccount, Category category) {
+        this.sum = createTransactionRequestDTO.getSum();
+        this.currency = createTransactionRequestDTO.getCurrency();
+        this.description = createTransactionRequestDTO.getDescription();
+        this.bankAccount = bankAccount;
+        this.category = category;
+    }
 }

@@ -1,4 +1,4 @@
-package com.example.skrineybackend.dto;
+package com.example.skrineybackend.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
@@ -17,6 +17,6 @@ public class SignInUserRequestDTO {
 
     @Schema(description = "User password", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "Пароль обязателен")
-    @Size(min = 8, message = "Пароль должен содержать не менее 8 символов")
+    @Size(min = 8, max = 128, message = "Пароль должен содержать от 8 до 128 символов")
     private String password;
 }

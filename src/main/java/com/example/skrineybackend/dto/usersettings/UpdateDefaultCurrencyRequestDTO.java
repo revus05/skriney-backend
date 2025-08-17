@@ -1,4 +1,4 @@
-package com.example.skrineybackend.dto;
+package com.example.skrineybackend.dto.usersettings;
 
 import com.example.skrineybackend.enums.Currency;
 import io.swagger.v3.oas.annotations.media.Schema;

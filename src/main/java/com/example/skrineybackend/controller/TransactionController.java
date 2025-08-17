@@ -1,13 +1,13 @@
 package com.example.skrineybackend.controller;
 
-import com.example.skrineybackend.dto.*;
+import com.example.skrineybackend.dto.response.Response;
+import com.example.skrineybackend.dto.transaction.CreateTransactionRequestDTO;
+import com.example.skrineybackend.dto.transaction.DeleteTransactionRequestDTO;
+import com.example.skrineybackend.dto.transaction.TransactionDTO;
 import com.example.skrineybackend.service.TransactionService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import com.example.skrineybackend.swagger.transaction.CreateTransactionOperation;
+import com.example.skrineybackend.swagger.transaction.DeleteTransactionOperation;
+import com.example.skrineybackend.swagger.transaction.GetTransactionsOperation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -28,33 +28,7 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @Operation(
-        summary = "Создание транзакций",
-        description = "Создает транзакцию",
-        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = "Данные для создания транзакции",
-            content = @Content(
-                schema = @Schema(implementation = CreateTransactionRequestDTO.class),
-                examples = @ExampleObject(
-                    name = "Пример запроса",
-                    value = """
-                        {\
-                          "description": "please",\
-                          "sum": 63.05,\
-                          "bankAccountUuid": "42043119-7ee4-4106-aa92-afa7e49b092b",
-                          "categoryUuid": "4f95009e-43fd-4cf4-86d2-cbba4626d35d"
-                        }"""
-                )
-            )
-        ),
-        responses = {
-            @ApiResponse(
-                responseCode = "201",
-                description = "Транзакция успешно создана",
-                content = @Content(schema = @Schema(implementation = TransactionDTO.class))
-            ),
-        }
-    )
+    @CreateTransactionOperation
     @PostMapping("/create")
     public Response createTransaction(@Valid @RequestBody CreateTransactionRequestDTO createTransactionRequestDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -62,19 +36,7 @@ public class TransactionController {
         return new Response("Транзакция успешно создана", HttpStatus.CREATED, createdTransaction);
     }
 
-    @Operation(
-        summary = "Получение транзакций со всех счетов",
-        description = "Получение всех счетов транзакций пользователя",
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Транзакции получены успешно",
-                content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = TransactionDTO.class))
-                )
-            ),
-        }
-    )
+    @GetTransactionsOperation
     @GetMapping()
     public Response getTransactions() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -82,27 +44,7 @@ public class TransactionController {
         return new Response("Транзакции успешно получены", HttpStatus.OK, transactions);
     }
 
-    @Operation(
-        summary = "Удаление транзакции",
-        description = "Удаляет транзакцию пользователя",
-        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = "Данные для удаления транзакции",
-            content = @Content(
-                schema = @Schema(implementation = DeleteTransactionRequestDTO.class),
-                examples = @ExampleObject(
-                    name = "Пример запроса",
-                    value = "{\"uuid\":\"bcbfe240-a61b-4e21-94f0-188bddf4a04e\"}"
-                )
-            )
-        ),
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Транзакция успешно удалена",
-                content = @Content(schema = @Schema(implementation = CategoryDTO.class))
-            ),
-        }
-    )
+    @DeleteTransactionOperation
     @DeleteMapping("/delete")
     public Response deleteTransaction(@Valid @RequestBody DeleteTransactionRequestDTO deleteTransactionRequestDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

@@ -1,4 +1,4 @@
-package com.example.skrineybackend.dto;
+package com.example.skrineybackend.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
@@ -10,12 +10,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class SignUpUserRequestDTO {
-    public SignUpUserRequestDTO(String username, String email, String password) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-    }
-
     @Schema(description = "Username", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "Имя пользователя обязательно")
     private String username;
@@ -27,6 +21,12 @@ public class SignUpUserRequestDTO {
 
     @Schema(description = "User password", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "Пароль обязателен")
-    @Size(min = 8, message = "Пароль должен содержать не менее 8 символов")
+    @Size(min = 8, max = 128, message = "Пароль должен содержать от 8 до 128 символов")
     private String password;
+
+    public SignUpUserRequestDTO(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
 }

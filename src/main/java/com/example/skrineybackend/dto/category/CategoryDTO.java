@@ -1,4 +1,4 @@
-package com.example.skrineybackend.dto;
+package com.example.skrineybackend.dto.category;
 
 import com.example.skrineybackend.entity.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,19 +10,19 @@ import java.time.Instant;
 @Setter
 @Getter
 public class CategoryDTO {
-    @Schema(description = "Category UUID", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Category uuid")
     private String uuid;
 
-    @Schema(description = "Category title", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Category title")
     private String title;
 
-    @Schema(description = "Category emoji", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(description = "Category emoji")
     private String emoji;
 
-    @Schema(description = "Creation timestamp", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Creation timestamp", type = "string", format = "date-time")
     private Instant createdAt;
 
-    @Schema(description = "Last update timestamp", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Last update timestamp", type = "string", format = "date-time")
     private Instant updatedAt;
 
     public CategoryDTO(Category category) {

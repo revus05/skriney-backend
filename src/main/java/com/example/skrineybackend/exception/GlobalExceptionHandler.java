@@ -1,6 +1,6 @@
 package com.example.skrineybackend.exception;
 
-import com.example.skrineybackend.dto.Response;
+import com.example.skrineybackend.dto.response.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -32,12 +32,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoBankAccountFoundException.class)
     public Response handleNoBankAccountFoundException(NoBankAccountFoundException ex) {
-        return new Response(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new Response(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(NoCategoryFoundException.class)
     public Response handleNoCategoryFoundException(NoCategoryFoundException ex) {
-        return new Response(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new Response(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
@@ -47,12 +47,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoUserSettingsFoundException.class)
     public Response handleNoUserSettingsFoundException(NoUserSettingsFoundException ex) {
-        return new Response(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+        return new Response(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(NoTransactionFoundException.class)
+    public Response handleNoTransactionFoundException(NoTransactionFoundException ex) {
+        return new Response(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(NoUserFoundException.class)
     public Response handleNoUserFoundException(NoUserFoundException ex) {
-        return new Response(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+        return new Response(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)

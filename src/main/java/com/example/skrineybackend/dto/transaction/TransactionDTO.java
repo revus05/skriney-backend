@@ -1,5 +1,7 @@
-package com.example.skrineybackend.dto;
+package com.example.skrineybackend.dto.transaction;
 
+import com.example.skrineybackend.dto.bankaccount.BankAccountDTO;
+import com.example.skrineybackend.dto.category.CategoryDTO;
 import com.example.skrineybackend.entity.Transaction;
 import com.example.skrineybackend.enums.Currency;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,28 +13,28 @@ import java.time.Instant;
 @Setter
 @Getter
 public class TransactionDTO {
-    @Schema(description = "Transaction UUID", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Transaction uuid")
     private String uuid;
 
-    @Schema(description = "Transaction sum", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Transaction sum")
     private double sum;
 
-    @Schema(description = "Transaction category", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Transaction category")
     private Currency currency;
 
-    @Schema(description = "Optional user description", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(description = "Optional user description")
     private String description;
 
-    @Schema(description = "Creation timestamp", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Creation timestamp", type = "string", format = "date-time")
     private Instant createdAt;
 
-    @Schema(description = "Last update timestamp", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Last update timestamp", type = "string", format = "date-time")
     private Instant updatedAt;
 
-    @Schema(description = "Connection to bank account", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Connection to bank account")
     private BankAccountDTO bankAccount;
 
-    @Schema(description = "transaction category", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "transaction category")
     private CategoryDTO category;
 
     public TransactionDTO(Transaction transaction) {

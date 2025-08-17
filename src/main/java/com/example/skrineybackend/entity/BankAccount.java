@@ -1,6 +1,6 @@
 package com.example.skrineybackend.entity;
 
-import com.example.skrineybackend.dto.CreateBankAccountRequestDTO;
+import com.example.skrineybackend.dto.bankaccount.CreateBankAccountRequestDTO;
 import com.example.skrineybackend.enums.Currency;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
@@ -21,25 +21,6 @@ import java.util.List;
 @Table(name = "bank_accounts")
 @EntityListeners(AuditingEntityListener.class)
 public class BankAccount {
-    public BankAccount() {}
-
-    public BankAccount(CreateBankAccountRequestDTO createBankAccountRequestDTO) {
-        this.balance = createBankAccountRequestDTO.getBalance();
-        this.currency = createBankAccountRequestDTO.getCurrency();
-        this.title = createBankAccountRequestDTO.getTitle();
-        this.isInTotalBalance = createBankAccountRequestDTO.isInTotalBalance();
-        this.changePercent = 0;
-        this.description = createBankAccountRequestDTO.getDescription();
-        this.image = createBankAccountRequestDTO.getImage();
-
-        if (createBankAccountRequestDTO.getColor() == null) {
-            this.color = "blue";
-        }
-        if (createBankAccountRequestDTO.getCurrency() == null) {
-            this.currency = Currency.BYN;
-        }
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String uuid;
@@ -53,14 +34,13 @@ public class BankAccount {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
     private String color;
 
     @Column(nullable = false)
     private boolean isInTotalBalance;
 
     @Column(nullable = false)
-    private double changePercent;
+    private double changePercent = 0;
 
     private String description;
 
@@ -80,4 +60,16 @@ public class BankAccount {
 
     @OneToMany(mappedBy = "bankAccount", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions = new ArrayList<>();
+
+    public BankAccount() {}
+
+    public BankAccount(CreateBankAccountRequestDTO createBankAccountRequestDTO) {
+        this.balance = createBankAccountRequestDTO.getBalance();
+        this.currency = createBankAccountRequestDTO.getCurrency();
+        this.title = createBankAccountRequestDTO.getTitle();
+        this.isInTotalBalance = createBankAccountRequestDTO.isInTotalBalance();
+        this.description = createBankAccountRequestDTO.getDescription();
+        this.image = createBankAccountRequestDTO.getImage();
+        this.color = createBankAccountRequestDTO.getColor();
+    }
 }

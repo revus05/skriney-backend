@@ -1,16 +1,13 @@
 package com.example.skrineybackend.controller;
 
-import com.example.skrineybackend.dto.BankAccountDTO;
-import com.example.skrineybackend.dto.CreateBankAccountRequestDTO;
-import com.example.skrineybackend.dto.DeleteBankAccountRequestDTO;
-import com.example.skrineybackend.dto.Response;
+import com.example.skrineybackend.dto.bankaccount.BankAccountDTO;
+import com.example.skrineybackend.dto.bankaccount.CreateBankAccountRequestDTO;
+import com.example.skrineybackend.dto.bankaccount.DeleteBankAccountRequestDTO;
+import com.example.skrineybackend.dto.response.Response;
 import com.example.skrineybackend.service.BankAccountService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import com.example.skrineybackend.swagger.bankaccount.CreateBankAccountOperation;
+import com.example.skrineybackend.swagger.bankaccount.DeleteBankAccountOperation;
+import com.example.skrineybackend.swagger.bankaccount.GetBankAccountOperation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -31,27 +28,7 @@ public class BankAccountController {
         this.bankAccountService = bankAccountService;
     }
 
-    @Operation(
-        summary = "Создание счета",
-        description = "Создает счет для пользователя",
-        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = "Данные для создания счета",
-            content = @Content(
-                schema = @Schema(implementation = CreateBankAccountRequestDTO.class),
-                examples = @ExampleObject(
-                    name = "Пример запроса",
-                    value = "{\"title\":\"bank account name\"}"
-                )
-            )
-        ),
-        responses = {
-            @ApiResponse(
-                responseCode = "201",
-                description = "Счет успешно создан",
-                content = @Content(schema = @Schema(implementation = BankAccountDTO.class))
-            ),
-        }
-    )
+    @CreateBankAccountOperation
     @PostMapping("/create")
     public Response createBankAccount(@Valid @RequestBody CreateBankAccountRequestDTO requestBody) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -59,27 +36,7 @@ public class BankAccountController {
         return new Response("Счет успешно создан", HttpStatus.CREATED, createdBankAccount);
     }
 
-    @Operation(
-        summary = "Удаление счета",
-        description = "Удаляет счет пользователя",
-        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = "Данные для удаления счета",
-            content = @Content(
-                schema = @Schema(implementation = DeleteBankAccountRequestDTO.class),
-                examples = @ExampleObject(
-                    name = "Пример запроса",
-                    value = "{\"uuid\":\"dc10e980-6546-4ab8-984e-651b91735960\"}"
-                )
-            )
-        ),
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Счет успешно удален",
-                content = @Content(schema = @Schema(implementation = BankAccountDTO.class))
-            ),
-        }
-    )
+    @DeleteBankAccountOperation
     @DeleteMapping("/delete")
     public Response deleteBankAccount(@Valid @RequestBody DeleteBankAccountRequestDTO requestBody) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -87,19 +44,7 @@ public class BankAccountController {
         return new Response("Счет успешно удален", HttpStatus.OK, deletedBankAccount);
     }
 
-    @Operation(
-        summary = "Получение счетов пользователя",
-        description = "Получение всех счетов пользователя",
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Счета пользователя успешно получены",
-                content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = BankAccountDTO.class))
-                )
-            ),
-        }
-    )
+    @GetBankAccountOperation
     @GetMapping()
     public Response getBankAccount() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
