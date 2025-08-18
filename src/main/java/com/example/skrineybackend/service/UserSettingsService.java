@@ -12,19 +12,15 @@ import com.example.skrineybackend.exception.NoUserSettingsFoundException;
 import com.example.skrineybackend.repository.CategoryRepo;
 import com.example.skrineybackend.repository.UserRepo;
 import com.example.skrineybackend.repository.UserSettingsRepo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserSettingsService {
     private final UserSettingsRepo userSettingsRepo;
     private final UserRepo userRepo;
     private final CategoryRepo categoryRepo;
-
-    public UserSettingsService(UserSettingsRepo userSettingsRepo, UserRepo userRepo, CategoryRepo categoryRepo) {
-        this.userSettingsRepo = userSettingsRepo;
-        this.userRepo = userRepo;
-        this.categoryRepo = categoryRepo;
-    }
 
     public UserSettingsDTO updateDefaultCurrency(UpdateDefaultCurrencyRequestDTO updateDefaultCurrencyRequestDTO, String userUuid) throws NoUserFoundException, NoUserSettingsFoundException {
         userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));

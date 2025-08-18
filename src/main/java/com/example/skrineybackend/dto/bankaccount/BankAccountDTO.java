@@ -6,42 +6,31 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Setter
 @Getter
 public class BankAccountDTO {
-    @Schema(description = "Bank Account uuid")
+    @Schema(description = "Bank Account uuid", requiredMode = Schema.RequiredMode.REQUIRED)
     private String uuid;
 
-    @Schema(description = "Money on the bank account")
-    private double balance;
+    @Schema(description = "Money on the bank account", requiredMode = Schema.RequiredMode.REQUIRED)
+    private BigDecimal balance;
 
-    @Schema(description = "Bank Account currency")
+    @Schema(description = "Bank Account currency", requiredMode = Schema.RequiredMode.REQUIRED)
     private Currency currency;
 
-    @Schema(description = "Bank Account title")
+    @Schema(description = "Bank Account title", requiredMode = Schema.RequiredMode.REQUIRED)
     private String title;
 
-    @Schema(description = "Bank Account's card color")
-    private String color;
-
-    @Schema(description = "Are bank account money used to calculate total user balance")
+    @Schema(description = "Are bank account money used to calculate total user balance", requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean isInTotalBalance;
 
-    @Schema(description = "Percent of balance change")
-    private double changePercent;
-
-    @Schema(description = "Optional user's description")
-    private String description;
-
-    @Schema(description = "Optional user's image")
-    private String image;
-
-    @Schema(description = "Creation timestamp", type = "string", format = "date-time")
+    @Schema(description = "Creation timestamp", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
     private Instant createdAt;
 
-    @Schema(description = "Last update timestamp", type = "string", format = "date-time")
+    @Schema(description = "Last update timestamp", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
     private Instant updatedAt;
 
     public BankAccountDTO(BankAccount bankAccount) {
@@ -49,11 +38,7 @@ public class BankAccountDTO {
         this.balance = bankAccount.getBalance();
         this.currency = bankAccount.getCurrency();
         this.title = bankAccount.getTitle();
-        this.color = bankAccount.getColor();
         this.isInTotalBalance = bankAccount.isInTotalBalance();
-        this.changePercent = bankAccount.getChangePercent();
-        this.description = bankAccount.getDescription();
-        this.image = bankAccount.getImage();
         this.createdAt = bankAccount.getCreatedAt();
         this.updatedAt = bankAccount.getUpdatedAt();
     }

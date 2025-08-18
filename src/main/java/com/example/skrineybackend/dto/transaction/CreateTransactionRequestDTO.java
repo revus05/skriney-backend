@@ -8,12 +8,14 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Setter
 @Getter
 public class CreateTransactionRequestDTO {
-    @Schema(description = "Transaction sum", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Transaction amount", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "Сумма транзакции обязательна")
-    private double sum;
+    private BigDecimal amount;
 
     @Schema(description = "Transaction category", requiredMode = Schema.RequiredMode.REQUIRED)
     private Currency currency;

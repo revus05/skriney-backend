@@ -10,6 +10,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
@@ -24,7 +25,7 @@ public class Transaction {
     private String uuid;
 
     @Column(nullable = false)
-    private double sum;
+    private BigDecimal amount;
 
     @Column(nullable = false)
     private Currency currency;
@@ -51,7 +52,7 @@ public class Transaction {
     public Transaction() {}
 
     public Transaction(CreateTransactionRequestDTO createTransactionRequestDTO, BankAccount bankAccount, Category category) {
-        this.sum = createTransactionRequestDTO.getSum();
+        this.amount = createTransactionRequestDTO.getAmount();
         this.currency = createTransactionRequestDTO.getCurrency();
         this.description = createTransactionRequestDTO.getDescription();
         this.bankAccount = bankAccount;

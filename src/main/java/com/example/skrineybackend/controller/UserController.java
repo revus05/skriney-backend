@@ -13,6 +13,7 @@ import com.example.skrineybackend.swagger.user.SignUpOperation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,17 +23,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/users")
 @Tag(name = "Пользователи", description = "Управление пользователями")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
     private final JwtService jwtService;
     private final CookieService cookieService;
-
-    public UserController(UserService userService, JwtService jwtService, CookieService cookieService) {
-        this.userService = userService;
-        this.jwtService = jwtService;
-        this.cookieService = cookieService;
-    }
 
     @SignUpOperation
     @PostMapping("/sign-up")

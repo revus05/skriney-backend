@@ -8,11 +8,13 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Setter
 @Getter
 public class CreateBankAccountRequestDTO {
     @Schema(description = "Initial bank account balance", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    private double balance;
+    private BigDecimal balance;
 
     @Schema(description = "Bank account currency", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "Валюта обязательна")

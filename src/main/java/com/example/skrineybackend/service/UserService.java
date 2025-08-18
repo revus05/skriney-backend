@@ -7,18 +7,15 @@ import com.example.skrineybackend.entity.User;
 import com.example.skrineybackend.exception.InvalidCredentialsException;
 import com.example.skrineybackend.exception.UserAlreadyExistsException;
 import com.example.skrineybackend.repository.UserRepo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepo userRepo, PasswordEncoder passwordEncoder) {
-        this.userRepo = userRepo;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     public UserDTO signUpUser(SignUpUserRequestDTO signUpUserRequestDTO) throws UserAlreadyExistsException {
         checkUserExists(signUpUserRequestDTO.getEmail(), signUpUserRequestDTO.getUsername());

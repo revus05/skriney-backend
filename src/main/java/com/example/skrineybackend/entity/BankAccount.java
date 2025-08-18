@@ -10,6 +10,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +26,8 @@ public class BankAccount {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String uuid;
 
-    @Column(nullable = false)
-    private double balance;
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal balance;
 
     @Column(nullable = false)
     private Currency currency;
@@ -34,17 +35,8 @@ public class BankAccount {
     @Column(nullable = false)
     private String title;
 
-    private String color;
-
     @Column(nullable = false)
     private boolean isInTotalBalance;
-
-    @Column(nullable = false)
-    private double changePercent = 0;
-
-    private String description;
-
-    private String image;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -61,6 +53,9 @@ public class BankAccount {
     @OneToMany(mappedBy = "bankAccount", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "bankAccount", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DailyBalance> dailyBalances = new ArrayList<>();
+
     public BankAccount() {}
 
     public BankAccount(CreateBankAccountRequestDTO createBankAccountRequestDTO) {
@@ -68,8 +63,5 @@ public class BankAccount {
         this.currency = createBankAccountRequestDTO.getCurrency();
         this.title = createBankAccountRequestDTO.getTitle();
         this.isInTotalBalance = createBankAccountRequestDTO.isInTotalBalance();
-        this.description = createBankAccountRequestDTO.getDescription();
-        this.image = createBankAccountRequestDTO.getImage();
-        this.color = createBankAccountRequestDTO.getColor();
     }
 }

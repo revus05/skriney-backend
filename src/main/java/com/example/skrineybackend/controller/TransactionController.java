@@ -10,6 +10,7 @@ import com.example.skrineybackend.swagger.transaction.DeleteTransactionOperation
 import com.example.skrineybackend.swagger.transaction.GetTransactionsOperation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,12 +22,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/transactions")
 @Tag(name = "Транзакции", description = "Управление транзакциями")
+@RequiredArgsConstructor
 public class TransactionController {
     private final TransactionService transactionService;
-
-    public TransactionController(TransactionService transactionService) {
-        this.transactionService = transactionService;
-    }
 
     @CreateTransactionOperation
     @PostMapping("/create")

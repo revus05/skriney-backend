@@ -12,13 +12,13 @@ import lombok.Setter;
 @Getter
 public class UserSettingsDTO {
 
-    @Schema(description = "User's ui theme")
+    @Schema(description = "User's ui theme", requiredMode = Schema.RequiredMode.REQUIRED)
     private UserTheme userTheme;
 
-    @Schema(description = "User's default currency")
+    @Schema(description = "User's default currency", requiredMode = Schema.RequiredMode.REQUIRED)
     private Currency defaultCurrency;
 
-    @Schema(description = "User's default category")
+    @Schema(description = "User's default category", requiredMode = Schema.RequiredMode.REQUIRED)
     private CategoryDTO defaultCategory;
 
     public UserSettingsDTO(UserSettings userSettings) {

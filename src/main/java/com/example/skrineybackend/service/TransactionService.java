@@ -14,23 +14,22 @@ import com.example.skrineybackend.repository.BankAccountRepo;
 import com.example.skrineybackend.repository.CategoryRepo;
 import com.example.skrineybackend.repository.TransactionRepo;
 import com.example.skrineybackend.repository.UserRepo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class TransactionService {
     private final TransactionRepo transactionRepo;
     private final UserRepo userRepo;
     private final BankAccountRepo bankAccountRepo;
     private final CategoryRepo categoryRepo;
-
-    public TransactionService(TransactionRepo transactionRepo, UserRepo userRepo, BankAccountRepo bankAccountRepo, CategoryRepo categoryRepo) {
-        this.transactionRepo = transactionRepo;
-        this.userRepo = userRepo;
-        this.bankAccountRepo = bankAccountRepo;
-        this.categoryRepo = categoryRepo;
-    }
+    private final BalanceService dailyBalanceService;
 
     public TransactionDTO createTransaction(CreateTransactionRequestDTO createTransactionRequestDTO, String userUuid) throws NoUserFoundException, NoBankAccountFoundException, NoCategoryFoundException {
         userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
@@ -40,6 +39,8 @@ public class TransactionService {
 
         Category category = categoryRepo.findByUuidAndUser_Uuid(createTransactionRequestDTO.getCategoryUuid(), userUuid)
                 .orElseThrow(() -> new NoCategoryFoundException("Категория не найдена или не принадлежит пользователю"));
+
+        dailyBalanceService.updateBalance(bankAccount, LocalDate.now(), createTransactionRequestDTO.getAmount());
 
         return new TransactionDTO(transactionRepo.save(new Transaction(createTransactionRequestDTO, bankAccount, category)));
     }
@@ -61,6 +62,8 @@ public class TransactionService {
                 .orElseThrow(() -> new NoTransactionFoundException("Нет такой транзакции"));
 
         transactionRepo.delete(deleteTransaction);
+
+        dailyBalanceService.updateBalance(deleteTransaction.getBankAccount(), deleteTransaction.getCreatedAt().atZone(ZoneId.of("UTC")).toLocalDate(), deleteTransaction.getAmount().multiply(new BigDecimal(-1)));
 
         return new TransactionDTO(deleteTransaction);
     }

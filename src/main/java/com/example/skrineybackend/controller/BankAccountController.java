@@ -10,6 +10,7 @@ import com.example.skrineybackend.swagger.bankaccount.DeleteBankAccountOperation
 import com.example.skrineybackend.swagger.bankaccount.GetBankAccountOperation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,12 +22,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/bank-accounts")
 @Tag(name = "Счета", description = "Управление счетами пользователей")
+@RequiredArgsConstructor
 public class BankAccountController {
     private final BankAccountService bankAccountService;
-
-    public BankAccountController(BankAccountService bankAccountService) {
-        this.bankAccountService = bankAccountService;
-    }
 
     @CreateBankAccountOperation
     @PostMapping("/create")

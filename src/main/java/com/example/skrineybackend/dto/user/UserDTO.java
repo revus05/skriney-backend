@@ -3,6 +3,7 @@ package com.example.skrineybackend.dto.user;
 import com.example.skrineybackend.dto.usersettings.UserSettingsDTO;
 import com.example.skrineybackend.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,25 +12,26 @@ import java.time.Instant;
 @Setter
 @Getter
 public class UserDTO {
-    @Schema(description = "User uuid")
+    @Schema(description = "User uuid", requiredMode = Schema.RequiredMode.REQUIRED)
     private String uuid;
 
-    @Schema(description = "User image URL")
+    @Schema(description = "User image URL", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Nullable
     private String image;
 
-    @Schema(description = "Username")
+    @Schema(description = "Username", requiredMode = Schema.RequiredMode.REQUIRED)
     private String username;
 
-    @Schema(description = "Email address")
+    @Schema(description = "Email address", requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
 
-    @Schema(description = "User settings")
+    @Schema(description = "User settings", requiredMode = Schema.RequiredMode.REQUIRED)
     private UserSettingsDTO userSettings;
 
-    @Schema(description = "Creation timestamp", type = "string", format = "date-time")
+    @Schema(description = "Creation timestamp", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
     private Instant createdAt;
 
-    @Schema(description = "Last update timestamp", type = "string", format = "date-time")
+    @Schema(description = "Last update timestamp", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
     private Instant updatedAt;
 
     public UserDTO(User user) {
