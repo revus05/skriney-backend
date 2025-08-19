@@ -1,6 +1,7 @@
 package com.example.skrineybackend.controller;
 
 import com.example.skrineybackend.dto.category.CategoryDTO;
+import com.example.skrineybackend.dto.category.CategoryStatDTO;
 import com.example.skrineybackend.dto.category.CreateCategoryRequestDTO;
 import com.example.skrineybackend.dto.category.DeleteCategoryRequestDTO;
 import com.example.skrineybackend.dto.response.Response;
@@ -8,6 +9,7 @@ import com.example.skrineybackend.service.CategoryService;
 import com.example.skrineybackend.swagger.category.CreateCategoryOperation;
 import com.example.skrineybackend.swagger.category.DeleteCategoryOperation;
 import com.example.skrineybackend.swagger.category.GetCategoriesOperation;
+import com.example.skrineybackend.swagger.category.GetCategoryStatsOperation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,14 +28,6 @@ import java.util.List;
 public class CategoryController {
     private final CategoryService categoryService;
 
-    @CreateCategoryOperation
-    @PostMapping("/create")
-    public Response createCategory(@Valid @RequestBody CreateCategoryRequestDTO createCategoryRequestDTO) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        CategoryDTO createdCategory = categoryService.createCategory(createCategoryRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
-        return new Response("Категория успешно создана", HttpStatus.CREATED, createdCategory);
-    }
-
     @GetCategoriesOperation
     @GetMapping()
     public Response getCategories() {
@@ -42,11 +36,27 @@ public class CategoryController {
         return new Response("Категории получены успешно", HttpStatus.OK, categories);
     }
 
+    @CreateCategoryOperation
+    @PostMapping("/create")
+    public Response createCategory(@Valid @RequestBody CreateCategoryRequestDTO createCategoryRequestDTO) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CategoryDTO createdCategory = categoryService.createCategory(createCategoryRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Категория успешно создана", HttpStatus.CREATED, createdCategory);
+    }
+
     @DeleteCategoryOperation
     @DeleteMapping("/delete")
     public Response deleteCategory(@Valid @RequestBody DeleteCategoryRequestDTO deleteCategoryRequestDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CategoryDTO deletedCategory = categoryService.deleteCategory(deleteCategoryRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Категория успешно удалена", HttpStatus.OK, deletedCategory);
+    }
+
+    @GetCategoryStatsOperation
+    @GetMapping("/stats")
+    public Response getCategoryStats() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<CategoryStatDTO> categoryStats = categoryService.getCategoryStats(((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Статистика категорий получена успешно", HttpStatus.OK, categoryStats);
     }
 }

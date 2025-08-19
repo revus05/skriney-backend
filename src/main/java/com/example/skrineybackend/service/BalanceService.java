@@ -18,8 +18,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class BalanceService {
-    final DailyBalanceRepo dailyBalanceRepo;
-    final BankAccountRepo bankAccountRepo;
+    private final DailyBalanceRepo dailyBalanceRepo;
+    private final BankAccountRepo bankAccountRepo;
 
     @Transactional
     public void updateBalance(BankAccount bankAccount, LocalDate date, BigDecimal amount) {
