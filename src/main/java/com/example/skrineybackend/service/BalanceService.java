@@ -92,7 +92,7 @@ public class BalanceService {
                 totalExpense = totalExpense.add(day.getDailyExpenses().abs());
             }
 
-            totalBalance = totalBalance.add(balances.get(0).getTotalBalance());
+            totalBalance = totalBalance.add(balances.get(balances.size() - 1).getTotalBalance());
         }
 
         return new BalanceSummaryDTO(totalBalance, totalIncome, totalExpense);

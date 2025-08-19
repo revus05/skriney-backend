@@ -48,7 +48,7 @@ public class TransactionService {
     public List<TransactionDTO> getTransactions(String userUuid) throws NoUserFoundException {
         userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
 
-        List<Transaction> transactions = transactionRepo.findByBankAccount_User_Uuid(userUuid);
+        List<Transaction> transactions = transactionRepo.findByBankAccount_User_UuidOrderByCreatedAtDesc(userUuid);
 
         return transactions.stream()
             .map(TransactionDTO::new)
