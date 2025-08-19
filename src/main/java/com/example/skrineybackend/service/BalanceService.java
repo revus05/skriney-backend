@@ -33,6 +33,7 @@ public class BalanceService {
             dailyBalance.setDailyExpenses(dailyBalance.getDailyExpenses().add(amount));
         }
         dailyBalance.setTotalBalance(dailyBalance.getTotalBalance().add(amount));
+        bankAccount.setBalance(bankAccount.getBalance().add(amount));
 
         dailyBalanceRepo.save(dailyBalance);
 
@@ -73,7 +74,7 @@ public class BalanceService {
     }
 
     public BalanceSummaryDTO getUserBalanceSummary(String userUuid) {
-        List<BankAccount> allBankAccounts = bankAccountRepo.findAllByUser_Uuid(userUuid);
+        List<BankAccount> allBankAccounts = bankAccountRepo.findAllByUser_UuidOrderByCreatedAtAsc(userUuid);
 
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusDays(30);

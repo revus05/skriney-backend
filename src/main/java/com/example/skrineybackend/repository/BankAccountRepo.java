@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface BankAccountRepo extends CrudRepository<BankAccount, String> {
     Optional<BankAccount> findByUuidAndUser_Uuid(String uuid, String userUuid);
-    List<BankAccount> findAllByUser_Uuid(String userUuid);
+    List<BankAccount> findAllByUser_UuidOrderByCreatedAtAsc(String userUuid);
 }
