@@ -35,7 +35,7 @@ public class BankAccount {
     @Column(nullable = false)
     private String title;
 
-    @Column()
+    @Column
     private String emoji;
 
     @Column(nullable = false)

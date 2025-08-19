@@ -1,15 +1,9 @@
 package com.example.skrineybackend.controller;
 
-import com.example.skrineybackend.dto.category.CategoryDTO;
-import com.example.skrineybackend.dto.category.CategoryStatDTO;
-import com.example.skrineybackend.dto.category.CreateCategoryRequestDTO;
-import com.example.skrineybackend.dto.category.DeleteCategoryRequestDTO;
+import com.example.skrineybackend.dto.category.*;
 import com.example.skrineybackend.dto.response.Response;
 import com.example.skrineybackend.service.CategoryService;
-import com.example.skrineybackend.swagger.category.CreateCategoryOperation;
-import com.example.skrineybackend.swagger.category.DeleteCategoryOperation;
-import com.example.skrineybackend.swagger.category.GetCategoriesOperation;
-import com.example.skrineybackend.swagger.category.GetCategoryStatsOperation;
+import com.example.skrineybackend.swagger.category.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -58,5 +52,13 @@ public class CategoryController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         List<CategoryStatDTO> categoryStats = categoryService.getCategoryStats(((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Статистика категорий получена успешно", HttpStatus.OK, categoryStats);
+    }
+
+    @UpdateCategoryOperation
+    @PatchMapping("/{categoryUuid}")
+    public Response updateCategory(@PathVariable String categoryUuid, @Valid @RequestBody UpdateCategoryRequestDTO updateCategoryRequestDTO) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CategoryDTO updatedCategory = categoryService.updateCategory(categoryUuid, updateCategoryRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Категория обновлена успешно", HttpStatus.OK, updatedCategory);
     }
 }

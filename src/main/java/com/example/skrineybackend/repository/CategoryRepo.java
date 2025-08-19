@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface CategoryRepo extends CrudRepository<Category, String> {
-    List<Category> findAllByUser_Uuid(String userUuid);
+    List<Category> findAllByUser_UuidOrderByCreatedAt(String userUuid);
     Optional<Category> findByUuidAndUser_Uuid(String categoryUuid, String userUuid);
 }
