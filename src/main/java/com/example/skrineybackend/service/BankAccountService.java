@@ -5,6 +5,7 @@ import com.example.skrineybackend.dto.bankaccount.CreateBankAccountRequestDTO;
 import com.example.skrineybackend.dto.bankaccount.DeleteBankAccountRequestDTO;
 import com.example.skrineybackend.dto.bankaccount.UpdateBankAccountRequestDTO;
 import com.example.skrineybackend.entity.BankAccount;
+import com.example.skrineybackend.entity.DailyBalance;
 import com.example.skrineybackend.entity.User;
 import com.example.skrineybackend.exception.NoBankAccountFoundException;
 import com.example.skrineybackend.exception.NoUserFoundException;
@@ -13,6 +14,8 @@ import com.example.skrineybackend.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -32,6 +35,7 @@ public class BankAccountService {
 
         BankAccount bankAccount = new BankAccount(requestBody);
         bankAccount.setUser(user);
+        bankAccount.setDailyBalances(new ArrayList<>(Collections.singletonList(new DailyBalance(bankAccount))));
 
         return new BankAccountDTO(bankAccountRepo.save(bankAccount));
     }

@@ -6,10 +6,7 @@ import com.example.skrineybackend.dto.transaction.TransactionDTO;
 import com.example.skrineybackend.entity.BankAccount;
 import com.example.skrineybackend.entity.Category;
 import com.example.skrineybackend.entity.Transaction;
-import com.example.skrineybackend.exception.NoBankAccountFoundException;
-import com.example.skrineybackend.exception.NoCategoryFoundException;
-import com.example.skrineybackend.exception.NoTransactionFoundException;
-import com.example.skrineybackend.exception.NoUserFoundException;
+import com.example.skrineybackend.exception.*;
 import com.example.skrineybackend.repository.BankAccountRepo;
 import com.example.skrineybackend.repository.CategoryRepo;
 import com.example.skrineybackend.repository.TransactionRepo;
@@ -32,6 +29,10 @@ public class TransactionService {
     private final BalanceService dailyBalanceService;
 
     public TransactionDTO createTransaction(CreateTransactionRequestDTO createTransactionRequestDTO, String userUuid) throws NoUserFoundException, NoBankAccountFoundException, NoCategoryFoundException {
+        if (createTransactionRequestDTO.getAmount().compareTo(BigDecimal.ZERO) == 0) {
+            throw new InvalidTransactionAmount("Сумма транзакции не может быть равна 0");
+        }
+
         userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
 
         BankAccount bankAccount = bankAccountRepo.findByUuidAndUser_Uuid(createTransactionRequestDTO.getBankAccountUuid(), userUuid)

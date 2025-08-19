@@ -41,8 +41,7 @@ public class BalanceService {
     }
 
     private DailyBalance createDailyBalance(BankAccount bankAccount, LocalDate date) {
-        DailyBalance db = new DailyBalance();
-        db.setBankAccount(bankAccount);
+        DailyBalance db = new DailyBalance(bankAccount);
         db.setDate(date);
 
         Optional<DailyBalance> prev = dailyBalanceRepo
@@ -93,7 +92,9 @@ public class BalanceService {
                 totalExpense = totalExpense.add(day.getDailyExpenses().abs());
             }
 
-            totalBalance = totalBalance.add(balances.get(balances.size() - 1).getTotalBalance());
+            int index = balances.size() - 1;
+
+            totalBalance = totalBalance.add(balances.get(index).getTotalBalance());
         }
 
         return new BalanceSummaryDTO(totalBalance, totalIncome, totalExpense);

@@ -23,6 +23,11 @@ public class GlobalExceptionHandler {
         return new Response("Ошибка валидации", HttpStatus.BAD_REQUEST, errors);
     }
 
+    @ExceptionHandler(InvalidTransactionAmount.class)
+    public Response InvalidTransactionAmount(InvalidTransactionAmount ex) {
+        return new Response(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(UserAlreadyExistsException.class)
     public Response handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
         Map<String, String> fields = new HashMap<>();

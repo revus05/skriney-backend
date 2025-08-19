@@ -17,7 +17,7 @@ public class DailyBalance {
     private String uuid;
 
     @Column(nullable = false, precision = 19, scale = 2)
-    private LocalDate date;
+    private LocalDate date = LocalDate.now();
 
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal dailyChange = BigDecimal.ZERO;
@@ -34,4 +34,11 @@ public class DailyBalance {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bank_account_id", nullable = false)
     private BankAccount bankAccount;
+
+    public DailyBalance() { }
+
+    public DailyBalance(BankAccount bankAccount) {
+        this.bankAccount = bankAccount ;
+    }
+
 }
