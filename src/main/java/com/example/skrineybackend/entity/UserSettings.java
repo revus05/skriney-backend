@@ -20,12 +20,16 @@ public class UserSettings {
     @Column(nullable = false)
     private UserTheme userTheme = UserTheme.SYSTEM;
 
-    @Column(nullable = false)
+    @Column()
     private Currency defaultCurrency = Currency.USD;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "default_category_id")
     private Category defaultCategory;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "default_bankaccount_id")
+    private BankAccount defaultBankAccount;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
