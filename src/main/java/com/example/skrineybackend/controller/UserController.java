@@ -3,6 +3,7 @@ package com.example.skrineybackend.controller;
 import com.example.skrineybackend.dto.response.Response;
 import com.example.skrineybackend.dto.user.SignInUserRequestDTO;
 import com.example.skrineybackend.dto.user.SignUpUserRequestDTO;
+import com.example.skrineybackend.dto.user.UpdateUserImageRequestDTO;
 import com.example.skrineybackend.dto.user.UserDTO;
 import com.example.skrineybackend.service.CookieService;
 import com.example.skrineybackend.service.JwtService;
@@ -10,6 +11,7 @@ import com.example.skrineybackend.service.UserService;
 import com.example.skrineybackend.swagger.user.GetMeOperation;
 import com.example.skrineybackend.swagger.user.SignInOperation;
 import com.example.skrineybackend.swagger.user.SignUpOperation;
+import com.example.skrineybackend.swagger.user.UpdateUserImageOperation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -51,5 +53,13 @@ public class UserController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDTO loggedUser = userService.getMe(((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Пользователь успешно авторизован", HttpStatus.OK, loggedUser);
+    }
+
+    @UpdateUserImageOperation
+    @PatchMapping("/update-image")
+    public Response updateImage(@Valid @RequestBody UpdateUserImageRequestDTO updateUserImageRequestDTO) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDTO updatedUser = userService.updateImage(updateUserImageRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Изображение профиля успешно изменено", HttpStatus.OK, updatedUser);
     }
 }

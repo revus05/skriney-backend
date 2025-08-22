@@ -1,6 +1,7 @@
 package com.example.skrineybackend.entity;
 
 import com.example.skrineybackend.dto.user.SignUpUserRequestDTO;
+import com.example.skrineybackend.enums.UserColor;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Entity
 @Hidden
@@ -25,6 +27,9 @@ public class User {
     private String uuid;
 
     private String image;
+
+    @Column(nullable = false)
+    private UserColor color;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -58,9 +63,17 @@ public class User {
         this.username = requestBody.getUsername();
         this.email = requestBody.getEmail();
         this.password = requestBody.getPassword();
+        this.color = getRandomColor();
 
         UserSettings settings = new UserSettings();
         settings.setUser(this);
         this.settings = settings;
+    }
+
+    private UserColor getRandomColor() {
+        Random random = new Random();
+
+        UserColor[] colors = UserColor.values();
+        return colors[random.nextInt(colors.length)];
     }
 }

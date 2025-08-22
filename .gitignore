@@ -38,3 +38,7 @@ build/
 
 src/main/resources/application.properties
 
+
+### Uploaded Files ###
+
+/uploads

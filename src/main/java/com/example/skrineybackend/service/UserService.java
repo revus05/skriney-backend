@@ -2,9 +2,11 @@ package com.example.skrineybackend.service;
 
 import com.example.skrineybackend.dto.user.SignInUserRequestDTO;
 import com.example.skrineybackend.dto.user.SignUpUserRequestDTO;
+import com.example.skrineybackend.dto.user.UpdateUserImageRequestDTO;
 import com.example.skrineybackend.dto.user.UserDTO;
 import com.example.skrineybackend.entity.User;
 import com.example.skrineybackend.exception.InvalidCredentialsException;
+import com.example.skrineybackend.exception.NoUserFoundException;
 import com.example.skrineybackend.exception.UserAlreadyExistsException;
 import com.example.skrineybackend.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -51,5 +53,14 @@ public class UserService {
             .ifPresent(user -> {
                 throw new UserAlreadyExistsException("email", "Пользователь с таким email уже существует");
             });
+    }
+
+    public UserDTO updateImage(UpdateUserImageRequestDTO updateUserImageRequestDTO, String userUuid) {
+        User user = userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+
+        user.setImage(updateUserImageRequestDTO.getUrl());
+        userRepo.save(user);
+
+        return new UserDTO(user);
     }
 }

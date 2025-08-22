@@ -2,6 +2,7 @@ package com.example.skrineybackend.dto.user;
 
 import com.example.skrineybackend.dto.usersettings.UserSettingsDTO;
 import com.example.skrineybackend.entity.User;
+import com.example.skrineybackend.enums.UserColor;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import lombok.Getter;
@@ -18,6 +19,9 @@ public class UserDTO {
     @Schema(description = "User image URL", requiredMode = Schema.RequiredMode.REQUIRED)
     @Nullable
     private String image;
+
+    @Schema(description = "User color if no image", requiredMode = Schema.RequiredMode.REQUIRED)
+    private UserColor colour;
 
     @Schema(description = "Username", requiredMode = Schema.RequiredMode.REQUIRED)
     private String username;
@@ -37,6 +41,7 @@ public class UserDTO {
     public UserDTO(User user) {
         this.uuid = user.getUuid();
         this.image = user.getImage();
+        this.colour = user.getColor();
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.userSettings = new UserSettingsDTO(user.getSettings());
