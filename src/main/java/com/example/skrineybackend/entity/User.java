@@ -40,6 +40,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(unique = true)
+    private Long telegramId;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private Instant createdAt;

@@ -31,4 +31,12 @@ public class CreateTransactionRequestDTO {
     @Schema(description = "Transaction category uuid", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "Uuid категории транзакции обязателен")
     private String categoryUuid;
+
+    public CreateTransactionRequestDTO(BigDecimal amount, Currency currency, String description, String bankAccountUuid, String categoryUuid) {
+        this.amount = amount;
+        this.currency = currency;
+        this.description = description;
+        this.bankAccountUuid = bankAccountUuid;
+        this.categoryUuid = categoryUuid;
+    }
 }

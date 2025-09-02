@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.example.grpc";
+option java_outer_classname = "TransactionProto";
+
+service TransactionService {
+  rpc AddTransaction (AddTransactionRequest) returns (AddTransactionResponse);
+}
+
+message AddTransactionRequest {
+  string userUuid = 1;
+  double amount = 2;
+  string currency = 3;
+  string bankAccountUuid = 4;
+  string categoryUuid = 5;
+}
+
+message AddTransactionResponse {
+  string transactionUuid = 1;
+}

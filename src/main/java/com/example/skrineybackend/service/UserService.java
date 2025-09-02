@@ -63,4 +63,14 @@ public class UserService {
 
         return new UserDTO(user);
     }
+
+    public String connectTelegram(long telegramId, String userUuid) throws NoUserFoundException {
+        User user = userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+
+        user.setTelegramId(telegramId);
+
+        userRepo.save(user);
+
+        return user.getUsername();
+    }
 }
