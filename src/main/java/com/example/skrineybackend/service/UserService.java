@@ -73,4 +73,8 @@ public class UserService {
 
         return user.getUsername();
     }
+
+    public User getUserByTelegramId(long telegramId) throws NoUserFoundException {
+        return userRepo.findByTelegramId(telegramId).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+    }
 }

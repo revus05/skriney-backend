@@ -5,17 +5,15 @@ option java_package = "com.example.grpc";
 option java_outer_classname = "TransactionProto";
 
 service TransactionService {
-  rpc AddTransaction (AddTransactionRequest) returns (AddTransactionResponse);
+  rpc CreateTransaction (CreateTransactionRequest) returns (CreateTransactionResponse);
 }
 
-message AddTransactionRequest {
-  string userUuid = 1;
+message CreateTransactionRequest {
+  int64 telegramId = 1;
   double amount = 2;
-  string currency = 3;
-  string bankAccountUuid = 4;
-  string categoryUuid = 5;
+  string categoryUuid = 3;
 }
 
-message AddTransactionResponse {
+message CreateTransactionResponse {
   string transactionUuid = 1;
 }
