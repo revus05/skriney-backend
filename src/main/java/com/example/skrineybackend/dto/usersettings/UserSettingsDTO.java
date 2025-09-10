@@ -4,6 +4,7 @@ import com.example.skrineybackend.dto.bankaccount.BankAccountDTO;
 import com.example.skrineybackend.dto.category.CategoryDTO;
 import com.example.skrineybackend.entity.UserSettings;
 import com.example.skrineybackend.enums.Currency;
+import com.example.skrineybackend.enums.Language;
 import com.example.skrineybackend.enums.UserTheme;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -25,6 +26,9 @@ public class UserSettingsDTO {
     @Schema(description = "User's default bank account", requiredMode = Schema.RequiredMode.REQUIRED)
     private BankAccountDTO defaultBankAccount;
 
+    @Schema(description = "User's language", requiredMode = Schema.RequiredMode.REQUIRED)
+    private Language language;
+
     public UserSettingsDTO(UserSettings userSettings) {
         this.defaultCurrency = userSettings.getDefaultCurrency();
         this.userTheme = userSettings.getUserTheme();
@@ -34,5 +38,6 @@ public class UserSettingsDTO {
         if (userSettings.getDefaultBankAccount() != null) {
             this.defaultBankAccount = new BankAccountDTO(userSettings.getDefaultBankAccount());
         }
+        this.language = userSettings.getLanguage();
     }
 }

@@ -3,10 +3,7 @@ package com.example.skrineybackend.controller;
 import com.example.skrineybackend.dto.response.Response;
 import com.example.skrineybackend.dto.usersettings.*;
 import com.example.skrineybackend.service.UserSettingsService;
-import com.example.skrineybackend.swagger.usersettings.UpdateDefaultBankAccountOperation;
-import com.example.skrineybackend.swagger.usersettings.UpdateDefaultCategoryOperation;
-import com.example.skrineybackend.swagger.usersettings.UpdateDefaultCurrencyOperation;
-import com.example.skrineybackend.swagger.usersettings.UpdateThemeOperation;
+import com.example.skrineybackend.swagger.usersettings.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -57,5 +54,13 @@ public class UserSettingsController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserSettingsDTO updatedUserSettings = userSettingsService.updateDefaultBankAccount(updateDefaultBankAccountRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Счет по умолчанию успешно обновлен",  HttpStatus.OK, updatedUserSettings);
+    }
+
+    @UpdateLanguageOperation
+    @PostMapping("/update-language")
+    public Response updateLanguage(@Valid @RequestBody UpdateLanguageRequestDTO updateLanguageRequestDTO) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserSettingsDTO updatedUserSettings = userSettingsService.updateLanguage(updateLanguageRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Язык интерфейса пользователя успешно обновлен",  HttpStatus.OK, updatedUserSettings);
     }
 }

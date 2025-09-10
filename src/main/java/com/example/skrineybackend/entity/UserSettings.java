@@ -1,6 +1,7 @@
 package com.example.skrineybackend.entity;
 
 import com.example.skrineybackend.enums.Currency;
+import com.example.skrineybackend.enums.Language;
 import com.example.skrineybackend.enums.UserTheme;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
@@ -30,6 +31,9 @@ public class UserSettings {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "default_bankaccount_id")
     private BankAccount defaultBankAccount;
+
+    @Column()
+    private Language language = Language.EN;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

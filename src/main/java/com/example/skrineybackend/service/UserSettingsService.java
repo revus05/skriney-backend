@@ -66,4 +66,14 @@ public class UserSettingsService {
 
         return new UserSettingsDTO(userSettings);
     }
+
+    public UserSettingsDTO updateLanguage(UpdateLanguageRequestDTO updateLanguageRequestDTO, String userUuid) throws NoUserFoundException, NoUserSettingsFoundException {
+        userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+        UserSettings userSettings = userSettingsRepo.findByUserUuid(userUuid).orElseThrow(() -> new NoUserSettingsFoundException("Нет настроек для пользователя"));
+
+        userSettings.setLanguage(updateLanguageRequestDTO.getLanguage());
+        userSettingsRepo.save(userSettings);
+
+        return new UserSettingsDTO(userSettings);
+    }
 }
