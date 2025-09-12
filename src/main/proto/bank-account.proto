@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.example.grpc";
+option java_outer_classname = "BankAccountProto";
+
+service BankAccountService {
+  rpc GetBankAccounts (GetBankAccountsRequest) returns (GetBankAccountsResponse);
+}
+
+message GetBankAccountsRequest {
+  int64 telegramId = 1;
+}
+
+message BankAccount {
+  string uuid = 1;
+  int64 balance = 2;
+  string currency = 3;
+  string title = 4;
+  string emoji = 5;
+  bool isInTotalBalance = 6;
+  string createdAt = 7;
+  string updatedAt = 8;
+}
+
+message GetBankAccountsResponse {
+  bool status = 1;
+  repeated BankAccount bankAccounts = 2;
+}
