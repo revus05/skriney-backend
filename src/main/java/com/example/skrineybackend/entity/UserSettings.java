@@ -4,6 +4,7 @@ import com.example.skrineybackend.enums.Currency;
 import com.example.skrineybackend.enums.Language;
 import com.example.skrineybackend.enums.UserTheme;
 import io.swagger.v3.oas.annotations.Hidden;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +34,8 @@ public class UserSettings {
     private BankAccount defaultBankAccount;
 
     @Column()
-    private Language language = Language.EN;
+    @Nullable
+    private Language language;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

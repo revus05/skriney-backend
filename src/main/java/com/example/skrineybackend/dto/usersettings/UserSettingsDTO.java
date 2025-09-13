@@ -26,7 +26,7 @@ public class UserSettingsDTO {
     @Schema(description = "User's default bank account", requiredMode = Schema.RequiredMode.REQUIRED)
     private BankAccountDTO defaultBankAccount;
 
-    @Schema(description = "User's language", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "User's language", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private Language language;
 
     public UserSettingsDTO(UserSettings userSettings) {
