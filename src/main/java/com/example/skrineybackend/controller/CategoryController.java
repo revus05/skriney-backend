@@ -1,6 +1,9 @@
 package com.example.skrineybackend.controller;
 
-import com.example.skrineybackend.dto.category.*;
+import com.example.skrineybackend.dto.category.CategoryDTO;
+import com.example.skrineybackend.dto.category.CategoryStatDTO;
+import com.example.skrineybackend.dto.category.CreateCategoryRequestDTO;
+import com.example.skrineybackend.dto.category.UpdateCategoryRequestDTO;
 import com.example.skrineybackend.dto.response.Response;
 import com.example.skrineybackend.service.CategoryService;
 import com.example.skrineybackend.swagger.category.*;
@@ -31,7 +34,7 @@ public class CategoryController {
     }
 
     @CreateCategoryOperation
-    @PostMapping("/create")
+    @PostMapping()
     public Response createCategory(@Valid @RequestBody CreateCategoryRequestDTO createCategoryRequestDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CategoryDTO createdCategory = categoryService.createCategory(createCategoryRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
@@ -39,10 +42,10 @@ public class CategoryController {
     }
 
     @DeleteCategoryOperation
-    @DeleteMapping("/delete")
-    public Response deleteCategory(@Valid @RequestBody DeleteCategoryRequestDTO deleteCategoryRequestDTO) {
+    @DeleteMapping("{uuid}")
+    public Response deleteCategory(@PathVariable String uuid) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        CategoryDTO deletedCategory = categoryService.deleteCategory(deleteCategoryRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
+        CategoryDTO deletedCategory = categoryService.deleteCategory(uuid, ((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Категория успешно удалена", HttpStatus.OK, deletedCategory);
     }
 
@@ -55,10 +58,10 @@ public class CategoryController {
     }
 
     @UpdateCategoryOperation
-    @PatchMapping("/{categoryUuid}")
-    public Response updateCategory(@PathVariable String categoryUuid, @Valid @RequestBody UpdateCategoryRequestDTO updateCategoryRequestDTO) {
+    @PatchMapping("{uuid}")
+    public Response updateCategory(@PathVariable String uuid, @Valid @RequestBody UpdateCategoryRequestDTO updateCategoryRequestDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        CategoryDTO updatedCategory = categoryService.updateCategory(categoryUuid, updateCategoryRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
+        CategoryDTO updatedCategory = categoryService.updateCategory(uuid, updateCategoryRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Категория обновлена успешно", HttpStatus.OK, updatedCategory);
     }
 }

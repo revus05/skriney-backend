@@ -2,7 +2,6 @@ package com.example.skrineybackend.controller;
 
 import com.example.skrineybackend.dto.bankaccount.BankAccountDTO;
 import com.example.skrineybackend.dto.bankaccount.CreateBankAccountRequestDTO;
-import com.example.skrineybackend.dto.bankaccount.DeleteBankAccountRequestDTO;
 import com.example.skrineybackend.dto.bankaccount.UpdateBankAccountRequestDTO;
 import com.example.skrineybackend.dto.response.Response;
 import com.example.skrineybackend.service.BankAccountService;
@@ -37,7 +36,7 @@ public class BankAccountController {
     }
 
     @CreateBankAccountOperation
-    @PostMapping("/create")
+    @PostMapping()
     public Response createBankAccount(@Valid @RequestBody CreateBankAccountRequestDTO requestBody) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         BankAccountDTO createdBankAccount = bankAccountService.createBankAccount(requestBody, ((UserDetails) auth.getPrincipal()).getUsername());
@@ -45,18 +44,19 @@ public class BankAccountController {
     }
 
     @DeleteBankAccountOperation
-    @DeleteMapping("/delete")
-    public Response deleteBankAccount(@Valid @RequestBody DeleteBankAccountRequestDTO requestBody) {
+    @DeleteMapping("{uuid}")
+    public Response deleteBankAccount(@PathVariable String uuid) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        BankAccountDTO deletedBankAccount = bankAccountService.deleteBankAccount(requestBody, ((UserDetails) auth.getPrincipal()).getUsername());
+        System.out.println(uuid);
+        BankAccountDTO deletedBankAccount = bankAccountService.deleteBankAccount(uuid, ((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Счет успешно удален", HttpStatus.OK, deletedBankAccount);
     }
 
     @UpdateBankAccountOperation
-    @PatchMapping("/{bankAccountUuid}")
-    public Response updateBankAccount(@PathVariable String bankAccountUuid, @Valid @RequestBody UpdateBankAccountRequestDTO updateBankAccountRequestDTO) {
+    @PatchMapping("{uuid}")
+    public Response updateBankAccount(@PathVariable String uuid, @Valid @RequestBody UpdateBankAccountRequestDTO updateBankAccountRequestDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        BankAccountDTO updatedBankAccount = bankAccountService.updateBankAccount(bankAccountUuid, updateBankAccountRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
+        BankAccountDTO updatedBankAccount = bankAccountService.updateBankAccount(uuid, updateBankAccountRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Счет пользователя успешно обновлен", HttpStatus.OK, updatedBankAccount);
     }
 }

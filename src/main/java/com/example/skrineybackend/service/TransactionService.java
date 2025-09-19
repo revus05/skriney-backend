@@ -1,7 +1,6 @@
 package com.example.skrineybackend.service;
 
 import com.example.skrineybackend.dto.transaction.CreateTransactionRequestDTO;
-import com.example.skrineybackend.dto.transaction.DeleteTransactionRequestDTO;
 import com.example.skrineybackend.dto.transaction.TransactionDTO;
 import com.example.skrineybackend.entity.BankAccount;
 import com.example.skrineybackend.entity.Category;
@@ -56,10 +55,10 @@ public class TransactionService {
             .toList();
     }
 
-    public TransactionDTO deleteTransaction(DeleteTransactionRequestDTO deleteTransactionRequestDTO, String userUuid) throws NoUserFoundException, NoTransactionFoundException {
+    public TransactionDTO deleteTransaction(String uuid, String userUuid) throws NoUserFoundException, NoTransactionFoundException {
         userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
 
-        Transaction deleteTransaction = transactionRepo.findByUuidAndBankAccount_User_Uuid(deleteTransactionRequestDTO.getUuid(), userUuid)
+        Transaction deleteTransaction = transactionRepo.findByUuidAndBankAccount_User_Uuid(uuid, userUuid)
                 .orElseThrow(() -> new NoTransactionFoundException("Нет такой транзакции"));
 
         transactionRepo.delete(deleteTransaction);

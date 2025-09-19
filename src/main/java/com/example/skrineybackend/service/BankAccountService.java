@@ -2,7 +2,6 @@ package com.example.skrineybackend.service;
 
 import com.example.skrineybackend.dto.bankaccount.BankAccountDTO;
 import com.example.skrineybackend.dto.bankaccount.CreateBankAccountRequestDTO;
-import com.example.skrineybackend.dto.bankaccount.DeleteBankAccountRequestDTO;
 import com.example.skrineybackend.dto.bankaccount.UpdateBankAccountRequestDTO;
 import com.example.skrineybackend.entity.BankAccount;
 import com.example.skrineybackend.entity.DailyBalance;
@@ -40,19 +39,19 @@ public class BankAccountService {
         return new BankAccountDTO(bankAccountRepo.save(bankAccount));
     }
 
-    public BankAccountDTO deleteBankAccount(DeleteBankAccountRequestDTO requestBody, String userUuid) throws NoUserFoundException {
+    public BankAccountDTO deleteBankAccount(String uuid, String userUuid) throws NoUserFoundException {
         userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
 
-        BankAccount deleteBankAccount = bankAccountRepo.findByUuidAndUser_Uuid(requestBody.getUuid(), userUuid).orElseThrow(() -> new NoBankAccountFoundException("Нет такого счета у пользователя"));
+        BankAccount deleteBankAccount = bankAccountRepo.findByUuidAndUser_Uuid(uuid, userUuid).orElseThrow(() -> new NoBankAccountFoundException("Нет такого счета у пользователя"));
         bankAccountRepo.delete(deleteBankAccount);
 
         return new BankAccountDTO(deleteBankAccount);
     }
 
-    public BankAccountDTO updateBankAccount(String bankAccountUuid, UpdateBankAccountRequestDTO updateBankAccountRequestDTO, String userUuid) throws NoUserFoundException {
+    public BankAccountDTO updateBankAccount(String uuid, UpdateBankAccountRequestDTO updateBankAccountRequestDTO, String userUuid) throws NoUserFoundException {
         userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
 
-        BankAccount updateBankAccount = bankAccountRepo.findByUuidAndUser_Uuid(bankAccountUuid, userUuid)
+        BankAccount updateBankAccount = bankAccountRepo.findByUuidAndUser_Uuid(uuid, userUuid)
                 .orElseThrow(() -> new NoBankAccountFoundException("Нет такого счета у пользователя"));
 
         if (updateBankAccountRequestDTO.getEmoji() != null) {

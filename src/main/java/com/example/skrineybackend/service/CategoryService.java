@@ -1,6 +1,9 @@
 package com.example.skrineybackend.service;
 
-import com.example.skrineybackend.dto.category.*;
+import com.example.skrineybackend.dto.category.CategoryDTO;
+import com.example.skrineybackend.dto.category.CategoryStatDTO;
+import com.example.skrineybackend.dto.category.CreateCategoryRequestDTO;
+import com.example.skrineybackend.dto.category.UpdateCategoryRequestDTO;
 import com.example.skrineybackend.entity.Category;
 import com.example.skrineybackend.entity.User;
 import com.example.skrineybackend.exception.NoCategoryFoundException;
@@ -39,11 +42,11 @@ public class CategoryService {
         return categoryRepo.findAllByUser_UuidOrderByCreatedAt(userUuid).stream().map(CategoryDTO::new).toList();
     }
 
-    public CategoryDTO deleteCategory(DeleteCategoryRequestDTO deleteCategoryRequestDTO, String userUuid) throws NoUserFoundException, NoCategoryFoundException {
+    public CategoryDTO deleteCategory(String uuid, String userUuid) throws NoUserFoundException, NoCategoryFoundException {
         userRepo.findById(userUuid)
                 .orElseThrow(() -> new NoUserFoundException("Не авторизован"));
 
-        Category category = categoryRepo.findByUuidAndUser_Uuid(deleteCategoryRequestDTO.getUuid(), userUuid)
+        Category category = categoryRepo.findByUuidAndUser_Uuid(uuid, userUuid)
                 .orElseThrow(() -> new NoCategoryFoundException("Категория не найдена или не принадлежит пользователю"));
 
         categoryRepo.delete(category);
@@ -51,11 +54,11 @@ public class CategoryService {
         return new CategoryDTO(category);
     }
 
-    public CategoryDTO updateCategory(String categoryUuid, UpdateCategoryRequestDTO updateCategoryRequestDTO, String userUuid) throws NoUserFoundException, NoCategoryFoundException {
+    public CategoryDTO updateCategory(String uuid, UpdateCategoryRequestDTO updateCategoryRequestDTO, String userUuid) throws NoUserFoundException, NoCategoryFoundException {
         userRepo.findById(userUuid)
                 .orElseThrow(() -> new NoUserFoundException("Не авторизован"));
 
-        Category category = categoryRepo.findByUuidAndUser_Uuid(categoryUuid, userUuid)
+        Category category = categoryRepo.findByUuidAndUser_Uuid(uuid, userUuid)
                 .orElseThrow(() -> new NoCategoryFoundException("Категория не найдена или не принадлежит пользователю"));
 
         if (updateCategoryRequestDTO.getTitle() != null) {

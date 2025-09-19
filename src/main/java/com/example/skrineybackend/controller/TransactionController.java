@@ -2,7 +2,6 @@ package com.example.skrineybackend.controller;
 
 import com.example.skrineybackend.dto.response.Response;
 import com.example.skrineybackend.dto.transaction.CreateTransactionRequestDTO;
-import com.example.skrineybackend.dto.transaction.DeleteTransactionRequestDTO;
 import com.example.skrineybackend.dto.transaction.TransactionDTO;
 import com.example.skrineybackend.service.TransactionService;
 import com.example.skrineybackend.swagger.transaction.CreateTransactionOperation;
@@ -27,7 +26,7 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @CreateTransactionOperation
-    @PostMapping("/create")
+    @PostMapping()
     public Response createTransaction(@Valid @RequestBody CreateTransactionRequestDTO createTransactionRequestDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         TransactionDTO createdTransaction = transactionService.createTransaction(createTransactionRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
@@ -43,10 +42,10 @@ public class TransactionController {
     }
 
     @DeleteTransactionOperation
-    @DeleteMapping("/delete")
-    public Response deleteTransaction(@Valid @RequestBody DeleteTransactionRequestDTO deleteTransactionRequestDTO) {
+    @DeleteMapping("{uuid}")
+    public Response deleteTransaction(@PathVariable String uuid) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        TransactionDTO deletedTransaction = transactionService.deleteTransaction(deleteTransactionRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
+        TransactionDTO deletedTransaction = transactionService.deleteTransaction(uuid, ((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Транзакция успешно удалена", HttpStatus.OK, deletedTransaction);
     }
 }
