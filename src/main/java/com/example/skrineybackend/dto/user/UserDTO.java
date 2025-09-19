@@ -32,6 +32,10 @@ public class UserDTO {
     @Schema(description = "User settings", requiredMode = Schema.RequiredMode.REQUIRED)
     private UserSettingsDTO userSettings;
 
+    @Schema(description = "User's telegram id", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Nullable
+    private Long telegramId;
+
     @Schema(description = "Creation timestamp", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
     private Instant createdAt;
 
@@ -45,6 +49,7 @@ public class UserDTO {
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.userSettings = new UserSettingsDTO(user.getSettings());
+        this.telegramId = user.getTelegramId();
         this.createdAt = user.getCreatedAt();
         this.updatedAt = user.getUpdatedAt();
     }
