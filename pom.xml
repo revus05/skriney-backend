@@ -128,7 +128,17 @@
             <version>1.3.2</version>
             <scope>provided</scope>
         </dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 	<build>
         <extensions>
@@ -151,6 +161,10 @@
 					<argLine>
 						-javaagent:"${settings.localRepository}/net/bytebuddy/byte-buddy-agent/1.17.6/byte-buddy-agent-1.17.6.jar"
 					</argLine>
+                    <environmentVariables>
+                        <TESTCONTAINERS_REUSE_ENABLE>true</TESTCONTAINERS_REUSE_ENABLE>
+                        <TESTCONTAINERS_REUSE_ID>skriney-postgres</TESTCONTAINERS_REUSE_ID>  <!-- Опционально: уникальный ID для вашего проекта, чтобы избежать конфликтов -->
+                    </environmentVariables>
 				</configuration>
 			</plugin>
 			<plugin>
