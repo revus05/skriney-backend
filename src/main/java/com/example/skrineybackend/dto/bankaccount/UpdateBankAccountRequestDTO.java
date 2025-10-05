@@ -16,4 +16,10 @@ public class UpdateBankAccountRequestDTO {
 
     @Schema(description = "Bank Account emoji", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private String emoji;
+
+    public UpdateBankAccountRequestDTO(Currency currency, String title, String emoji) {
+        this.currency = currency;
+        this.title = title;
+        this.emoji = emoji;
+    }
 }

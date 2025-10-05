@@ -7,7 +7,7 @@ import com.example.skrineybackend.dto.category.UpdateCategoryRequestDTO;
 import com.example.skrineybackend.entity.Category;
 import com.example.skrineybackend.entity.User;
 import com.example.skrineybackend.exception.NoCategoryFoundException;
-import com.example.skrineybackend.exception.NoUserFoundException;
+import com.example.skrineybackend.exception.UnauthorizedException;
 import com.example.skrineybackend.repository.CategoryRepo;
 import com.example.skrineybackend.repository.TransactionRepo;
 import com.example.skrineybackend.repository.UserRepo;
@@ -23,12 +23,12 @@ public class CategoryService {
     private final UserRepo userRepo;
     private final TransactionRepo transactionRepo;
 
-    public List<CategoryStatDTO> getCategoryStats(String userUuid) throws NoUserFoundException {
+    public List<CategoryStatDTO> getCategoryStats(String userUuid) throws UnauthorizedException {
         return transactionRepo.getUserCategoryStats(userUuid);
     }
 
-    public CategoryDTO createCategory(CreateCategoryRequestDTO createCategoryRequestDTO, String userUuid) throws NoUserFoundException {
-        User user = userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+    public CategoryDTO createCategory(CreateCategoryRequestDTO createCategoryRequestDTO, String userUuid) throws UnauthorizedException {
+        User user = userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
 
         Category category = new Category(createCategoryRequestDTO);
         category.setUser(user);
@@ -36,15 +36,15 @@ public class CategoryService {
         return new CategoryDTO(categoryRepo.save(category));
     }
 
-    public List<CategoryDTO> getCategories(String userUuid) throws NoUserFoundException {
-        userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+    public List<CategoryDTO> getCategories(String userUuid) throws UnauthorizedException {
+        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
 
         return categoryRepo.findAllByUser_UuidOrderByCreatedAt(userUuid).stream().map(CategoryDTO::new).toList();
     }
 
-    public CategoryDTO deleteCategory(String uuid, String userUuid) throws NoUserFoundException, NoCategoryFoundException {
+    public CategoryDTO deleteCategory(String uuid, String userUuid) throws UnauthorizedException, NoCategoryFoundException {
         userRepo.findById(userUuid)
-                .orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+                .orElseThrow(() -> new UnauthorizedException("Не авторизован"));
 
         Category category = categoryRepo.findByUuidAndUser_Uuid(uuid, userUuid)
                 .orElseThrow(() -> new NoCategoryFoundException("Категория не найдена или не принадлежит пользователю"));
@@ -54,9 +54,9 @@ public class CategoryService {
         return new CategoryDTO(category);
     }
 
-    public CategoryDTO updateCategory(String uuid, UpdateCategoryRequestDTO updateCategoryRequestDTO, String userUuid) throws NoUserFoundException, NoCategoryFoundException {
+    public CategoryDTO updateCategory(String uuid, UpdateCategoryRequestDTO updateCategoryRequestDTO, String userUuid) throws UnauthorizedException, NoCategoryFoundException {
         userRepo.findById(userUuid)
-                .orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+                .orElseThrow(() -> new UnauthorizedException("Не авторизован"));
 
         Category category = categoryRepo.findByUuidAndUser_Uuid(uuid, userUuid)
                 .orElseThrow(() -> new NoCategoryFoundException("Категория не найдена или не принадлежит пользователю"));

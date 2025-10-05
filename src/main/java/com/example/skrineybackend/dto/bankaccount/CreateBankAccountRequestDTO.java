@@ -36,4 +36,10 @@ public class CreateBankAccountRequestDTO {
 
     @Schema(description = "Optional user's image", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private String image;
+
+    public CreateBankAccountRequestDTO(BigDecimal balance, Currency currency, String title) {
+        this.balance = balance;
+        this.currency = currency;
+        this.title = title;
+    }
 }

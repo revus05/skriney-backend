@@ -25,7 +25,7 @@ public class BankAccountGrpcService extends BankAccountServiceGrpc.BankAccountSe
     public void getBankAccounts(GetBankAccountsRequest request, StreamObserver<GetBankAccountsResponse> responseObserver) {
         User user = userService.getUserByTelegramId(request.getTelegramId());
 
-        List<BankAccount> bankAccounts = bankAccountService.getBankAccounts(user.getUuid()).stream()
+        List<BankAccount> bankAccounts = bankAccountService.getAllBankAccounts(user.getUuid()).stream()
                 .map(dto -> BankAccount.newBuilder()
                         .setUuid(dto.getUuid())
                         .setBalance(MoneyConverter.toCents(dto.getBalance()))

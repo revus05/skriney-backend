@@ -16,7 +16,7 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    static final String JWT_COOKIE_NAME = "jwt";
+    public static final String JWT_COOKIE_NAME = "jwt";
 
     private final JwtService jwtService;
 

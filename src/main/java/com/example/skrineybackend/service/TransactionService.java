@@ -27,15 +27,15 @@ public class TransactionService {
     private final CategoryRepo categoryRepo;
     private final BalanceService dailyBalanceService;
 
-    public TransactionDTO createTransaction(CreateTransactionRequestDTO createTransactionRequestDTO, String userUuid) throws NoUserFoundException, NoBankAccountFoundException, NoCategoryFoundException {
+    public TransactionDTO createTransaction(CreateTransactionRequestDTO createTransactionRequestDTO, String userUuid) throws UnauthorizedException, NoBankAccountFoundException, NoCategoryFoundException {
         if (createTransactionRequestDTO.getAmount().compareTo(BigDecimal.ZERO) == 0) {
             throw new InvalidTransactionAmount("Сумма транзакции не может быть равна 0");
         }
 
-        userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
 
         BankAccount bankAccount = bankAccountRepo.findByUuidAndUser_Uuid(createTransactionRequestDTO.getBankAccountUuid(), userUuid)
-                .orElseThrow(() -> new NoBankAccountFoundException("Нет такого счета у пользователя"));
+                .orElseThrow(() -> new NoBankAccountFoundException("Счет не найден"));
 
         Category category = categoryRepo.findByUuidAndUser_Uuid(createTransactionRequestDTO.getCategoryUuid(), userUuid)
                 .orElseThrow(() -> new NoCategoryFoundException("Категория не найдена или не принадлежит пользователю"));
@@ -45,8 +45,8 @@ public class TransactionService {
         return new TransactionDTO(transactionRepo.save(new Transaction(createTransactionRequestDTO, bankAccount, category)));
     }
 
-    public List<TransactionDTO> getTransactions(String userUuid) throws NoUserFoundException {
-        userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+    public List<TransactionDTO> getTransactions(String userUuid) throws UnauthorizedException {
+        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
 
         List<Transaction> transactions = transactionRepo.findByBankAccount_User_UuidOrderByCreatedAtDesc(userUuid);
 
@@ -55,8 +55,8 @@ public class TransactionService {
             .toList();
     }
 
-    public TransactionDTO deleteTransaction(String uuid, String userUuid) throws NoUserFoundException, NoTransactionFoundException {
-        userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+    public TransactionDTO deleteTransaction(String uuid, String userUuid) throws UnauthorizedException, NoTransactionFoundException {
+        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
 
         Transaction deleteTransaction = transactionRepo.findByUuidAndBankAccount_User_Uuid(uuid, userUuid)
                 .orElseThrow(() -> new NoTransactionFoundException("Нет такой транзакции"));

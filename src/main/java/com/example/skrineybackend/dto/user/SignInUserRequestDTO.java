@@ -19,4 +19,10 @@ public class SignInUserRequestDTO {
     @NotBlank(message = "Пароль обязателен")
     @Size(min = 8, max = 128, message = "Пароль должен содержать от 8 до 128 символов")
     private String password;
+
+
+    public SignInUserRequestDTO(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 }

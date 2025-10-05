@@ -25,5 +25,5 @@ import java.lang.annotation.*;
         ),
     }
 )
-public @interface GetBankAccountOperation {
+public @interface GetAllBankAccountsOperation {
 }

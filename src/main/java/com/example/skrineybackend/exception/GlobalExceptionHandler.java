@@ -51,8 +51,8 @@ public class GlobalExceptionHandler {
         return new Response(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(InvalidCredentialsException.class)
-    public Response handleInvalidCredentialsException(InvalidCredentialsException ex) {
+    @ExceptionHandler(UnauthorizedException.class)
+    public Response handleInvalidCredentialsException(UnauthorizedException ex) {
         return new Response(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
@@ -63,11 +63,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoTransactionFoundException.class)
     public Response handleNoTransactionFoundException(NoTransactionFoundException ex) {
-        return new Response(ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(NoUserFoundException.class)
-    public Response handleNoUserFoundException(NoUserFoundException ex) {
         return new Response(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 

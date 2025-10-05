@@ -5,10 +5,7 @@ import com.example.skrineybackend.dto.bankaccount.CreateBankAccountRequestDTO;
 import com.example.skrineybackend.dto.bankaccount.UpdateBankAccountRequestDTO;
 import com.example.skrineybackend.dto.response.Response;
 import com.example.skrineybackend.service.BankAccountService;
-import com.example.skrineybackend.swagger.bankaccount.CreateBankAccountOperation;
-import com.example.skrineybackend.swagger.bankaccount.DeleteBankAccountOperation;
-import com.example.skrineybackend.swagger.bankaccount.GetBankAccountOperation;
-import com.example.skrineybackend.swagger.bankaccount.UpdateBankAccountOperation;
+import com.example.skrineybackend.swagger.bankaccount.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +24,20 @@ import java.util.List;
 public class BankAccountController {
     private final BankAccountService bankAccountService;
 
-    @GetBankAccountOperation
+    @GetAllBankAccountsOperation
     @GetMapping()
-    public Response getBankAccount() {
+    public Response getAllBankAccounts() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        List<BankAccountDTO> bankAccounts = bankAccountService.getBankAccounts(((UserDetails) auth.getPrincipal()).getUsername());
+        List<BankAccountDTO> bankAccounts = bankAccountService.getAllBankAccounts(((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Счета пользователя успешно получены", HttpStatus.OK, bankAccounts);
+    }
+
+    @GetOneBankAccountOperation
+    @GetMapping("{uuid}")
+    public Response getOneBankAccount(@PathVariable String uuid) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        BankAccountDTO bankAccount = bankAccountService.getOneBankAccount(((UserDetails) auth.getPrincipal()).getUsername(), uuid);
+        return new Response("Счет пользователя успешно получен", HttpStatus.OK, bankAccount);
     }
 
     @CreateBankAccountOperation
@@ -47,7 +52,6 @@ public class BankAccountController {
     @DeleteMapping("{uuid}")
     public Response deleteBankAccount(@PathVariable String uuid) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(uuid);
         BankAccountDTO deletedBankAccount = bankAccountService.deleteBankAccount(uuid, ((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Счет успешно удален", HttpStatus.OK, deletedBankAccount);
     }

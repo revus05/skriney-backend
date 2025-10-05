@@ -7,7 +7,7 @@ import com.example.skrineybackend.entity.BankAccount;
 import com.example.skrineybackend.entity.DailyBalance;
 import com.example.skrineybackend.entity.User;
 import com.example.skrineybackend.exception.NoBankAccountFoundException;
-import com.example.skrineybackend.exception.NoUserFoundException;
+import com.example.skrineybackend.exception.UnauthorizedException;
 import com.example.skrineybackend.repository.BankAccountRepo;
 import com.example.skrineybackend.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -23,14 +23,23 @@ public class BankAccountService {
     private final BankAccountRepo bankAccountRepo;
     private final UserRepo userRepo;
 
-    public List<BankAccountDTO> getBankAccounts(String userUuid) throws NoUserFoundException {
-        userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+    public List<BankAccountDTO> getAllBankAccounts(String userUuid) throws UnauthorizedException {
+        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
 
         return bankAccountRepo.findAllByUser_UuidOrderByCreatedAtAsc(userUuid).stream().map(BankAccountDTO::new).toList();
     }
 
-    public BankAccountDTO createBankAccount(CreateBankAccountRequestDTO requestBody, String userUuid) throws NoUserFoundException {
-        User user = userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+    public BankAccountDTO getOneBankAccount(String userUuid, String uuid) throws UnauthorizedException {
+        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
+
+        BankAccount bankAccount = bankAccountRepo.findByUuidAndUser_Uuid(uuid, userUuid)
+                .orElseThrow(() -> new NoBankAccountFoundException("Счет не найден"));
+
+        return new BankAccountDTO(bankAccount);
+    }
+
+    public BankAccountDTO createBankAccount(CreateBankAccountRequestDTO requestBody, String userUuid) throws UnauthorizedException {
+        User user = userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
 
         BankAccount bankAccount = new BankAccount(requestBody);
         bankAccount.setUser(user);
@@ -39,20 +48,20 @@ public class BankAccountService {
         return new BankAccountDTO(bankAccountRepo.save(bankAccount));
     }
 
-    public BankAccountDTO deleteBankAccount(String uuid, String userUuid) throws NoUserFoundException {
-        userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+    public BankAccountDTO deleteBankAccount(String uuid, String userUuid) throws UnauthorizedException {
+        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
 
-        BankAccount deleteBankAccount = bankAccountRepo.findByUuidAndUser_Uuid(uuid, userUuid).orElseThrow(() -> new NoBankAccountFoundException("Нет такого счета у пользователя"));
+        BankAccount deleteBankAccount = bankAccountRepo.findByUuidAndUser_Uuid(uuid, userUuid).orElseThrow(() -> new NoBankAccountFoundException("Счет не найден"));
         bankAccountRepo.delete(deleteBankAccount);
 
         return new BankAccountDTO(deleteBankAccount);
     }
 
-    public BankAccountDTO updateBankAccount(String uuid, UpdateBankAccountRequestDTO updateBankAccountRequestDTO, String userUuid) throws NoUserFoundException {
-        userRepo.findById(userUuid).orElseThrow(() -> new NoUserFoundException("Не авторизован"));
+    public BankAccountDTO updateBankAccount(String uuid, UpdateBankAccountRequestDTO updateBankAccountRequestDTO, String userUuid) throws UnauthorizedException {
+        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
 
         BankAccount updateBankAccount = bankAccountRepo.findByUuidAndUser_Uuid(uuid, userUuid)
-                .orElseThrow(() -> new NoBankAccountFoundException("Нет такого счета у пользователя"));
+                .orElseThrow(() -> new NoBankAccountFoundException("Счет не найден"));
 
         if (updateBankAccountRequestDTO.getEmoji() != null) {
             updateBankAccount.setEmoji(updateBankAccountRequestDTO.getEmoji());

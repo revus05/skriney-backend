@@ -10,5 +10,5 @@ import lombok.Setter;
 public class UpdateUserImageRequestDTO {
     @Schema(description = "Image url", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "Url изображения обязателен")
-    private String url;
+    private String image;
 }
