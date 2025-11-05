@@ -20,7 +20,7 @@ target/
 *.ipr
 
 ### Local Configuration ###
-.env
+src/main/resources/.env.properties
 postgres.env
 
 ### NetBeans ###
@@ -35,8 +35,6 @@ build/
 
 ### VS Code ###
 .vscode/
-
-src/main/resources/application.properties
 
 
 ### Uploaded Files ###

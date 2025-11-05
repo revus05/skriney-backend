@@ -9,12 +9,14 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static com.example.skrineybackend.config.JwtAuthenticationFilter.JWT_COOKIE_NAME;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Transactional
+@Testcontainers
 class UserControllerTest extends AbstractIntegrationTest {
     @Test
     void signUp_User_ValidRequest_ReturnsSuccessResponse() throws Exception {

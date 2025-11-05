@@ -13,7 +13,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static com.example.skrineybackend.config.JwtAuthenticationFilter.JWT_COOKIE_NAME;
@@ -26,18 +25,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureMockMvc
 public abstract class AbstractIntegrationTest {
 
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17-alpine")
-            .withDatabaseName("skriney")
-            .withUsername("postgres")
-            .withPassword("12345678")
-            .withReuse(true);
-
     @Autowired
     protected MockMvc mockMvc;
 
     @DynamicPropertySource
     static void registerPgProperties(DynamicPropertyRegistry registry) {
+        PostgreSQLContainer<?> postgres = TestContainerSingleton.getInstance();
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);

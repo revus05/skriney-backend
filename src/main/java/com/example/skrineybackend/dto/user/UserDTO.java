@@ -26,6 +26,9 @@ public class UserDTO {
     @Schema(description = "Username", requiredMode = Schema.RequiredMode.REQUIRED)
     private String username;
 
+    @Schema(description = "Dasha", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String dasha;
+
     @Schema(description = "Email address", requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
 

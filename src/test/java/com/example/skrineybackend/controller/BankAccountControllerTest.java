@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
 
@@ -21,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @Transactional
+@Testcontainers
 class BankAccountControllerTest extends AbstractIntegrationTest {
     @Test
     void create_BankAccount_ValidRequest_ReturnsSuccessResponse() throws Exception {
