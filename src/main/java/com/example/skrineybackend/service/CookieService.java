@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 public class CookieService {
     public void addJwtCookie(HttpServletResponse response, String token) {
         String cookie = String.format(
-                "jwt=%s; Path=/; Max-Age=%d; Secure; HttpOnly; SameSite=None",
+                "jwt=%s; Path=/; Max-Age=%d; Secure; SameSite=None",
                 token,
                 86400
         );
