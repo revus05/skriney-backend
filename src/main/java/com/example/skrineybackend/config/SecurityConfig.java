@@ -18,8 +18,8 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
 
-    @Value("${cors.origins}")
-    private String CORS_ORIGINS;
+    @Value("${cors.origin}")
+    private String CORS_ORIGIN;
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -60,7 +60,7 @@ public class SecurityConfig {
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of(CORS_ORIGINS));
+        config.setAllowedOrigins(List.of(CORS_ORIGIN));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

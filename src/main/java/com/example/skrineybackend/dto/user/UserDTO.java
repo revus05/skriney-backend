@@ -21,13 +21,10 @@ public class UserDTO {
     private String image;
 
     @Schema(description = "User color if no image", requiredMode = Schema.RequiredMode.REQUIRED)
-    private UserColor colour;
+    private UserColor color;
 
     @Schema(description = "Username", requiredMode = Schema.RequiredMode.REQUIRED)
     private String username;
-
-    @Schema(description = "Dasha", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String dasha;
 
     @Schema(description = "Email address", requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
@@ -48,7 +45,7 @@ public class UserDTO {
     public UserDTO(User user) {
         this.uuid = user.getUuid();
         this.image = user.getImage();
-        this.colour = user.getColor();
+        this.color = user.getColor();
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.userSettings = new UserSettingsDTO(user.getSettings());
