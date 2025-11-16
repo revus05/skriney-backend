@@ -50,7 +50,7 @@ public class CookieService {
                 host = host.substring(4);
             }
 
-            return "." + host;
+            return host;
         } catch (URISyntaxException e) {
             System.err.println("Invalid CORS_ORIGIN: " + origin);
         }
