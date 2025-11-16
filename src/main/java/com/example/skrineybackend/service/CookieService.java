@@ -40,7 +40,17 @@ public class CookieService {
     private String extractDomain(String origin) {
         try {
             URI uri = new URI(origin);
-            return uri.getHost();
+            String host = uri.getHost();
+
+            if (host == null) {
+                return null;
+            }
+
+            if (host.startsWith("www.")) {
+                host = host.substring(4);
+            }
+
+            return "." + host;
         } catch (URISyntaxException e) {
             System.err.println("Invalid CORS_ORIGIN: " + origin);
         }
