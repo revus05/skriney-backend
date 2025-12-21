@@ -20,10 +20,10 @@ public class UserSettingsDTO {
     @Schema(description = "User's default currency", requiredMode = Schema.RequiredMode.REQUIRED)
     private Currency defaultCurrency;
 
-    @Schema(description = "User's default category", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "User's default category", requiredMode = Schema.RequiredMode.NOT_REQUIRED, nullable = true)
     private CategoryDTO defaultCategory;
 
-    @Schema(description = "User's default bank account", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "User's default bank account", requiredMode = Schema.RequiredMode.NOT_REQUIRED, nullable = true)
     private BankAccountDTO defaultBankAccount;
 
     @Schema(description = "User's language", requiredMode = Schema.RequiredMode.NOT_REQUIRED)

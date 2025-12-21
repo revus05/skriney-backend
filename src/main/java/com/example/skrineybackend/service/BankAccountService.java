@@ -6,10 +6,12 @@ import com.example.skrineybackend.dto.bankaccount.UpdateBankAccountRequestDTO;
 import com.example.skrineybackend.entity.BankAccount;
 import com.example.skrineybackend.entity.DailyBalance;
 import com.example.skrineybackend.entity.User;
+import com.example.skrineybackend.entity.UserSettings;
 import com.example.skrineybackend.exception.NoBankAccountFoundException;
 import com.example.skrineybackend.exception.UnauthorizedException;
 import com.example.skrineybackend.repository.BankAccountRepo;
 import com.example.skrineybackend.repository.UserRepo;
+import com.example.skrineybackend.repository.UserSettingsRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,7 @@ import java.util.List;
 public class BankAccountService {
     private final BankAccountRepo bankAccountRepo;
     private final UserRepo userRepo;
+    private final UserSettingsRepo userSettingsRepo;
 
     public List<BankAccountDTO> getAllBankAccounts(String userUuid) throws UnauthorizedException {
         userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
@@ -40,8 +43,12 @@ public class BankAccountService {
 
     public BankAccountDTO createBankAccount(CreateBankAccountRequestDTO requestBody, String userUuid) throws UnauthorizedException {
         User user = userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
-
         BankAccount bankAccount = new BankAccount(requestBody);
+
+        if (user.getBankAccounts().isEmpty()) {
+            user.getSettings().setDefaultBankAccount(bankAccount);
+        }
+
         bankAccount.setUser(user);
         bankAccount.setDailyBalances(new ArrayList<>(Collections.singletonList(new DailyBalance(bankAccount))));
 
@@ -52,6 +59,13 @@ public class BankAccountService {
         userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
 
         BankAccount deleteBankAccount = bankAccountRepo.findByUuidAndUser_Uuid(uuid, userUuid).orElseThrow(() -> new NoBankAccountFoundException("Счет не найден"));
+
+        List<UserSettings> settingsList = userSettingsRepo.findAllByDefaultBankAccountUuid(deleteBankAccount.getUuid());
+
+        for (UserSettings settings : settingsList) {
+            settings.setDefaultBankAccount(null);
+        }
+
         bankAccountRepo.delete(deleteBankAccount);
 
         return new BankAccountDTO(deleteBankAccount);

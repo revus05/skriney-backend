@@ -12,6 +12,7 @@ import com.example.skrineybackend.swagger.user.GetMeOperation;
 import com.example.skrineybackend.swagger.user.SignInOperation;
 import com.example.skrineybackend.swagger.user.SignUpOperation;
 import com.example.skrineybackend.swagger.user.UpdateUserImageOperation;
+import com.example.skrineybackend.swagger.user.SignOutOperation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -43,7 +44,7 @@ public class UserController {
     public Response signInUser(@Valid @RequestBody SignInUserRequestDTO signInUserRequestDTO, HttpServletResponse response) {
         UserDTO loggedUser = userService.signInUser(signInUserRequestDTO);
         String token = jwtService.generateToken(loggedUser.getUuid());
-        cookieService.addJwtCookie(response, token);
+        cookieService.createJwtCookie(response, token, 60 * 60 * 24 * 7);
         return new Response("Пользователь успешно авторизован", HttpStatus.OK, loggedUser);
     }
 
@@ -61,5 +62,12 @@ public class UserController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDTO updatedUser = userService.updateImage(updateUserImageRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Изображение профиля успешно изменено", HttpStatus.OK, updatedUser);
+    }
+
+    @SignOutOperation
+    @PostMapping("/sign-out")
+    public Response singOut(HttpServletResponse response) {
+        cookieService.createJwtCookie(response, "", 0);
+        return new Response("Пользователь успешно вышел", HttpStatus.OK);
     }
 }

@@ -17,8 +17,8 @@ public class CookieService {
     @Value("${spring.profiles.active}")
     private String ACTIVE_PROFILE;
 
-    public void addJwtCookie(HttpServletResponse response, String token) {
-        Cookie jwtCookie = new Cookie("jwt", token);
+    public void createJwtCookie(HttpServletResponse response, String value, int maxAge) {
+        Cookie jwtCookie = new Cookie("jwt", value);
 
         jwtCookie.setSecure(Objects.equals(ACTIVE_PROFILE, "production"));
         jwtCookie.setHttpOnly(true);
@@ -32,7 +32,7 @@ public class CookieService {
         }
 
         jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(60 * 60 * 24 * 7);
+        jwtCookie.setMaxAge(maxAge);
 
         response.addCookie(jwtCookie);
     }

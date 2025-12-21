@@ -25,7 +25,7 @@ public class TransactionDTO {
     private Currency currency;
 
     @Schema(description = "Optional user description", requiredMode = Schema.RequiredMode.REQUIRED)
-    @Nullable()
+    @Nullable
     private String description;
 
     @Schema(description = "Creation timestamp", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
