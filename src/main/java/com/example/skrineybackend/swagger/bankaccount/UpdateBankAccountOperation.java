@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import java.lang.annotation.*;
@@ -27,7 +28,7 @@ import java.lang.annotation.*;
             schema = @Schema(type = "string", format = "uuid")
         )
     },
-    requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+    requestBody = @RequestBody(
         description = "Данные для обновления счета",
         required = true,
         content = @Content(

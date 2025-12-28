@@ -53,11 +53,18 @@ public class BankAccount {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "bankAccount", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "bankAccount")
     private List<Transaction> transactions = new ArrayList<>();
 
     @OneToMany(mappedBy = "bankAccount", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DailyBalance> dailyBalances = new ArrayList<>();
+
+    @PreRemove
+    private void preRemove() {
+        if (transactions != null) {
+            transactions.forEach(transaction -> transaction.setBankAccount(null));
+        }
+    }
 
     public BankAccount() {}
 

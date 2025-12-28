@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import java.lang.annotation.*;
@@ -16,7 +17,7 @@ import java.lang.annotation.*;
 @Operation(
     summary = "Регистрация пользователя",
     description = "Создает нового пользователя",
-    requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+    requestBody = @RequestBody(
         description = "Данные для регистрации пользователя",
         content = @Content(
             schema = @Schema(implementation = SignUpUserRequestDTO.class),

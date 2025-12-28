@@ -42,20 +42,25 @@ public class Transaction {
     private Instant updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bank_account_id", nullable = false)
+    @JoinColumn(name = "bank_account_id")
     private BankAccount bankAccount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id")
     private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Transaction() {}
 
-    public Transaction(CreateTransactionRequestDTO createTransactionRequestDTO, BankAccount bankAccount, Category category) {
+    public Transaction(CreateTransactionRequestDTO createTransactionRequestDTO, BankAccount bankAccount, Category category, User user) {
         this.amount = createTransactionRequestDTO.getAmount();
         this.currency = createTransactionRequestDTO.getCurrency();
         this.description = createTransactionRequestDTO.getDescription();
         this.bankAccount = bankAccount;
         this.category = category;
+        this.user = user;
     }
 }

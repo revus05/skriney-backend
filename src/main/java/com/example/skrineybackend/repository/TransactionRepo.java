@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TransactionRepo extends CrudRepository<Transaction, String> {
-    List<Transaction> findByBankAccount_User_UuidOrderByCreatedAtDesc(String userUuid);
-    Optional<Transaction> findByUuidAndBankAccount_User_Uuid(String uuid, String userUuid);
+    List<Transaction> findByUser_UuidOrderByCreatedAtDesc(String userUuid);
+    Optional<Transaction> findByUuidAndUser_Uuid(String uuid, String userUuid);
     @Query("""
         SELECT new com.example.skrineybackend.dto.category.CategoryStatDTO(
             tx.category.uuid,

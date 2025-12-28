@@ -3,10 +3,12 @@ package com.example.skrineybackend.controller;
 import com.example.skrineybackend.dto.response.Response;
 import com.example.skrineybackend.dto.transaction.CreateTransactionRequestDTO;
 import com.example.skrineybackend.dto.transaction.TransactionDTO;
+import com.example.skrineybackend.dto.transaction.UpdateTransactionRequestDTO;
 import com.example.skrineybackend.service.TransactionService;
 import com.example.skrineybackend.swagger.transaction.CreateTransactionOperation;
 import com.example.skrineybackend.swagger.transaction.DeleteTransactionOperation;
 import com.example.skrineybackend.swagger.transaction.GetTransactionsOperation;
+import com.example.skrineybackend.swagger.transaction.UpdateTransactionOperation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -47,5 +49,13 @@ public class TransactionController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         TransactionDTO deletedTransaction = transactionService.deleteTransaction(uuid, ((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Транзакция успешно удалена", HttpStatus.OK, deletedTransaction);
+    }
+
+    @UpdateTransactionOperation
+    @PatchMapping("{uuid}")
+    public Response updateCategory(@PathVariable String uuid, @Valid @RequestBody UpdateTransactionRequestDTO updateTransactionRequestDTO) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        TransactionDTO updatedTransaction = transactionService.updateTransaction(uuid, updateTransactionRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Транзакция успешно обновлена", HttpStatus.OK, updatedTransaction);
     }
 }

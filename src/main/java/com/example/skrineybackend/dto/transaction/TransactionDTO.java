@@ -34,10 +34,10 @@ public class TransactionDTO {
     @Schema(description = "Last update timestamp", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
     private Instant updatedAt;
 
-    @Schema(description = "Connection to bank account", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Connection to bank account", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private BankAccountDTO bankAccount;
 
-    @Schema(description = "transaction category", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "transaction category", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private CategoryDTO category;
 
     public TransactionDTO(Transaction transaction) {
@@ -45,8 +45,12 @@ public class TransactionDTO {
         this.amount = transaction.getAmount();
         this.currency = transaction.getCurrency();
         this.description = transaction.getDescription();
-        this.bankAccount = new BankAccountDTO(transaction.getBankAccount());
-        this.category = new CategoryDTO(transaction.getCategory());
+        if (transaction.getBankAccount() != null) {
+            this.bankAccount = new BankAccountDTO(transaction.getBankAccount());
+        }
+        if (transaction.getCategory() != null) {
+            this.category = new CategoryDTO(transaction.getCategory());
+        }
         this.createdAt = transaction.getCreatedAt();
         this.updatedAt = transaction.getUpdatedAt();
     }
