@@ -3,10 +3,7 @@ package com.example.skrineybackend.service;
 import com.example.skrineybackend.dto.bankaccount.BankAccountDTO;
 import com.example.skrineybackend.dto.bankaccount.CreateBankAccountRequestDTO;
 import com.example.skrineybackend.dto.bankaccount.UpdateBankAccountRequestDTO;
-import com.example.skrineybackend.entity.BankAccount;
-import com.example.skrineybackend.entity.DailyBalance;
-import com.example.skrineybackend.entity.User;
-import com.example.skrineybackend.entity.UserSettings;
+import com.example.skrineybackend.entity.*;
 import com.example.skrineybackend.exception.NoBankAccountFoundException;
 import com.example.skrineybackend.exception.UnauthorizedException;
 import com.example.skrineybackend.repository.BankAccountRepo;
@@ -18,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -60,11 +58,9 @@ public class BankAccountService {
 
         BankAccount deleteBankAccount = bankAccountRepo.findByUuidAndUser_Uuid(uuid, userUuid).orElseThrow(() -> new NoBankAccountFoundException("Счет не найден"));
 
-        List<UserSettings> settingsList = userSettingsRepo.findAllByDefaultBankAccountUuid(deleteBankAccount.getUuid());
+        Optional<UserSettings> optionalSettings = userSettingsRepo.findByDefaultBankAccountUuid(deleteBankAccount.getUuid());
 
-        for (UserSettings settings : settingsList) {
-            settings.setDefaultBankAccount(null);
-        }
+        optionalSettings.ifPresent(userSettings -> updateDefaultBankAccountAfterDeletion(userSettings, uuid));
 
         bankAccountRepo.delete(deleteBankAccount);
 
@@ -90,5 +86,17 @@ public class BankAccountService {
         bankAccountRepo.save(updateBankAccount);
 
         return new BankAccountDTO(updateBankAccount);
+    }
+
+    private void updateDefaultBankAccountAfterDeletion(UserSettings userSettings, String uuid) {
+        List<BankAccount> remainingBankAccounts = bankAccountRepo.findAllByUser_UuidOrderByCreatedAtAsc(userSettings.getUser().getUuid())
+                .stream()
+                .filter(c -> !c.getUuid().equals(uuid))
+                .toList();
+
+        BankAccount newDefault = remainingBankAccounts.isEmpty() ? null : remainingBankAccounts.get(0);
+        userSettings.setDefaultBankAccount(newDefault);
+
+        userSettingsRepo.save(userSettings);
     }
 }
