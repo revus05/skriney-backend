@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface UserSettingsRepo extends CrudRepository<UserSettings, String> {
     Optional<UserSettings> findByUserUuid(String userUuid);
     List<UserSettings> findAllByDefaultBankAccountUuid(String defaultBankAccountUuid);
-    List<UserSettings> findAllByDefaultCategoryUuid(String defaultCategoryUuid);
+    Optional<UserSettings> findByDefaultCategoryUuid(String defaultCategoryUuid);
 }

@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -56,11 +57,9 @@ public class CategoryService {
         Category category = categoryRepo.findByUuidAndUser_Uuid(uuid, userUuid)
                 .orElseThrow(() -> new NoCategoryFoundException("Категория не найдена или не принадлежит пользователю"));
 
-        List<UserSettings> settingsList = userSettingsRepo.findAllByDefaultCategoryUuid(category.getUuid());
+        Optional<UserSettings> optionalSettings = userSettingsRepo.findByDefaultCategoryUuid(category.getUuid());
 
-        for (UserSettings settings : settingsList) {
-            settings.setDefaultCategory(null);
-        }
+        optionalSettings.ifPresent(userSettings -> updateDefaultCategoryAfterDeletion(userSettings, uuid));
 
         categoryRepo.delete(category);
 
@@ -84,5 +83,17 @@ public class CategoryService {
         categoryRepo.save(category);
 
         return new CategoryDTO(category);
+    }
+
+    private void updateDefaultCategoryAfterDeletion(UserSettings userSettings, String uuid) {
+        List<Category> remainingCategories = categoryRepo.findAllByUser_UuidOrderByCreatedAt(userSettings.getUser().getUuid())
+                .stream()
+                .filter(c -> !c.getUuid().equals(uuid))
+                .toList();
+
+        Category newDefault = remainingCategories.isEmpty() ? null : remainingCategories.get(0);
+        userSettings.setDefaultCategory(newDefault);
+
+        userSettingsRepo.save(userSettings);
     }
 }
