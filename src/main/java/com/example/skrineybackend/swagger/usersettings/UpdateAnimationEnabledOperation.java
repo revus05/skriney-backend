@@ -1,6 +1,6 @@
 package com.example.skrineybackend.swagger.usersettings;
 
-import com.example.skrineybackend.dto.usersettings.UpdateAnimationSpeedRequestDTO;
+import com.example.skrineybackend.dto.usersettings.UpdateAnimationEnabledRequestDTO;
 import com.example.skrineybackend.dto.usersettings.UserSettingsDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,17 +15,17 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Operation(
-    summary = "Обновление скорости анимаций интерфейса",
-    description = "Обновляет скорость анимаций интерфейса пользователя",
+    summary = "Обновление отображения анимаций интерфейса",
+    description = "Включает/аотключает анимации интерфейса пользователя",
     requestBody = @RequestBody(
-        description = "Новая скорость анимаций",
+        description = "Новое заничение для отображения анимаций",
         content = @Content(
-            schema = @Schema(implementation = UpdateAnimationSpeedRequestDTO.class),
+            schema = @Schema(implementation = UpdateAnimationEnabledRequestDTO.class),
             examples = @ExampleObject(
                 name = "Пример запроса",
                 value = """
                     {
-                      "animationSpeed": "SLOW"
+                      "animationEnabled": true
                     }"""
             )
         )
@@ -38,5 +38,5 @@ import java.lang.annotation.*;
         ),
     }
 )
-public @interface UpdateAnimationSpeedOperation {
+public @interface UpdateAnimationEnabledOperation {
 }

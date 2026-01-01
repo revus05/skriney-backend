@@ -3,7 +3,6 @@ package com.example.skrineybackend.dto.usersettings;
 import com.example.skrineybackend.dto.bankaccount.BankAccountDTO;
 import com.example.skrineybackend.dto.category.CategoryDTO;
 import com.example.skrineybackend.entity.UserSettings;
-import com.example.skrineybackend.enums.AnimationSpeed;
 import com.example.skrineybackend.enums.Currency;
 import com.example.skrineybackend.enums.Language;
 import com.example.skrineybackend.enums.UserTheme;
@@ -21,8 +20,8 @@ public class UserSettingsDTO {
     @Schema(description = "User's default currency", requiredMode = Schema.RequiredMode.REQUIRED)
     private Currency defaultCurrency;
 
-    @Schema(description = "Interface animation speed", requiredMode = Schema.RequiredMode.REQUIRED)
-    private AnimationSpeed animationSpeed;
+    @Schema(description = "Interface animation enabled", requiredMode = Schema.RequiredMode.REQUIRED)
+    private boolean animationEnabled;
 
     @Schema(description = "User's default category", requiredMode = Schema.RequiredMode.NOT_REQUIRED, nullable = true)
     private CategoryDTO defaultCategory;
@@ -36,7 +35,7 @@ public class UserSettingsDTO {
     public UserSettingsDTO(UserSettings userSettings) {
         this.defaultCurrency = userSettings.getDefaultCurrency();
         this.userTheme = userSettings.getUserTheme();
-        this.animationSpeed = userSettings.getAnimationSpeed();
+        this.animationEnabled = userSettings.isAnimationEnabled();
         if (userSettings.getDefaultCategory() != null) {
             this.defaultCategory = new CategoryDTO(userSettings.getDefaultCategory());
         }
