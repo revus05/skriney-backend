@@ -1,5 +1,6 @@
 package com.example.skrineybackend.entity;
 
+import com.example.skrineybackend.enums.AnimationSpeed;
 import com.example.skrineybackend.enums.Currency;
 import com.example.skrineybackend.enums.Language;
 import com.example.skrineybackend.enums.UserTheme;
@@ -24,6 +25,9 @@ public class UserSettings {
 
     @Column()
     private Currency defaultCurrency = Currency.USD;
+
+    @Column()
+    private AnimationSpeed animationSpeed = AnimationSpeed.SLOW;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "default_category_id")

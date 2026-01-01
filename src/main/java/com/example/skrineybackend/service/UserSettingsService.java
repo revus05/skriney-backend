@@ -76,4 +76,14 @@ public class UserSettingsService {
 
         return new UserSettingsDTO(userSettings);
     }
+
+    public UserSettingsDTO updateAnimationSpeed(UpdateAnimationSpeedRequestDTO updateAnimationSpeedRequestDTO, String userUuid) throws UnauthorizedException, NoUserSettingsFoundException {
+        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
+        UserSettings userSettings = userSettingsRepo.findByUserUuid(userUuid).orElseThrow(() -> new NoUserSettingsFoundException("Нет настроек для пользователя"));
+
+        userSettings.setAnimationSpeed(updateAnimationSpeedRequestDTO.getAnimationSpeed());
+        userSettingsRepo.save(userSettings);
+
+        return new UserSettingsDTO(userSettings);
+    }
 }

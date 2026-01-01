@@ -63,4 +63,12 @@ public class UserSettingsController {
         UserSettingsDTO updatedUserSettings = userSettingsService.updateLanguage(updateLanguageRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
         return new Response("Язык интерфейса пользователя успешно обновлен",  HttpStatus.OK, updatedUserSettings);
     }
+
+    @UpdateAnimationSpeedOperation
+    @PostMapping("/update-animation-speed")
+    public Response updateLanguage(@Valid @RequestBody UpdateAnimationSpeedRequestDTO updateAnimationSpeedRequestDTO) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserSettingsDTO updatedUserSettings = userSettingsService.updateAnimationSpeed(updateAnimationSpeedRequestDTO, ((UserDetails) auth.getPrincipal()).getUsername());
+        return new Response("Скорость анимаций успешно обновлена",  HttpStatus.OK, updatedUserSettings);
+    }
 }
