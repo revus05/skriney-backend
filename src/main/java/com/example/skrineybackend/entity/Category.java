@@ -2,6 +2,7 @@ package com.example.skrineybackend.entity;
 
 import com.example.skrineybackend.dto.category.CreateCategoryRequestDTO;
 import io.swagger.v3.oas.annotations.Hidden;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +29,7 @@ public class Category {
     private String title;
 
     @Column
+    @Nullable
     private String emoji;
 
     @CreatedDate

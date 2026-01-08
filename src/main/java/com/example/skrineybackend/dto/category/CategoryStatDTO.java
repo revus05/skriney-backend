@@ -6,5 +6,5 @@ import java.math.BigDecimal;
 
 public record CategoryStatDTO(
         @Schema(description = "Category uuid", requiredMode = Schema.RequiredMode.REQUIRED) String uuid,
-        @Schema(description = "Category total spent", requiredMode = Schema.RequiredMode.REQUIRED) BigDecimal totalSpent) {
+        @Schema(description = "Category total spent", requiredMode = Schema.RequiredMode.REQUIRED) BigDecimal totalExpenses) {
 }

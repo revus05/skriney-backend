@@ -7,6 +7,7 @@ import com.example.skrineybackend.dto.category.UpdateCategoryRequestDTO;
 import com.example.skrineybackend.entity.Category;
 import com.example.skrineybackend.entity.User;
 import com.example.skrineybackend.entity.UserSettings;
+import com.example.skrineybackend.enums.BalancePeriod;
 import com.example.skrineybackend.exception.NoCategoryFoundException;
 import com.example.skrineybackend.exception.UnauthorizedException;
 import com.example.skrineybackend.repository.CategoryRepo;
@@ -16,6 +17,8 @@ import com.example.skrineybackend.repository.UserSettingsRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,8 +30,24 @@ public class CategoryService {
     private final TransactionRepo transactionRepo;
     private final UserSettingsRepo userSettingsRepo;
 
-    public List<CategoryStatDTO> getCategoryStats(String userUuid) throws UnauthorizedException {
-        return transactionRepo.getUserCategoryStats(userUuid);
+    public List<CategoryStatDTO> getCategoryStats(String userUuid, BalancePeriod period, String bankAccountUuid) throws UnauthorizedException {
+        Instant startDate = calculateFromDateTime(period);
+        if (startDate == null) {
+            startDate = Instant.EPOCH;
+        }
+        return transactionRepo.getUserCategoryStats(userUuid, startDate, bankAccountUuid);
+    }
+
+    private Instant calculateFromDateTime(BalancePeriod period) {
+        Instant now = Instant.now();
+
+        return switch (period) {
+            case LAST_7_DAYS   -> now.minus(7, ChronoUnit.DAYS);
+            case LAST_30_DAYS  -> now.minus(30, ChronoUnit.DAYS);
+            case LAST_3_MONTHS -> now.minus(90, ChronoUnit.DAYS);
+            case LAST_1_YEAR   -> now.minus(365, ChronoUnit.DAYS);
+            case ALL_TIME      -> Instant.EPOCH;
+        };
     }
 
     public CategoryDTO createCategory(CreateCategoryRequestDTO createCategoryRequestDTO, String userUuid) throws UnauthorizedException {

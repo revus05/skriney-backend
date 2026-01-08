@@ -3,6 +3,7 @@ package com.example.skrineybackend.controller;
 import com.example.skrineybackend.dto.balance.BalanceSummaryDTO;
 import com.example.skrineybackend.dto.balance.DailyBalanceDTO;
 import com.example.skrineybackend.dto.response.Response;
+import com.example.skrineybackend.enums.BalancePeriod;
 import com.example.skrineybackend.service.BalanceService;
 import com.example.skrineybackend.swagger.balance.GetUserBalanceSummaryOperation;
 import com.example.skrineybackend.swagger.balance.GetUserBalanceTimelineOperation;
@@ -14,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -27,9 +29,9 @@ public class BalanceController {
 
     @GetUserBalanceTimelineOperation
     @GetMapping()
-    public Response getUserBalanceTimeline() {
+    public Response getUserBalanceTimeline(@RequestParam(required = false, defaultValue = "LAST_30_DAYS") BalancePeriod period, @RequestParam(required = false) String bankAccountUuid) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        List<DailyBalanceDTO> dailyBalancesDTO = balanceService.getUserBalanceTimeline(((UserDetails) auth.getPrincipal()).getUsername());
+        List<DailyBalanceDTO> dailyBalancesDTO = balanceService.getUserBalanceTimeline(((UserDetails) auth.getPrincipal()).getUsername(), period, bankAccountUuid);
         return new Response("Ежедневные балансы успешно получены", HttpStatus.OK, dailyBalancesDTO);
     }
 
