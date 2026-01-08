@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
 import java.lang.annotation.*;
 
 @Target(ElementType.METHOD)
@@ -15,12 +14,9 @@ import java.lang.annotation.*;
     summary = "Получение конкретного счета пользователя",
     description = "Получение конкретного счета пользователя",
     responses = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Счет пользователя успешно получен",
-            content = @Content(schema = @Schema(implementation = BankAccountDTO.class))
-        ),
-    }
-)
-public @interface GetOneBankAccountOperation {
-}
+      @ApiResponse(
+          responseCode = "200",
+          description = "Счет пользователя успешно получен",
+          content = @Content(schema = @Schema(implementation = BankAccountDTO.class))),
+    })
+public @interface GetOneBankAccountOperation {}

@@ -7,12 +7,11 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class MoneyConvertClient {
 
-    private final RestTemplate restTemplate = new RestTemplate();
+  private final RestTemplate restTemplate = new RestTemplate();
 
-    private static final String URL =
-            "https://cdn.moneyconvert.net/api/latest.json";
+  private static final String URL = "https://cdn.moneyconvert.net/api/latest.json";
 
-    public MoneyConvertResponseDTO getLatestRates() {
-        return restTemplate.getForObject(URL, MoneyConvertResponseDTO.class);
-    }
+  public MoneyConvertResponseDTO getLatestRates() {
+    return restTemplate.getForObject(URL, MoneyConvertResponseDTO.class);
+  }
 }

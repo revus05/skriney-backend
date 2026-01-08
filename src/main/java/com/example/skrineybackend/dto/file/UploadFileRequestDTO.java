@@ -8,6 +8,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 public class UploadFileRequestDTO {
-    @Schema(description = "Файл для загрузки", type = "string", format = "binary", requiredMode = Schema.RequiredMode.REQUIRED)
-    private MultipartFile file;
+  @Schema(
+      description = "Файл для загрузки",
+      type = "string",
+      format = "binary",
+      requiredMode = Schema.RequiredMode.REQUIRED)
+  private MultipartFile file;
 }

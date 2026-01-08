@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class UpdateThemeRequestDTO {
-    @Schema(description = "New user's currency", requiredMode = Schema.RequiredMode.REQUIRED)
-    private UserTheme theme;
+  @Schema(description = "New user's currency", requiredMode = Schema.RequiredMode.REQUIRED)
+  private UserTheme theme;
 }

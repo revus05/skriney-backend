@@ -7,6 +7,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class UpdateAnimationEnabledRequestDTO {
-    @Schema(description = "New animation enabled state", requiredMode = Schema.RequiredMode.REQUIRED)
-    private boolean animationEnabled;
+  @Schema(description = "New animation enabled state", requiredMode = Schema.RequiredMode.REQUIRED)
+  private boolean animationEnabled;
 }

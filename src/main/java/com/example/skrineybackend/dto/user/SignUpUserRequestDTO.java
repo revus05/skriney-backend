@@ -10,23 +10,23 @@ import lombok.Setter;
 @Setter
 @Getter
 public class SignUpUserRequestDTO {
-    @Schema(description = "Username", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotBlank(message = "Имя пользователя обязательно")
-    private String username;
+  @Schema(description = "Username", requiredMode = Schema.RequiredMode.REQUIRED)
+  @NotBlank(message = "Имя пользователя обязательно")
+  private String username;
 
-    @Schema(description = "Email address", requiredMode = Schema.RequiredMode.REQUIRED)
-    @Email(message = "Email должен быть валидным")
-    @NotBlank(message = "Email обязателен")
-    private String email;
+  @Schema(description = "Email address", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Email(message = "Email должен быть валидным")
+  @NotBlank(message = "Email обязателен")
+  private String email;
 
-    @Schema(description = "User password", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotBlank(message = "Пароль обязателен")
-    @Size(min = 8, max = 128, message = "Пароль должен содержать от 8 до 128 символов")
-    private String password;
+  @Schema(description = "User password", requiredMode = Schema.RequiredMode.REQUIRED)
+  @NotBlank(message = "Пароль обязателен")
+  @Size(min = 8, max = 128, message = "Пароль должен содержать от 8 до 128 символов")
+  private String password;
 
-    public SignUpUserRequestDTO(String username, String email, String password) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-    }
+  public SignUpUserRequestDTO(String username, String email, String password) {
+    this.username = username;
+    this.email = email;
+    this.password = password;
+  }
 }

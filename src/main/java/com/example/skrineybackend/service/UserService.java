@@ -15,65 +15,82 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserRepo userRepo;
-    private final PasswordEncoder passwordEncoder;
+  private final UserRepo userRepo;
+  private final PasswordEncoder passwordEncoder;
 
-    public UserDTO signUpUser(SignUpUserRequestDTO signUpUserRequestDTO) throws UserAlreadyExistsException {
-        checkUserExists(signUpUserRequestDTO.getEmail(), signUpUserRequestDTO.getUsername());
+  public UserDTO signUpUser(SignUpUserRequestDTO signUpUserRequestDTO)
+      throws UserAlreadyExistsException {
+    checkUserExists(signUpUserRequestDTO.getEmail(), signUpUserRequestDTO.getUsername());
 
-        String encodedPassword = passwordEncoder.encode(signUpUserRequestDTO.getPassword());
-        signUpUserRequestDTO.setPassword(encodedPassword);
+    String encodedPassword = passwordEncoder.encode(signUpUserRequestDTO.getPassword());
+    signUpUserRequestDTO.setPassword(encodedPassword);
 
-        return new UserDTO(userRepo.save(new User(signUpUserRequestDTO)));
-    }
+    return new UserDTO(userRepo.save(new User(signUpUserRequestDTO)));
+  }
 
-    public UserDTO signInUser(SignInUserRequestDTO signInUserRequestDTO) throws UnauthorizedException {
-        User foundUser = userRepo.findByEmail(signInUserRequestDTO.getEmail())
-            .filter(user -> passwordEncoder.matches(signInUserRequestDTO.getPassword(), user.getPassword()))
+  public UserDTO signInUser(SignInUserRequestDTO signInUserRequestDTO)
+      throws UnauthorizedException {
+    User foundUser =
+        userRepo
+            .findByEmail(signInUserRequestDTO.getEmail())
+            .filter(
+                user ->
+                    passwordEncoder.matches(signInUserRequestDTO.getPassword(), user.getPassword()))
             .orElseThrow(() -> new UnauthorizedException("Нет пользователя с введенными данными"));
 
-        return new UserDTO(foundUser);
-    }
+    return new UserDTO(foundUser);
+  }
 
-    public UserDTO getMe(String userUuid) throws UnauthorizedException {
-        User foundUser = userRepo.findById(userUuid)
+  public UserDTO getMe(String userUuid) throws UnauthorizedException {
+    User foundUser =
+        userRepo
+            .findById(userUuid)
             .orElseThrow(() -> new UnauthorizedException("Нет пользователя для такого uuid"));
 
-        return new UserDTO(foundUser);
-    }
+    return new UserDTO(foundUser);
+  }
 
-    private void checkUserExists(String email, String username) {
-        userRepo.findByUsername(username)
-                .ifPresent(user -> {
-                    throw new UserAlreadyExistsException("username", "Имя пользователя занято");
-                });
-
-        userRepo.findByEmail(email)
-            .ifPresent(user -> {
-                throw new UserAlreadyExistsException("email", "Пользователь с таким email уже существует");
+  private void checkUserExists(String email, String username) {
+    userRepo
+        .findByUsername(username)
+        .ifPresent(
+            user -> {
+              throw new UserAlreadyExistsException("username", "Имя пользователя занято");
             });
-    }
 
-    public UserDTO updateImage(UpdateUserImageRequestDTO updateUserImageRequestDTO, String userUuid) {
-        User user = userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
+    userRepo
+        .findByEmail(email)
+        .ifPresent(
+            user -> {
+              throw new UserAlreadyExistsException(
+                  "email", "Пользователь с таким email уже существует");
+            });
+  }
 
-        user.setImage(updateUserImageRequestDTO.getImage());
-        userRepo.save(user);
+  public UserDTO updateImage(UpdateUserImageRequestDTO updateUserImageRequestDTO, String userUuid) {
+    User user =
+        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
 
-        return new UserDTO(user);
-    }
+    user.setImage(updateUserImageRequestDTO.getImage());
+    userRepo.save(user);
 
-    public String connectTelegram(long telegramId, String userUuid) throws UnauthorizedException {
-        User user = userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
+    return new UserDTO(user);
+  }
 
-        user.setTelegramId(telegramId);
+  public String connectTelegram(long telegramId, String userUuid) throws UnauthorizedException {
+    User user =
+        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
 
-        userRepo.save(user);
+    user.setTelegramId(telegramId);
 
-        return user.getUsername();
-    }
+    userRepo.save(user);
 
-    public User getUserByTelegramId(long telegramId) throws UnauthorizedException {
-        return userRepo.findByTelegramId(telegramId).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
-    }
+    return user.getUsername();
+  }
+
+  public User getUserByTelegramId(long telegramId) throws UnauthorizedException {
+    return userRepo
+        .findByTelegramId(telegramId)
+        .orElseThrow(() -> new UnauthorizedException("Не авторизован"));
+  }
 }

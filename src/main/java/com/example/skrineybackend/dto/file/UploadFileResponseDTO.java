@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @RequiredArgsConstructor
 public class UploadFileResponseDTO {
-    @Schema(description = "Uploaded file path", requiredMode = Schema.RequiredMode.REQUIRED)
-    private final String filepath;
+  @Schema(description = "Uploaded file path", requiredMode = Schema.RequiredMode.REQUIRED)
+  private final String filepath;
 }

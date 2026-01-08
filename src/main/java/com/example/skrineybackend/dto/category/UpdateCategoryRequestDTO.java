@@ -7,9 +7,9 @@ import lombok.Setter;
 @Setter
 @Getter
 public class UpdateCategoryRequestDTO {
-    @Schema(description = "Bank Account title", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    private String title;
+  @Schema(description = "Bank Account title", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  private String title;
 
-    @Schema(description = "Bank Account emoji", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    private String emoji;
+  @Schema(description = "Bank Account emoji", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  private String emoji;
 }

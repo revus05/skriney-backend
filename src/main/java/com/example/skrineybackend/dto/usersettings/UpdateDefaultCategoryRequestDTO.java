@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UpdateDefaultCategoryRequestDTO {
-    @Schema(description = "New category uuid", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotBlank(message = "Uuid категории обязателен")
-    private String uuid;
+  @Schema(description = "New category uuid", requiredMode = Schema.RequiredMode.REQUIRED)
+  @NotBlank(message = "Uuid категории обязателен")
+  private String uuid;
 }

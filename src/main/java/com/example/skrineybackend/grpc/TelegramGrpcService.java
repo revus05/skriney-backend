@@ -12,18 +12,17 @@ import net.devh.boot.grpc.server.service.GrpcService;
 @RequiredArgsConstructor
 public class TelegramGrpcService extends TelegramServiceGrpc.TelegramServiceImplBase {
 
-    private final UserService userService;
+  private final UserService userService;
 
-    @Override
-    public void connectTelegram(ConnectTelegramRequest request, StreamObserver<ConnectTelegramResponse> responseObserver) {
-        String username = userService.connectTelegram(request.getTelegramId(), request.getUserUuid());
+  @Override
+  public void connectTelegram(
+      ConnectTelegramRequest request, StreamObserver<ConnectTelegramResponse> responseObserver) {
+    String username = userService.connectTelegram(request.getTelegramId(), request.getUserUuid());
 
-        ConnectTelegramResponse response = ConnectTelegramResponse.newBuilder()
-                .setSuccess(true)
-                .setUsername(username)
-                .build();
+    ConnectTelegramResponse response =
+        ConnectTelegramResponse.newBuilder().setSuccess(true).setUsername(username).build();
 
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
-    }
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
+  }
 }

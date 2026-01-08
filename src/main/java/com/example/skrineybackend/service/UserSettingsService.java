@@ -18,72 +18,113 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserSettingsService {
-    private final UserSettingsRepo userSettingsRepo;
-    private final UserRepo userRepo;
-    private final CategoryRepo categoryRepo;
-    private final BankAccountRepo bankAccountRepo;
+  private final UserSettingsRepo userSettingsRepo;
+  private final UserRepo userRepo;
+  private final CategoryRepo categoryRepo;
+  private final BankAccountRepo bankAccountRepo;
 
-    public UserSettingsDTO updateDefaultCurrency(UpdateDefaultCurrencyRequestDTO updateDefaultCurrencyRequestDTO, String userUuid) throws UnauthorizedException, NoUserSettingsFoundException {
-        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
-        UserSettings userSettings = userSettingsRepo.findByUserUuid(userUuid).orElseThrow(() -> new NoUserSettingsFoundException("Нет настроек для пользователя"));
+  public UserSettingsDTO updateDefaultCurrency(
+      UpdateDefaultCurrencyRequestDTO updateDefaultCurrencyRequestDTO, String userUuid)
+      throws UnauthorizedException, NoUserSettingsFoundException {
+    userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
+    UserSettings userSettings =
+        userSettingsRepo
+            .findByUserUuid(userUuid)
+            .orElseThrow(() -> new NoUserSettingsFoundException("Нет настроек для пользователя"));
 
-        userSettings.setDefaultCurrency(updateDefaultCurrencyRequestDTO.getCurrency());
-        userSettingsRepo.save(userSettings);
+    userSettings.setDefaultCurrency(updateDefaultCurrencyRequestDTO.getCurrency());
+    userSettingsRepo.save(userSettings);
 
-        return new UserSettingsDTO(userSettings);
-    }
+    return new UserSettingsDTO(userSettings);
+  }
 
-    public UserSettingsDTO updateDefaultCategory(UpdateDefaultCategoryRequestDTO updateDefaultCategoryRequestDTO, String userUuid) throws UnauthorizedException, NoUserSettingsFoundException, NoCategoryFoundException {
-        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
-        UserSettings userSettings = userSettingsRepo.findByUserUuid(userUuid).orElseThrow(() -> new NoUserSettingsFoundException("Нет настроек для пользователя"));
+  public UserSettingsDTO updateDefaultCategory(
+      UpdateDefaultCategoryRequestDTO updateDefaultCategoryRequestDTO, String userUuid)
+      throws UnauthorizedException, NoUserSettingsFoundException, NoCategoryFoundException {
+    userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
+    UserSettings userSettings =
+        userSettingsRepo
+            .findByUserUuid(userUuid)
+            .orElseThrow(() -> new NoUserSettingsFoundException("Нет настроек для пользователя"));
 
-        Category category = categoryRepo.findById(updateDefaultCategoryRequestDTO.getUuid()).orElseThrow(() -> new NoCategoryFoundException("Категория не найдена или не принадлежит пользователю"));
+    Category category =
+        categoryRepo
+            .findById(updateDefaultCategoryRequestDTO.getUuid())
+            .orElseThrow(
+                () ->
+                    new NoCategoryFoundException(
+                        "Категория не найдена или не принадлежит пользователю"));
 
-        userSettings.setDefaultCategory(category);
-        userSettingsRepo.save(userSettings);
+    userSettings.setDefaultCategory(category);
+    userSettingsRepo.save(userSettings);
 
-        return new UserSettingsDTO(userSettings);
-    }
+    return new UserSettingsDTO(userSettings);
+  }
 
-    public UserSettingsDTO updateDefaultBankAccount(UpdateDefaultBankAccountRequestDTO updateDefaultBankAccountRequestDTO, String userUuid) throws UnauthorizedException, NoUserSettingsFoundException, NoCategoryFoundException {
-        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
-        UserSettings userSettings = userSettingsRepo.findByUserUuid(userUuid).orElseThrow(() -> new NoUserSettingsFoundException("Нет настроек для пользователя"));
+  public UserSettingsDTO updateDefaultBankAccount(
+      UpdateDefaultBankAccountRequestDTO updateDefaultBankAccountRequestDTO, String userUuid)
+      throws UnauthorizedException, NoUserSettingsFoundException, NoCategoryFoundException {
+    userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
+    UserSettings userSettings =
+        userSettingsRepo
+            .findByUserUuid(userUuid)
+            .orElseThrow(() -> new NoUserSettingsFoundException("Нет настроек для пользователя"));
 
-        BankAccount bankAccount = bankAccountRepo.findById(updateDefaultBankAccountRequestDTO.getUuid()).orElseThrow(() -> new NoBankAccountFoundException("Счет не найден или не принадлежит пользователю"));
+    BankAccount bankAccount =
+        bankAccountRepo
+            .findById(updateDefaultBankAccountRequestDTO.getUuid())
+            .orElseThrow(
+                () ->
+                    new NoBankAccountFoundException(
+                        "Счет не найден или не принадлежит пользователю"));
 
-        userSettings.setDefaultBankAccount(bankAccount);
-        userSettingsRepo.save(userSettings);
+    userSettings.setDefaultBankAccount(bankAccount);
+    userSettingsRepo.save(userSettings);
 
-        return new UserSettingsDTO(userSettings);
-    }
+    return new UserSettingsDTO(userSettings);
+  }
 
-    public UserSettingsDTO updateTheme(UpdateThemeRequestDTO updateThemeRequestDTO, String userUuid) throws UnauthorizedException, NoUserSettingsFoundException {
-        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
-        UserSettings userSettings = userSettingsRepo.findByUserUuid(userUuid).orElseThrow(() -> new NoUserSettingsFoundException("Нет настроек для пользователя"));
+  public UserSettingsDTO updateTheme(UpdateThemeRequestDTO updateThemeRequestDTO, String userUuid)
+      throws UnauthorizedException, NoUserSettingsFoundException {
+    userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
+    UserSettings userSettings =
+        userSettingsRepo
+            .findByUserUuid(userUuid)
+            .orElseThrow(() -> new NoUserSettingsFoundException("Нет настроек для пользователя"));
 
-        userSettings.setUserTheme(updateThemeRequestDTO.getTheme());
-        userSettingsRepo.save(userSettings);
+    userSettings.setUserTheme(updateThemeRequestDTO.getTheme());
+    userSettingsRepo.save(userSettings);
 
-        return new UserSettingsDTO(userSettings);
-    }
+    return new UserSettingsDTO(userSettings);
+  }
 
-    public UserSettingsDTO updateLanguage(UpdateLanguageRequestDTO updateLanguageRequestDTO, String userUuid) throws UnauthorizedException, NoUserSettingsFoundException {
-        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
-        UserSettings userSettings = userSettingsRepo.findByUserUuid(userUuid).orElseThrow(() -> new NoUserSettingsFoundException("Нет настроек для пользователя"));
+  public UserSettingsDTO updateLanguage(
+      UpdateLanguageRequestDTO updateLanguageRequestDTO, String userUuid)
+      throws UnauthorizedException, NoUserSettingsFoundException {
+    userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
+    UserSettings userSettings =
+        userSettingsRepo
+            .findByUserUuid(userUuid)
+            .orElseThrow(() -> new NoUserSettingsFoundException("Нет настроек для пользователя"));
 
-        userSettings.setLanguage(updateLanguageRequestDTO.getLanguage());
-        userSettingsRepo.save(userSettings);
+    userSettings.setLanguage(updateLanguageRequestDTO.getLanguage());
+    userSettingsRepo.save(userSettings);
 
-        return new UserSettingsDTO(userSettings);
-    }
+    return new UserSettingsDTO(userSettings);
+  }
 
-    public UserSettingsDTO updateAnimationEnabled(UpdateAnimationEnabledRequestDTO updateAnimationEnabledRequestDTO, String userUuid) throws UnauthorizedException, NoUserSettingsFoundException {
-        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
-        UserSettings userSettings = userSettingsRepo.findByUserUuid(userUuid).orElseThrow(() -> new NoUserSettingsFoundException("Нет настроек для пользователя"));
+  public UserSettingsDTO updateAnimationEnabled(
+      UpdateAnimationEnabledRequestDTO updateAnimationEnabledRequestDTO, String userUuid)
+      throws UnauthorizedException, NoUserSettingsFoundException {
+    userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
+    UserSettings userSettings =
+        userSettingsRepo
+            .findByUserUuid(userUuid)
+            .orElseThrow(() -> new NoUserSettingsFoundException("Нет настроек для пользователя"));
 
-        userSettings.setAnimationEnabled(updateAnimationEnabledRequestDTO.isAnimationEnabled());
-        userSettingsRepo.save(userSettings);
+    userSettings.setAnimationEnabled(updateAnimationEnabledRequestDTO.isAnimationEnabled());
+    userSettingsRepo.save(userSettings);
 
-        return new UserSettingsDTO(userSettings);
-    }
+    return new UserSettingsDTO(userSettings);
+  }
 }

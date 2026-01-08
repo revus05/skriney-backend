@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class UpdateDefaultCurrencyRequestDTO {
-    @Schema(description = "New user's currency", requiredMode = Schema.RequiredMode.REQUIRED)
-    private Currency currency;
+  @Schema(description = "New user's currency", requiredMode = Schema.RequiredMode.REQUIRED)
+  private Currency currency;
 }

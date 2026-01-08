@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UpdateUserImageRequestDTO {
-    @Schema(description = "Image url", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotBlank(message = "Url изображения обязателен")
-    private String image;
+  @Schema(description = "Image url", requiredMode = Schema.RequiredMode.REQUIRED)
+  @NotBlank(message = "Url изображения обязателен")
+  private String image;
 }

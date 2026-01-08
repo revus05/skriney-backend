@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
 import java.lang.annotation.*;
 
 @Target(ElementType.METHOD)
@@ -17,26 +16,24 @@ import java.lang.annotation.*;
 @Operation(
     summary = "Создание категории",
     description = "Создает категорию транзакции для пользователя",
-    requestBody = @RequestBody(
-        description = "Данные для создания категории",
-        content = @Content(
-            schema = @Schema(implementation = CreateCategoryRequestDTO.class),
-            examples = @ExampleObject(
-                name = "Пример запроса",
-                value = """
+    requestBody =
+        @RequestBody(
+            description = "Данные для создания категории",
+            content =
+                @Content(
+                    schema = @Schema(implementation = CreateCategoryRequestDTO.class),
+                    examples =
+                        @ExampleObject(
+                            name = "Пример запроса",
+                            value =
+                                """
                     {
                        "title": "Продукты"
-                     }"""
-            )
-        )
-    ),
+                     }"""))),
     responses = {
-        @ApiResponse(
-            responseCode = "201",
-            description = "Категория успешно создана",
-            content = @Content(schema = @Schema(implementation = TransactionDTO.class))
-        ),
-    }
-)
-public @interface CreateCategoryOperation {
-}
+      @ApiResponse(
+          responseCode = "201",
+          description = "Категория успешно создана",
+          content = @Content(schema = @Schema(implementation = TransactionDTO.class))),
+    })
+public @interface CreateCategoryOperation {}

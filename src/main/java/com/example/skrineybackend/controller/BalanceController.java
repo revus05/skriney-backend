@@ -8,6 +8,7 @@ import com.example.skrineybackend.service.BalanceService;
 import com.example.skrineybackend.swagger.balance.GetUserBalanceSummaryOperation;
 import com.example.skrineybackend.swagger.balance.GetUserBalanceTimelineOperation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -18,28 +19,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/balance")
 @Tag(name = "Баланс", description = "Управление балансом пользователя")
 @RequiredArgsConstructor
 public class BalanceController {
-    private final BalanceService balanceService;
+  private final BalanceService balanceService;
 
-    @GetUserBalanceTimelineOperation
-    @GetMapping()
-    public Response getUserBalanceTimeline(@RequestParam(required = false, defaultValue = "LAST_30_DAYS") BalancePeriod period, @RequestParam(required = false) String bankAccountUuid) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        List<DailyBalanceDTO> dailyBalancesDTO = balanceService.getUserBalanceTimeline(((UserDetails) auth.getPrincipal()).getUsername(), period, bankAccountUuid);
-        return new Response("Ежедневные балансы успешно получены", HttpStatus.OK, dailyBalancesDTO);
-    }
+  @GetUserBalanceTimelineOperation
+  @GetMapping()
+  public Response getUserBalanceTimeline(
+      @RequestParam(required = false, defaultValue = "LAST_30_DAYS") BalancePeriod period,
+      @RequestParam(required = false) String bankAccountUuid) {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    List<DailyBalanceDTO> dailyBalancesDTO =
+        balanceService.getUserBalanceTimeline(
+            ((UserDetails) auth.getPrincipal()).getUsername(), period, bankAccountUuid);
+    return new Response("Ежедневные балансы успешно получены", HttpStatus.OK, dailyBalancesDTO);
+  }
 
-    @GetUserBalanceSummaryOperation
-    @GetMapping("/summary")
-    public Response getUserBalanceSummary() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        BalanceSummaryDTO balanceSummaryDTO = balanceService.getUserBalanceSummary(((UserDetails) auth.getPrincipal()).getUsername());
-        return new Response("Баланс успешно получен", HttpStatus.OK, balanceSummaryDTO);
-    }
+  @GetUserBalanceSummaryOperation
+  @GetMapping("/summary")
+  public Response getUserBalanceSummary() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    BalanceSummaryDTO balanceSummaryDTO =
+        balanceService.getUserBalanceSummary(((UserDetails) auth.getPrincipal()).getUsername());
+    return new Response("Баланс успешно получен", HttpStatus.OK, balanceSummaryDTO);
+  }
 }

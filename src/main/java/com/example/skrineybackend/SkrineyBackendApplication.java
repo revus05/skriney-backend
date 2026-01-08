@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableJpaAuditing
 public class SkrineyBackendApplication {
 
-	public static void main(String[] args) {
-        SpringApplication.run(SkrineyBackendApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(SkrineyBackendApplication.class, args);
+  }
 }

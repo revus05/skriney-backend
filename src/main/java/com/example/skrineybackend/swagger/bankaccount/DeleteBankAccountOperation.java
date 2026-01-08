@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
 import java.lang.annotation.*;
 
 @Target(ElementType.METHOD)
@@ -15,16 +14,11 @@ import java.lang.annotation.*;
 @Operation(
     summary = "Удаление счета",
     description = "Удаляет счет пользователя",
-    requestBody = @RequestBody(
-        description = "Данные для удаления счета"
-    ),
+    requestBody = @RequestBody(description = "Данные для удаления счета"),
     responses = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Счет успешно удален",
-            content = @Content(schema = @Schema(implementation = BankAccountDTO.class))
-        ),
-    }
-)
-public @interface DeleteBankAccountOperation {
-}
+      @ApiResponse(
+          responseCode = "200",
+          description = "Счет успешно удален",
+          content = @Content(schema = @Schema(implementation = BankAccountDTO.class))),
+    })
+public @interface DeleteBankAccountOperation {}

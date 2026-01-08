@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
 import java.lang.annotation.*;
 
 @Target(ElementType.METHOD)
@@ -16,14 +15,10 @@ import java.lang.annotation.*;
     summary = "Получение категорий",
     description = "Получение всех категорий пользователя",
     responses = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Категории получены успешно",
-            content = @Content(
-                array = @ArraySchema(schema = @Schema(implementation = CategoryDTO.class))
-            )
-        ),
-    }
-)
-public @interface GetCategoriesOperation {
-}
+      @ApiResponse(
+          responseCode = "200",
+          description = "Категории получены успешно",
+          content =
+              @Content(array = @ArraySchema(schema = @Schema(implementation = CategoryDTO.class)))),
+    })
+public @interface GetCategoriesOperation {}

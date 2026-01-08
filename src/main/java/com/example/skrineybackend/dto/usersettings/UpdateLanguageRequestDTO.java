@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class UpdateLanguageRequestDTO {
-    @Schema(description = "New user's language", requiredMode = Schema.RequiredMode.REQUIRED)
-    private Language language;
+  @Schema(description = "New user's language", requiredMode = Schema.RequiredMode.REQUIRED)
+  private Language language;
 }

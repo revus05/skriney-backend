@@ -15,32 +15,28 @@ import lombok.Setter;
 @Setter
 @Table(name = "user_settings")
 public class UserSettings {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String uuid;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String uuid;
 
-    @Column(nullable = false)
-    private UserTheme userTheme = UserTheme.SYSTEM;
+  @Column(nullable = false)
+  private UserTheme userTheme = UserTheme.SYSTEM;
 
-    @Column()
-    private Currency defaultCurrency = Currency.USD;
+  @Column() private Currency defaultCurrency = Currency.USD;
 
-    @Column()
-    private boolean animationEnabled = true;
+  @Column() private boolean animationEnabled = true;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "default_category_id")
-    private Category defaultCategory;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "default_category_id")
+  private Category defaultCategory;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "default_bankaccount_id")
-    private BankAccount defaultBankAccount;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "default_bankaccount_id")
+  private BankAccount defaultBankAccount;
 
-    @Column()
-    @Nullable
-    private Language language;
+  @Column() @Nullable private Language language;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 }
