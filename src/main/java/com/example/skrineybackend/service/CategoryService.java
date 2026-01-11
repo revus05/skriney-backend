@@ -1,23 +1,21 @@
 package com.example.skrineybackend.service;
 
-import com.example.skrineybackend.dto.category.CategoryDTO;
 import com.example.skrineybackend.dto.category.CategoryStatDTO;
 import com.example.skrineybackend.dto.category.CreateCategoryRequestDTO;
 import com.example.skrineybackend.dto.category.UpdateCategoryRequestDTO;
 import com.example.skrineybackend.entity.Category;
+import com.example.skrineybackend.entity.CurrencyRate;
+import com.example.skrineybackend.entity.Transaction;
 import com.example.skrineybackend.entity.User;
-import com.example.skrineybackend.entity.UserSettings;
-import com.example.skrineybackend.enums.BalancePeriod;
-import com.example.skrineybackend.exception.NoCategoryFoundException;
-import com.example.skrineybackend.exception.UnauthorizedException;
+import com.example.skrineybackend.enums.Currency;
 import com.example.skrineybackend.repository.CategoryRepo;
-import com.example.skrineybackend.repository.TransactionRepo;
-import com.example.skrineybackend.repository.UserRepo;
-import com.example.skrineybackend.repository.UserSettingsRepo;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import com.example.skrineybackend.repository.CurrencyRateRepo;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,91 +23,62 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CategoryService {
   private final CategoryRepo categoryRepo;
-  private final UserRepo userRepo;
-  private final TransactionRepo transactionRepo;
-  private final UserSettingsRepo userSettingsRepo;
+  private final CurrencyRateRepo currencyRateRepo;
 
-  public List<CategoryStatDTO> getCategoryStats(
-      String userUuid, BalancePeriod period, String bankAccountUuid) throws UnauthorizedException {
-    Instant startDate = calculateFromDateTime(period);
-    if (startDate == null) {
-      startDate = Instant.EPOCH;
-    }
-    return transactionRepo.getUserCategoryStats(userUuid, startDate, bankAccountUuid);
-  }
+  public List<CategoryStatDTO> getCategoryStats(List<Transaction> transactions) {
+    Map<Category, BigDecimal> categoryAmount = new HashMap<>();
+    Map<Category, Map<Currency, BigDecimal>> currencyBalances = new HashMap<>();
+    for (Transaction transaction : transactions) {
+      if (transaction.getCategory() == null) {
+        continue;
+      }
 
-  private Instant calculateFromDateTime(BalancePeriod period) {
-    Instant now = Instant.now();
+      BigDecimal rate =
+          currencyRateRepo
+              .findTopByBaseCurrencyAndTargetCurrencyOrderByRateDateDesc(
+                  "USD", transaction.getCurrency().name())
+              .orElse(new CurrencyRate())
+              .getRate();
 
-    return switch (period) {
-      case LAST_7_DAYS -> now.minus(7, ChronoUnit.DAYS);
-      case LAST_30_DAYS -> now.minus(30, ChronoUnit.DAYS);
-      case LAST_3_MONTHS -> now.minus(90, ChronoUnit.DAYS);
-      case LAST_1_YEAR -> now.minus(365, ChronoUnit.DAYS);
-      case ALL_TIME -> Instant.EPOCH;
-    };
-  }
+      int CURRENCY_SCALE =
+          java.util.Currency.getInstance(transaction.getCurrency().name())
+              .getDefaultFractionDigits();
 
-  public CategoryDTO createCategory(
-      CreateCategoryRequestDTO createCategoryRequestDTO, String userUuid)
-      throws UnauthorizedException {
-    User user =
-        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
-    Category category = new Category(createCategoryRequestDTO);
+      BigDecimal amountInUsd =
+          transaction.getAmount().divide(rate, CURRENCY_SCALE, RoundingMode.HALF_EVEN);
 
-    if (user.getCategories().isEmpty()) {
-      user.getSettings().setDefaultCategory(category);
+      categoryAmount.merge(transaction.getCategory(), amountInUsd, BigDecimal::add);
+
+      currencyBalances
+          .computeIfAbsent(transaction.getCategory(), k -> new HashMap<>())
+          .merge(transaction.getCurrency(), transaction.getAmount(), BigDecimal::add);
     }
 
-    category.setUser(user);
+    List<CategoryStatDTO> result = new ArrayList<>();
+    System.out.println(categoryAmount.size());
+    for (Map.Entry<Category, BigDecimal> entry : categoryAmount.entrySet()) {
+      result.add(
+          new CategoryStatDTO(
+              entry.getKey().getUuid(), entry.getValue(), currencyBalances.get(entry.getKey())));
+    }
 
-    return new CategoryDTO(categoryRepo.save(category));
+    return result;
   }
 
-  public List<CategoryDTO> getCategories(String userUuid) throws UnauthorizedException {
-    userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
-
-    return categoryRepo.findAllByUser_UuidOrderByCreatedAt(userUuid).stream()
-        .map(CategoryDTO::new)
-        .toList();
+  public Category createCategory(CreateCategoryRequestDTO dto, User user) {
+    return categoryRepo.save(new Category(dto, user));
   }
 
-  public CategoryDTO deleteCategory(String uuid, String userUuid)
-      throws UnauthorizedException, NoCategoryFoundException {
-    userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
+  public List<Category> getCategories(String userUuid) {
+    return categoryRepo.findAllByUser_UuidOrderByCreatedAt(userUuid);
+  }
 
-    Category category =
-        categoryRepo
-            .findByUuidAndUser_Uuid(uuid, userUuid)
-            .orElseThrow(
-                () ->
-                    new NoCategoryFoundException(
-                        "Категория не найдена или не принадлежит пользователю"));
-
-    Optional<UserSettings> optionalSettings =
-        userSettingsRepo.findByDefaultCategoryUuid(category.getUuid());
-
-    optionalSettings.ifPresent(
-        userSettings -> updateDefaultCategoryAfterDeletion(userSettings, uuid));
-
+  public void deleteCategory(Category category) {
     categoryRepo.delete(category);
-
-    return new CategoryDTO(category);
   }
 
-  public CategoryDTO updateCategory(
-      String uuid, UpdateCategoryRequestDTO updateCategoryRequestDTO, String userUuid)
-      throws UnauthorizedException, NoCategoryFoundException {
-    userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
-
-    Category category =
-        categoryRepo
-            .findByUuidAndUser_Uuid(uuid, userUuid)
-            .orElseThrow(
-                () ->
-                    new NoCategoryFoundException(
-                        "Категория не найдена или не принадлежит пользователю"));
-
+  public Category updateCategory(
+      Category category, UpdateCategoryRequestDTO updateCategoryRequestDTO) {
     if (updateCategoryRequestDTO.getTitle() != null) {
       category.setTitle(updateCategoryRequestDTO.getTitle());
     }
@@ -119,18 +88,6 @@ public class CategoryService {
 
     categoryRepo.save(category);
 
-    return new CategoryDTO(category);
-  }
-
-  private void updateDefaultCategoryAfterDeletion(UserSettings userSettings, String uuid) {
-    List<Category> remainingCategories =
-        categoryRepo.findAllByUser_UuidOrderByCreatedAt(userSettings.getUser().getUuid()).stream()
-            .filter(c -> !c.getUuid().equals(uuid))
-            .toList();
-
-    Category newDefault = remainingCategories.isEmpty() ? null : remainingCategories.get(0);
-    userSettings.setDefaultCategory(newDefault);
-
-    userSettingsRepo.save(userSettings);
+    return category;
   }
 }

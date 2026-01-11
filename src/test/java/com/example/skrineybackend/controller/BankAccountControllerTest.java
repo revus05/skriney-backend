@@ -101,10 +101,8 @@ class BankAccountControllerTest extends AbstractIntegrationTest {
         .andExpect(jsonPath("$.status").value(HttpStatus.OK.value()))
         .andExpect(jsonPath("$.message").value("Счета пользователя успешно получены"))
         .andExpect(jsonPath("$.data[0].title").value("account title 1"))
-        .andExpect(jsonPath("$.data[0].currency").value("BYN"))
         .andExpect(jsonPath("$.data[0].balance").value("100.12"))
         .andExpect(jsonPath("$.data[1].title").value("account title 2"))
-        .andExpect(jsonPath("$.data[1].currency").value("USD"))
         .andExpect(jsonPath("$.data[1].balance").value("200.12"));
   }
 
@@ -184,7 +182,6 @@ class BankAccountControllerTest extends AbstractIntegrationTest {
             .andExpect(jsonPath("$.status").value(HttpStatus.CREATED.value()))
             .andExpect(jsonPath("$.data.title").value("account title"))
             .andExpect(jsonPath("$.data.balance").value("100.12"))
-            .andExpect(jsonPath("$.data.currency").value("BYN"))
             .andReturn();
 
     String responseJson = createdBankAccountResult.getResponse().getContentAsString();
@@ -193,7 +190,7 @@ class BankAccountControllerTest extends AbstractIntegrationTest {
     String accountUuid = jsonNode.path("data").path("uuid").asText();
 
     UpdateBankAccountRequestDTO updateBankAccountRequest =
-        new UpdateBankAccountRequestDTO(Currency.USD, "updated title", "😊");
+        new UpdateBankAccountRequestDTO("updated title", "😊");
 
     String updateBodyJson = new ObjectMapper().writeValueAsString(updateBankAccountRequest);
 
@@ -207,7 +204,6 @@ class BankAccountControllerTest extends AbstractIntegrationTest {
         .andExpect(jsonPath("$.status").value(HttpStatus.OK.value()))
         .andExpect(jsonPath("$.message").value("Счет пользователя успешно обновлен"))
         .andExpect(jsonPath("$.data.title").value("updated title"))
-        .andExpect(jsonPath("$.data.currency").value("USD"))
         .andExpect(jsonPath("$.data.emoji").value("😊"));
   }
 }

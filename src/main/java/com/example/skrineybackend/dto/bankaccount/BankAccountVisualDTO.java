@@ -1,26 +1,17 @@
 package com.example.skrineybackend.dto.bankaccount;
 
 import com.example.skrineybackend.entity.BankAccount;
-import com.example.skrineybackend.enums.Currency;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.Map;
-
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Instant;
+
 @Setter
 @Getter
-public class BankAccountDTO {
+public class BankAccountVisualDTO {
   @Schema(description = "Bank Account uuid", requiredMode = Schema.RequiredMode.REQUIRED)
   private String uuid;
-
-  @Schema(description = "Money on the bank account", requiredMode = Schema.RequiredMode.REQUIRED)
-  private BigDecimal balanceInUsd;
-
-  @Schema(description = "Each currency balance", requiredMode = Schema.RequiredMode.REQUIRED)
-  private Map<Currency, BigDecimal> currencyBalances;
 
   @Schema(description = "Bank Account title", requiredMode = Schema.RequiredMode.REQUIRED)
   private String title;
@@ -42,10 +33,8 @@ public class BankAccountDTO {
       requiredMode = Schema.RequiredMode.REQUIRED)
   private Instant updatedAt;
 
-  public BankAccountDTO(BankAccount bankAccount, Map<Currency, BigDecimal> currencyBalances) {
+  public BankAccountVisualDTO(BankAccount bankAccount) {
     this.uuid = bankAccount.getUuid();
-    this.balanceInUsd = bankAccount.getBalanceInUsd();
-    this.currencyBalances = currencyBalances;
     this.title = bankAccount.getTitle();
     this.emoji = bankAccount.getEmoji();
     this.createdAt = bankAccount.getCreatedAt();

@@ -3,11 +3,11 @@ package com.example.skrineybackend.grpc;
 import com.example.grpc.CreateTransactionRequest;
 import com.example.grpc.CreateTransactionResponse;
 import com.example.grpc.TransactionServiceGrpc;
+import com.example.skrineybackend.applicationservice.TransactionApplicationService;
 import com.example.skrineybackend.dto.transaction.CreateTransactionRequestDTO;
 import com.example.skrineybackend.dto.transaction.TransactionDTO;
 import com.example.skrineybackend.entity.User;
 import com.example.skrineybackend.enums.Currency;
-import com.example.skrineybackend.service.TransactionService;
 import com.example.skrineybackend.service.UserService;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
@@ -18,8 +18,8 @@ import net.devh.boot.grpc.server.service.GrpcService;
 @RequiredArgsConstructor
 public class TransactionGrpcService extends TransactionServiceGrpc.TransactionServiceImplBase {
 
-  private final TransactionService transactionService;
   private final UserService userService;
+  private final TransactionApplicationService transactionApplicationService;
 
   @Override
   public void createTransaction(
@@ -41,7 +41,7 @@ public class TransactionGrpcService extends TransactionServiceGrpc.TransactionSe
                 ? request.getCategoryUuid()
                 : user.getSettings().getDefaultCategory().getUuid());
 
-    TransactionDTO transaction = transactionService.createTransaction(dto, user.getUuid());
+    TransactionDTO transaction = transactionApplicationService.createTransaction(dto, user.getUuid());
 
     CreateTransactionResponse response =
         CreateTransactionResponse.newBuilder().setTransactionUuid(transaction.getUuid()).build();

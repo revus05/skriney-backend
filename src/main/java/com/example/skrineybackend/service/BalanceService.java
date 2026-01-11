@@ -1,164 +1,121 @@
 package com.example.skrineybackend.service;
 
-import com.example.skrineybackend.dto.balance.BalanceSummaryDTO;
 import com.example.skrineybackend.dto.balance.DailyBalanceDTO;
 import com.example.skrineybackend.entity.BankAccount;
-import com.example.skrineybackend.entity.DailyBalance;
+import com.example.skrineybackend.entity.CurrencyRate;
 import com.example.skrineybackend.entity.Transaction;
 import com.example.skrineybackend.enums.BalancePeriod;
 import com.example.skrineybackend.repository.BankAccountRepo;
-import com.example.skrineybackend.repository.DailyBalanceRepo;
-import com.example.skrineybackend.repository.TransactionRepo;
-import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+
+import com.example.skrineybackend.repository.CurrencyRateRepo;
+import com.example.skrineybackend.repository.TransactionRepo;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class BalanceService {
-  private final DailyBalanceRepo dailyBalanceRepo;
   private final BankAccountRepo bankAccountRepo;
   private final TransactionRepo transactionRepo;
-
-  @Transactional
-  public void updateBalance(BankAccount bankAccount, LocalDate date, BigDecimal amount) {
-    DailyBalance dailyBalance =
-        dailyBalanceRepo
-            .findByBankAccount_UuidAndDate(bankAccount.getUuid(), date)
-            .orElseGet(() -> createDailyBalance(bankAccount, date));
-
-    dailyBalance.setDailyChange(dailyBalance.getDailyChange().add(amount));
-    if (amount.compareTo(BigDecimal.ZERO) > 0) {
-      dailyBalance.setDailyIncome(dailyBalance.getDailyIncome().add(amount));
-    } else {
-      dailyBalance.setDailyExpenses(dailyBalance.getDailyExpenses().add(amount));
-    }
-    dailyBalance.setTotalBalance(dailyBalance.getTotalBalance().add(amount));
-    bankAccount.setBalance(bankAccount.getBalance().add(amount));
-
-    dailyBalanceRepo.save(dailyBalance);
-
-    recalcNextDays(bankAccount.getUuid(), date);
-  }
-
-  private DailyBalance createDailyBalance(BankAccount bankAccount, LocalDate date) {
-    DailyBalance db = new DailyBalance(bankAccount);
-    db.setDate(date);
-
-    Optional<DailyBalance> prev =
-        dailyBalanceRepo.findTopByBankAccount_UuidAndDateBeforeOrderByDateDesc(
-            bankAccount.getUuid(), date);
-
-    db.setTotalBalance(prev.map(DailyBalance::getTotalBalance).orElse(BigDecimal.ZERO));
-
-    return db;
-  }
-
-  private void recalcNextDays(String bankAccountUuid, LocalDate startDate) {
-    List<DailyBalance> balances =
-        dailyBalanceRepo.findAllByBankAccount_UuidOrderByDateAsc(bankAccountUuid);
-
-    BigDecimal runningTotal = BigDecimal.ZERO;
-    for (DailyBalance db : balances) {
-      if (!db.getDate().isBefore(startDate)) {
-        runningTotal = runningTotal.add(db.getDailyChange());
-        db.setTotalBalance(runningTotal);
-        dailyBalanceRepo.save(db);
-      } else {
-        runningTotal = db.getTotalBalance();
-      }
-    }
-  }
+  private final CurrencyRateRepo currencyRateRepo;
 
   public List<DailyBalanceDTO> getUserBalanceTimeline(
-      String userUuid, BalancePeriod period, String bankAccountUuid) {
-    BigDecimal currentBalance = getCurrentBalance(userUuid, bankAccountUuid);
-    Instant fromDateTime = calculateFromDateTime(period);
+          String userUuid, List<Transaction> transactions, Instant startDateTime, @Nullable BankAccount bankAccount) {
 
-    List<Transaction> transactions =
-        fetchTransactionsDescending(userUuid, bankAccountUuid, fromDateTime);
+    BigDecimal currentBalance;
+    if (bankAccount != null) {
+      currentBalance = bankAccount.getBalanceInUsd();
+    } else {
+      currentBalance = getUserTotalBalanceInUsd(userUuid);
+    }
 
-    LocalDate fromDate = fromDateTime.atZone(ZoneId.systemDefault()).toLocalDate();
+    return generateDaySummaryMap(startDateTime, transactions, currentBalance);
+  }
+
+  private List<DailyBalanceDTO> generateDaySummaryMap(
+      Instant startDateTime, List<Transaction> transactions, BigDecimal currentBalance) {
+    LocalDate startDate;
+    if (startDateTime == null) {
+      startDate =
+          transactions
+              .get(transactions.size() - 1)
+              .getCreatedAt()
+              .atZone(ZoneId.systemDefault())
+              .toLocalDate();
+    } else {
+      startDate = startDateTime.atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
     LocalDate toDate = LocalDate.now();
 
-    TreeMap<LocalDate, DaySummary> daySummaryMap = new TreeMap<>(Comparator.reverseOrder());
+    TreeMap<LocalDate, BigDecimal[]> daySummaryMap = new TreeMap<>(Comparator.reverseOrder());
 
-    for (LocalDate date = toDate; !date.isBefore(fromDate); date = date.minusDays(1)) {
-      daySummaryMap.put(date, new DaySummary());
+    for (LocalDate date = toDate; !date.isBefore(startDate); date = date.minusDays(1)) {
+      daySummaryMap.put(date, new BigDecimal[] {BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO});
     }
 
     for (Transaction tx : transactions) {
       LocalDate date = tx.getCreatedAt().atZone(ZoneId.systemDefault()).toLocalDate();
+      BigDecimal[] sums = daySummaryMap.computeIfAbsent(date, d -> new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO});
 
-      daySummaryMap
-          .computeIfAbsent(date, k -> new DaySummary())
-          .addTransaction(tx.getAmount(), tx.getBankAccount().getUuid());
+      BigDecimal rate = currencyRateRepo
+              .findTopByBaseCurrencyAndTargetCurrencyOrderByRateDateDesc("USD", tx.getCurrency().name())
+              .orElse(new CurrencyRate())
+              .getRate();
+
+      int CURRENCY_SCALE = java.util.Currency.getInstance(tx.getCurrency().name()).getDefaultFractionDigits();
+
+      BigDecimal amountInUsd = tx.getAmount().divide(rate, CURRENCY_SCALE, RoundingMode.HALF_EVEN);
+      if (amountInUsd.signum() > 0) {
+        sums[0] = sums[0].add(amountInUsd);
+      } else if (amountInUsd.signum() < 0) {
+        sums[1] = sums[1].add(amountInUsd.abs());
+      }
+      sums[2] = sums[2].add(amountInUsd);
     }
 
     List<DailyBalanceDTO> result = new ArrayList<>();
     BigDecimal runningBalance = currentBalance;
 
-    for (Map.Entry<LocalDate, DaySummary> entry : daySummaryMap.entrySet()) {
+    for (Map.Entry<LocalDate, BigDecimal[]> entry : daySummaryMap.entrySet()) {
       LocalDate date = entry.getKey();
-      DaySummary summary = entry.getValue();
+      BigDecimal[] sums = entry.getValue();
 
-      BigDecimal totalBalanceAtEndOfDay = runningBalance;
-
-      result.add(
-          new DailyBalanceDTO(
+      result.add(new DailyBalanceDTO(
               date,
-              summary.dailyIncome,
-              summary.dailyExpenses,
-              summary.dailyChange,
-              totalBalanceAtEndOfDay,
-              bankAccountUuid));
+              sums[0],
+              sums[1],
+              sums[2],
+              runningBalance
+      ));
 
-      runningBalance = runningBalance.subtract(summary.dailyChange);
+      runningBalance = runningBalance.subtract(sums[2]);
     }
 
     Collections.reverse(result);
 
     if (result.isEmpty()) {
-      result.add(
-          new DailyBalanceDTO(
+      result.add(new DailyBalanceDTO(
               LocalDate.now(),
               BigDecimal.ZERO,
               BigDecimal.ZERO,
               BigDecimal.ZERO,
-              currentBalance,
-              bankAccountUuid));
+              currentBalance
+      ));
     }
 
     return result;
   }
 
-  private static class DaySummary {
-    BigDecimal dailyIncome = BigDecimal.ZERO;
-    BigDecimal dailyExpenses = BigDecimal.ZERO;
-    BigDecimal dailyChange = BigDecimal.ZERO;
-    String bankAccountUuid;
-
-    void addTransaction(BigDecimal amount, String bankAccountUuid) {
-      if (amount.compareTo(BigDecimal.ZERO) > 0) {
-        this.dailyIncome = this.dailyIncome.add(amount);
-      } else if (amount.compareTo(BigDecimal.ZERO) < 0) {
-        this.dailyExpenses = this.dailyExpenses.add(amount.abs());
-      }
-      this.dailyChange = this.dailyChange.add(amount);
-
-      if (this.bankAccountUuid == null) {
-        this.bankAccountUuid = bankAccountUuid;
-      }
-    }
-  }
-
-  private Instant calculateFromDateTime(BalancePeriod period) {
+  public Instant getStartDateTimeFromPeriod(BalancePeriod period) {
     Instant now = Instant.now();
 
     return switch (period) {
@@ -166,59 +123,68 @@ public class BalanceService {
       case LAST_30_DAYS -> now.minus(30, ChronoUnit.DAYS);
       case LAST_3_MONTHS -> now.minus(90, ChronoUnit.DAYS);
       case LAST_1_YEAR -> now.minus(365, ChronoUnit.DAYS);
-      case ALL_TIME -> Instant.EPOCH;
+      case ALL_TIME -> null;
     };
   }
 
-  private BigDecimal getCurrentBalance(String userUuid, String bankAccountUuid) {
-    if (bankAccountUuid == null || bankAccountUuid.isBlank()) {
-      return bankAccountRepo.sumBalanceByUserUuid(userUuid).orElse(BigDecimal.ZERO);
-    } else {
-      return bankAccountRepo
-          .findByUuidAndUser_Uuid(bankAccountUuid, userUuid)
-          .map(BankAccount::getBalance)
-          .orElse(BigDecimal.ZERO);
+  public BigDecimal getUserTotalBalanceInUsd(String userUuid) {
+    List<BankAccount> bankAccounts =
+        bankAccountRepo
+          .findAllByUser_UuidOrderByCreatedAtAsc(userUuid);
+
+    BigDecimal balanceInUsd = BigDecimal.ZERO;
+
+    for(BankAccount bankAccount : bankAccounts) {
+      balanceInUsd = balanceInUsd.add(bankAccount.getBalanceInUsd());
     }
+
+    return balanceInUsd;
   }
 
-  private List<Transaction> fetchTransactionsDescending(
-      String userUuid, String bankAccountUuid, Instant fromDateTime) {
-    if (bankAccountUuid == null || bankAccountUuid.isBlank()) {
-      return transactionRepo.findByUser_UuidAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(
-          userUuid, fromDateTime);
-    } else {
-      return transactionRepo
-          .findByUser_UuidAndBankAccount_UuidAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(
-              userUuid, bankAccountUuid, fromDateTime);
+
+  public BigDecimal getUserTotalIncome(String userUuid) {
+    List<Transaction> incomeTransactions = transactionRepo.findAllUserIncome(userUuid);
+
+    BigDecimal TotalIncomeInUsd = BigDecimal.ZERO;
+
+    for(Transaction tx : incomeTransactions) {
+      BigDecimal rate = currencyRateRepo
+              .findTopByBaseCurrencyAndTargetCurrencyOrderByRateDateDesc("USD", tx.getCurrency().name())
+              .orElse(new CurrencyRate())
+              .getRate();
+
+      int CURRENCY_SCALE =
+              java.util.Currency.getInstance(tx.getCurrency().name())
+                      .getDefaultFractionDigits();
+
+      BigDecimal amountInUsd = tx.getAmount().divide(rate, CURRENCY_SCALE, RoundingMode.HALF_EVEN);
+
+      TotalIncomeInUsd = TotalIncomeInUsd.add(amountInUsd);
     }
+
+    return TotalIncomeInUsd;
   }
 
-  public BalanceSummaryDTO getUserBalanceSummary(String userUuid) {
-    List<BankAccount> allBankAccounts =
-        bankAccountRepo.findAllByUser_UuidOrderByCreatedAtAsc(userUuid);
+  public BigDecimal getUserTotalExpenses(String userUuid) {
+    List<Transaction> incomeTransactions = transactionRepo.findAllUserExpenses(userUuid);
 
-    LocalDate endDate = LocalDate.now();
-    LocalDate startDate = endDate.minusDays(30);
+    BigDecimal TotalExpensesInUsd = BigDecimal.ZERO;
 
-    BigDecimal totalBalance = BigDecimal.ZERO;
-    BigDecimal totalIncome = BigDecimal.ZERO;
-    BigDecimal totalExpense = BigDecimal.ZERO;
+    for(Transaction tx : incomeTransactions) {
+      BigDecimal rate = currencyRateRepo
+              .findTopByBaseCurrencyAndTargetCurrencyOrderByRateDateDesc("USD", tx.getCurrency().name())
+              .orElse(new CurrencyRate())
+              .getRate();
 
-    for (BankAccount account : allBankAccounts) {
-      List<DailyBalance> balances =
-          dailyBalanceRepo.findAllByBankAccount_UuidAndDateBetweenOrderByDateAsc(
-              account.getUuid(), startDate, endDate);
+      int CURRENCY_SCALE =
+              java.util.Currency.getInstance(tx.getCurrency().name())
+                      .getDefaultFractionDigits();
 
-      for (DailyBalance day : balances) {
-        totalIncome = totalIncome.add(day.getDailyIncome());
-        totalExpense = totalExpense.add(day.getDailyExpenses().abs());
-      }
+      BigDecimal amountInUsd = tx.getAmount().divide(rate, CURRENCY_SCALE, RoundingMode.HALF_EVEN);
 
-      int index = balances.size() - 1;
-
-      totalBalance = totalBalance.add(balances.get(index).getTotalBalance());
+      TotalExpensesInUsd = TotalExpensesInUsd.add(amountInUsd);
     }
 
-    return new BalanceSummaryDTO(totalBalance, totalIncome, totalExpense);
+    return TotalExpensesInUsd;
   }
 }

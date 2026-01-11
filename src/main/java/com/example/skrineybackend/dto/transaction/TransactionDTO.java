@@ -1,6 +1,5 @@
 package com.example.skrineybackend.dto.transaction;
 
-import com.example.skrineybackend.dto.bankaccount.BankAccountDTO;
 import com.example.skrineybackend.dto.category.CategoryDTO;
 import com.example.skrineybackend.entity.Transaction;
 import com.example.skrineybackend.enums.Currency;
@@ -44,7 +43,7 @@ public class TransactionDTO {
   @Schema(
       description = "Connection to bank account",
       requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  private BankAccountDTO bankAccount;
+  private String bankAccountUuid;
 
   @Schema(description = "transaction category", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   private CategoryDTO category;
@@ -55,7 +54,7 @@ public class TransactionDTO {
     this.currency = transaction.getCurrency();
     this.description = transaction.getDescription();
     if (transaction.getBankAccount() != null) {
-      this.bankAccount = new BankAccountDTO(transaction.getBankAccount());
+      this.bankAccountUuid = transaction.getBankAccount().getUuid();
     }
     if (transaction.getCategory() != null) {
       this.category = new CategoryDTO(transaction.getCategory());

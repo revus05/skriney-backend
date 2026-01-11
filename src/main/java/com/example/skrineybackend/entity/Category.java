@@ -53,8 +53,9 @@ public class Category {
 
   public Category() {}
 
-  public Category(CreateCategoryRequestDTO requestBody) {
+  public Category(CreateCategoryRequestDTO requestBody, User user) {
     this.title = requestBody.getTitle();
     this.emoji = requestBody.getEmoji();
+    this.user = user;
   }
 }

@@ -31,11 +31,9 @@ public class BankAccountGrpcService extends BankAccountServiceGrpc.BankAccountSe
                 dto ->
                     BankAccount.newBuilder()
                         .setUuid(dto.getUuid())
-                        .setBalance(MoneyConverter.toCents(dto.getBalance()))
-                        .setCurrency(dto.getCurrency().toString())
+                        .setBalance(MoneyConverter.toCents(dto.getBalanceInUsd()))
                         .setTitle(dto.getTitle())
                         .setEmoji(dto.getEmoji())
-                        .setIsInTotalBalance(dto.isInTotalBalance())
                         .setCreatedAt(String.valueOf(dto.getCreatedAt()))
                         .setUpdatedAt(String.valueOf(dto.getUpdatedAt()))
                         .build())

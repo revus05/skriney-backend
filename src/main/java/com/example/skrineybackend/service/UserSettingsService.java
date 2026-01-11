@@ -1,6 +1,12 @@
 package com.example.skrineybackend.service;
 
-import com.example.skrineybackend.dto.usersettings.*;
+import com.example.skrineybackend.dto.usersettings.UpdateAnimationEnabledRequestDTO;
+import com.example.skrineybackend.dto.usersettings.UpdateDefaultBankAccountRequestDTO;
+import com.example.skrineybackend.dto.usersettings.UpdateDefaultCategoryRequestDTO;
+import com.example.skrineybackend.dto.usersettings.UpdateDefaultCurrencyRequestDTO;
+import com.example.skrineybackend.dto.usersettings.UpdateLanguageRequestDTO;
+import com.example.skrineybackend.dto.usersettings.UpdateThemeRequestDTO;
+import com.example.skrineybackend.dto.usersettings.UserSettingsDTO;
 import com.example.skrineybackend.entity.BankAccount;
 import com.example.skrineybackend.entity.Category;
 import com.example.skrineybackend.entity.UserSettings;
@@ -12,6 +18,8 @@ import com.example.skrineybackend.repository.BankAccountRepo;
 import com.example.skrineybackend.repository.CategoryRepo;
 import com.example.skrineybackend.repository.UserRepo;
 import com.example.skrineybackend.repository.UserSettingsRepo;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -126,5 +134,49 @@ public class UserSettingsService {
     userSettingsRepo.save(userSettings);
 
     return new UserSettingsDTO(userSettings);
+  }
+
+  public void updateDefaultBankAccountAfterDeletion(String deletedBankAccountUuid) {
+    Optional<UserSettings> optionalUserSettings =
+        userSettingsRepo.findByDefaultBankAccountUuid(deletedBankAccountUuid);
+
+    if (optionalUserSettings.isEmpty()) {
+      return;
+    }
+
+    UserSettings userSettings = optionalUserSettings.get();
+
+    List<BankAccount> remainingBankAccounts =
+        bankAccountRepo
+            .findAllByUser_UuidOrderByCreatedAtAsc(userSettings.getUser().getUuid())
+            .stream()
+            .filter(c -> !c.getUuid().equals(deletedBankAccountUuid))
+            .toList();
+
+    BankAccount newDefault = remainingBankAccounts.isEmpty() ? null : remainingBankAccounts.get(0);
+    userSettings.setDefaultBankAccount(newDefault);
+
+    userSettingsRepo.save(userSettings);
+  }
+
+  public void updateDefaultCategoryAfterDeletion(String deletedCategoryUuid) {
+    Optional<UserSettings> optionalUserSettings =
+            userSettingsRepo.findByDefaultCategoryUuid(deletedCategoryUuid);
+
+    if (optionalUserSettings.isEmpty()) {
+      return;
+    }
+
+    UserSettings userSettings = optionalUserSettings.get();
+
+    List<Category> remainingCategories =
+            categoryRepo.findAllByUser_UuidOrderByCreatedAt(userSettings.getUser().getUuid()).stream()
+                    .filter(c -> !c.getUuid().equals(deletedCategoryUuid))
+                    .toList();
+
+    Category newDefault = remainingCategories.isEmpty() ? null : remainingCategories.get(0);
+    userSettings.setDefaultCategory(newDefault);
+
+    userSettingsRepo.save(userSettings);
   }
 }

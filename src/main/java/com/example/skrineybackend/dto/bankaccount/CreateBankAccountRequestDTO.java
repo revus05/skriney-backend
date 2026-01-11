@@ -1,6 +1,8 @@
 package com.example.skrineybackend.dto.bankaccount;
 
 import com.example.skrineybackend.enums.Currency;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,7 +17,7 @@ public class CreateBankAccountRequestDTO {
   @Schema(
       description = "Initial bank account balance",
       requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  private BigDecimal balance;
+  private BigDecimal initialBalance;
 
   @Schema(description = "Bank account currency", requiredMode = Schema.RequiredMode.REQUIRED)
   @NotNull(message = "Валюта обязательна")
@@ -26,26 +28,12 @@ public class CreateBankAccountRequestDTO {
   @Size(max = 64, message = "Название счета не может быть длиннее 64 символов")
   private String title;
 
-  @Schema(
-      description = "Bank account's card color",
-      requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  private String color;
-
-  @Schema(
-      description = "Are bank account money used to calculate total user balance",
-      requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  private boolean isInTotalBalance;
-
-  @Schema(
-      description = "Optional user's description",
-      requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  private String description;
-
-  @Schema(description = "Optional user's image", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  private String image;
-
-  public CreateBankAccountRequestDTO(BigDecimal balance, Currency currency, String title) {
-    this.balance = balance;
+  @JsonCreator
+  public CreateBankAccountRequestDTO(
+      @JsonProperty("initialBalance") BigDecimal initialBalance,
+      @JsonProperty("currency") Currency currency,
+      @JsonProperty("title") String title) {
+    this.initialBalance = initialBalance;
     this.currency = currency;
     this.title = title;
   }

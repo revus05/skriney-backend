@@ -1,105 +1,73 @@
 package com.example.skrineybackend.service;
 
 import com.example.skrineybackend.dto.transaction.CreateTransactionRequestDTO;
-import com.example.skrineybackend.dto.transaction.TransactionDTO;
 import com.example.skrineybackend.dto.transaction.UpdateTransactionRequestDTO;
 import com.example.skrineybackend.entity.BankAccount;
 import com.example.skrineybackend.entity.Category;
 import com.example.skrineybackend.entity.Transaction;
 import com.example.skrineybackend.entity.User;
-import com.example.skrineybackend.exception.*;
+import com.example.skrineybackend.exception.InvalidTransactionAmount;
+import com.example.skrineybackend.exception.NoBankAccountFoundException;
+import com.example.skrineybackend.exception.NoCategoryFoundException;
 import com.example.skrineybackend.repository.BankAccountRepo;
 import com.example.skrineybackend.repository.CategoryRepo;
 import com.example.skrineybackend.repository.TransactionRepo;
-import com.example.skrineybackend.repository.UserRepo;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.Instant;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class TransactionService {
   private final TransactionRepo transactionRepo;
-  private final UserRepo userRepo;
   private final BankAccountRepo bankAccountRepo;
   private final CategoryRepo categoryRepo;
-  private final BalanceService dailyBalanceService;
 
-  public TransactionDTO createTransaction(
-      CreateTransactionRequestDTO createTransactionRequestDTO, String userUuid)
-      throws UnauthorizedException, NoBankAccountFoundException, NoCategoryFoundException {
-    if (createTransactionRequestDTO.getAmount().compareTo(BigDecimal.ZERO) == 0) {
+  public Transaction createTransaction(
+      CreateTransactionRequestDTO dto, BankAccount bankAccount, Category category, User user)
+      throws InvalidTransactionAmount {
+    if (dto.getAmount().compareTo(BigDecimal.ZERO) == 0) {
       throw new InvalidTransactionAmount("Сумма транзакции не может быть равна 0");
     }
 
-    User user =
-        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
-
-    BankAccount bankAccount =
-        bankAccountRepo
-            .findByUuidAndUser_Uuid(createTransactionRequestDTO.getBankAccountUuid(), userUuid)
-            .orElseThrow(() -> new NoBankAccountFoundException("Счет не найден"));
-
-    Category category =
-        categoryRepo
-            .findByUuidAndUser_Uuid(createTransactionRequestDTO.getCategoryUuid(), userUuid)
-            .orElseThrow(
-                () ->
-                    new NoCategoryFoundException(
-                        "Категория не найдена или не принадлежит пользователю"));
-
-    dailyBalanceService.updateBalance(
-        bankAccount, LocalDate.now(), createTransactionRequestDTO.getAmount());
-
-    return new TransactionDTO(
-        transactionRepo.save(
-            new Transaction(createTransactionRequestDTO, bankAccount, category, user)));
+    return transactionRepo.save(new Transaction(dto, bankAccount, category, user));
   }
 
-  public List<TransactionDTO> getTransactions(String userUuid) throws UnauthorizedException {
-    userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
-
-    List<Transaction> transactions = transactionRepo.findByUser_UuidOrderByCreatedAtDesc(userUuid);
-
-    return transactions.stream().map(TransactionDTO::new).toList();
+  public List<Transaction> getTransactions(String userUuid) {
+    return getTransactions(userUuid, null, null);
   }
 
-  public TransactionDTO deleteTransaction(String uuid, String userUuid)
-      throws UnauthorizedException, NoTransactionFoundException {
-    userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
+  public List<Transaction> getTransactions(
+      String userUuid, @Nullable String bankAccountUuid, @Nullable Instant startDateTime) {
 
-    Transaction deleteTransaction =
-        transactionRepo
-            .findByUuidAndUser_Uuid(uuid, userUuid)
-            .orElseThrow(() -> new NoTransactionFoundException("Нет такой транзакции"));
-
-    transactionRepo.delete(deleteTransaction);
-
-    if (deleteTransaction.getBankAccount() != null) {
-      dailyBalanceService.updateBalance(
-          deleteTransaction.getBankAccount(),
-          deleteTransaction.getCreatedAt().atZone(ZoneId.of("UTC")).toLocalDate(),
-          deleteTransaction.getAmount().multiply(new BigDecimal(-1)));
+    if (bankAccountUuid != null && startDateTime != null) {
+      return transactionRepo
+          .findByUser_UuidAndBankAccount_UuidAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(
+              userUuid, bankAccountUuid, startDateTime);
     }
 
-    return new TransactionDTO(deleteTransaction);
+    if (bankAccountUuid != null) {
+      return transactionRepo.findByUser_UuidAndBankAccount_UuidOrderByCreatedAtDesc(
+          userUuid, bankAccountUuid);
+    }
+
+    if (startDateTime != null) {
+      return transactionRepo.findByUser_UuidAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(
+          userUuid, startDateTime);
+    }
+
+    return transactionRepo.findByUser_UuidOrderByCreatedAtDesc(userUuid);
   }
 
-  public TransactionDTO updateTransaction(
-      String uuid, UpdateTransactionRequestDTO updateTransactionRequestDTO, String userUuid) {
-    userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
+  public void deleteTransaction(Transaction transaction) {
+    transactionRepo.delete(transaction);
+  }
 
-    Transaction transaction =
-        transactionRepo
-            .findByUuidAndUser_Uuid(uuid, userUuid)
-            .orElseThrow(
-                () ->
-                    new NoTransactionFoundException(
-                        "Транзакция не найдена или не принадлежит пользователю"));
-
+  public Transaction updateTransaction(
+      Transaction transaction, UpdateTransactionRequestDTO updateTransactionRequestDTO) {
     if (updateTransactionRequestDTO.getAmount() != null) {
       transaction.setAmount(updateTransactionRequestDTO.getAmount());
     }
@@ -114,18 +82,21 @@ public class TransactionService {
     if (updateTransactionRequestDTO.getBankAccountUuid() != null) {
       BankAccount bankAccount =
           bankAccountRepo
-              .findByUuidAndUser_Uuid(updateTransactionRequestDTO.getBankAccountUuid(), userUuid)
+              .findByUuidAndUser_Uuid(
+                  updateTransactionRequestDTO.getBankAccountUuid(), transaction.getUser().getUuid())
               .orElseThrow(
                   () ->
                       new NoBankAccountFoundException(
                           "Счет не найден или не принадлежит пользователю"));
+
       transaction.setBankAccount(bankAccount);
     }
 
     if (updateTransactionRequestDTO.getCategoryUuid() != null) {
       Category category =
           categoryRepo
-              .findByUuidAndUser_Uuid(updateTransactionRequestDTO.getCategoryUuid(), userUuid)
+              .findByUuidAndUser_Uuid(
+                  updateTransactionRequestDTO.getCategoryUuid(), transaction.getUser().getUuid())
               .orElseThrow(
                   () ->
                       new NoCategoryFoundException(
@@ -135,6 +106,6 @@ public class TransactionService {
 
     transactionRepo.save(transaction);
 
-    return new TransactionDTO(transaction);
+    return transaction;
   }
 }

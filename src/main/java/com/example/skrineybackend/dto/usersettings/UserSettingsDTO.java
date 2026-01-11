@@ -1,6 +1,6 @@
 package com.example.skrineybackend.dto.usersettings;
 
-import com.example.skrineybackend.dto.bankaccount.BankAccountDTO;
+import com.example.skrineybackend.dto.bankaccount.BankAccountVisualDTO;
 import com.example.skrineybackend.dto.category.CategoryDTO;
 import com.example.skrineybackend.entity.UserSettings;
 import com.example.skrineybackend.enums.Currency;
@@ -33,7 +33,7 @@ public class UserSettingsDTO {
       description = "User's default bank account",
       requiredMode = Schema.RequiredMode.NOT_REQUIRED,
       nullable = true)
-  private BankAccountDTO defaultBankAccount;
+  private BankAccountVisualDTO defaultBankAccount;
 
   @Schema(description = "User's language", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   private Language language;
@@ -46,7 +46,7 @@ public class UserSettingsDTO {
       this.defaultCategory = new CategoryDTO(userSettings.getDefaultCategory());
     }
     if (userSettings.getDefaultBankAccount() != null) {
-      this.defaultBankAccount = new BankAccountDTO(userSettings.getDefaultBankAccount());
+      this.defaultBankAccount = new BankAccountVisualDTO(userSettings.getDefaultBankAccount());
     }
     this.language = userSettings.getLanguage();
   }

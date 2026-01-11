@@ -1,10 +1,10 @@
 package com.example.skrineybackend.controller;
 
+import com.example.skrineybackend.applicationservice.BalanceApplicationService;
 import com.example.skrineybackend.dto.balance.BalanceSummaryDTO;
 import com.example.skrineybackend.dto.balance.DailyBalanceDTO;
 import com.example.skrineybackend.dto.response.Response;
 import com.example.skrineybackend.enums.BalancePeriod;
-import com.example.skrineybackend.service.BalanceService;
 import com.example.skrineybackend.swagger.balance.GetUserBalanceSummaryOperation;
 import com.example.skrineybackend.swagger.balance.GetUserBalanceTimelineOperation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Баланс", description = "Управление балансом пользователя")
 @RequiredArgsConstructor
 public class BalanceController {
-  private final BalanceService balanceService;
+  private final BalanceApplicationService balanceApplicationService;
 
   @GetUserBalanceTimelineOperation
   @GetMapping()
@@ -33,17 +33,17 @@ public class BalanceController {
       @RequestParam(required = false) String bankAccountUuid) {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     List<DailyBalanceDTO> dailyBalancesDTO =
-        balanceService.getUserBalanceTimeline(
+        balanceApplicationService.getUserBalanceTimeline(
             ((UserDetails) auth.getPrincipal()).getUsername(), period, bankAccountUuid);
     return new Response("Ежедневные балансы успешно получены", HttpStatus.OK, dailyBalancesDTO);
   }
 
   @GetUserBalanceSummaryOperation
   @GetMapping("/summary")
-  public Response getUserBalanceSummary() {
+  public Response getUserTotalBalance() {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     BalanceSummaryDTO balanceSummaryDTO =
-        balanceService.getUserBalanceSummary(((UserDetails) auth.getPrincipal()).getUsername());
+        balanceApplicationService.getUserTotalBalanceInUsd(((UserDetails) auth.getPrincipal()).getUsername());
     return new Response("Баланс успешно получен", HttpStatus.OK, balanceSummaryDTO);
   }
 }

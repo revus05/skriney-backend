@@ -3,16 +3,12 @@ package com.example.skrineybackend.dto.balance;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class DailyBalanceDTO {
-  @Schema(description = "Daily balance uuid", requiredMode = Schema.RequiredMode.REQUIRED)
-  private String uuid;
-
   @Schema(description = "Day date", requiredMode = Schema.RequiredMode.REQUIRED)
   private LocalDate date;
 
@@ -28,22 +24,16 @@ public class DailyBalanceDTO {
   @Schema(description = "Total daily expenses", requiredMode = Schema.RequiredMode.REQUIRED)
   private BigDecimal dailyExpenses;
 
-  @Schema(description = "Bank account uuid", requiredMode = Schema.RequiredMode.REQUIRED)
-  private String bankAccountUuid;
-
   public DailyBalanceDTO(
       LocalDate date,
       BigDecimal dailyIncome,
       BigDecimal dailyExpenses,
       BigDecimal dailyChange,
-      BigDecimal totalBalance,
-      String bankAccountUuid) {
-    this.uuid = UUID.randomUUID().toString();
+      BigDecimal totalBalance) {
     this.date = date;
     this.dailyIncome = dailyIncome;
     this.dailyExpenses = dailyExpenses;
     this.dailyChange = dailyChange;
     this.totalBalance = totalBalance;
-    this.bankAccountUuid = bankAccountUuid;
   }
 }

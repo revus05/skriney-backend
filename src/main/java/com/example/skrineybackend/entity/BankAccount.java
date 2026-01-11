@@ -1,13 +1,13 @@
 package com.example.skrineybackend.entity;
 
 import com.example.skrineybackend.dto.bankaccount.CreateBankAccountRequestDTO;
-import com.example.skrineybackend.enums.Currency;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,18 +26,12 @@ public class BankAccount {
   private String uuid;
 
   @Column(nullable = false, precision = 19, scale = 2)
-  private BigDecimal balance;
-
-  @Column(nullable = false)
-  private Currency currency;
+  private BigDecimal balanceInUsd;
 
   @Column(nullable = false)
   private String title;
 
   @Column private String emoji;
-
-  @Column(nullable = false)
-  private boolean isInTotalBalance;
 
   @CreatedDate
   @Column(nullable = false, updatable = false)
@@ -54,9 +48,6 @@ public class BankAccount {
   @OneToMany(mappedBy = "bankAccount")
   private List<Transaction> transactions = new ArrayList<>();
 
-  @OneToMany(mappedBy = "bankAccount", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<DailyBalance> dailyBalances = new ArrayList<>();
-
   @PreRemove
   private void preRemove() {
     if (transactions != null) {
@@ -66,10 +57,9 @@ public class BankAccount {
 
   public BankAccount() {}
 
-  public BankAccount(CreateBankAccountRequestDTO createBankAccountRequestDTO) {
-    this.balance = createBankAccountRequestDTO.getBalance();
-    this.currency = createBankAccountRequestDTO.getCurrency();
-    this.title = createBankAccountRequestDTO.getTitle();
-    this.isInTotalBalance = createBankAccountRequestDTO.isInTotalBalance();
+  public BankAccount(CreateBankAccountRequestDTO dto,  User user) {
+    this.title = dto.getTitle();
+    this.balanceInUsd = BigDecimal.ZERO;
+    this.user = user;
   }
 }
