@@ -1,14 +1,38 @@
-FROM maven:3.9.9-eclipse-temurin-17 AS builder
+# =========================
+# Stage 1: Build
+# =========================
+FROM maven:3.9.4-eclipse-temurin-20 AS build
+
+# Устанавливаем рабочую директорию
 WORKDIR /app
+
+# Копируем pom.xml и скачиваем зависимости (кэшируем слои)
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
+RUN mvn dependency:go-offline
+
+# Копируем исходники
 COPY src ./src
-RUN mvn clean package -DskipTests -B
 
-# --- Этап запуска ---
-FROM eclipse-temurin:17-jdk-alpine
+# Сборка приложения
+RUN mvn clean package -DskipTests
+
+# =========================
+# Stage 2: Run
+# =========================
+FROM eclipse-temurin:20-jre-alpine
+
+# Рабочая директория
 WORKDIR /app
-COPY --from=builder /app/target/*.jar app.jar
 
+# Копируем JAR из стадии сборки
+COPY --from=build /app/target/*.jar app.jar
+
+# Прокидываем переменные окружения (можно через .env при запуске docker-compose)
+ENV JAVA_OPTS=""
+
+# Экспонируем порт приложения
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+EXPOSE 9090
+
+# Команда запуска
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

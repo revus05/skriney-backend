@@ -72,7 +72,7 @@ public class CurrencyRateService {
     BigDecimal rate = getRate(targetCurrency);
 
     int CURRENCY_SCALE =
-            java.util.Currency.getInstance(targetCurrency.name()).getDefaultFractionDigits();
+        java.util.Currency.getInstance(targetCurrency.name()).getDefaultFractionDigits();
 
     return amount.divide(rate, CURRENCY_SCALE, RoundingMode.HALF_EVEN);
   }

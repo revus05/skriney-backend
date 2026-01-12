@@ -61,9 +61,7 @@ public class TransactionApplicationService {
         transactionService.createTransaction(dto, bankAccount, category, user, amountInUsd);
 
     bankAccount.setBalanceInUsd(
-        bankAccount
-            .getBalanceInUsd()
-            .add(createdTransaction.getAmountInUsd()));
+        bankAccount.getBalanceInUsd().add(createdTransaction.getAmountInUsd()));
 
     return new TransactionDTO(createdTransaction);
   }
@@ -74,9 +72,9 @@ public class TransactionApplicationService {
     Transaction transaction = getTransactionIfUserAuthorizedAndOwnsIt(uuid, userUuid);
 
     BigDecimal oldValueInUsd =
-            currencyRateService.getAmountInUsd(transaction.getAmount(), transaction.getCurrency());
+        currencyRateService.getAmountInUsd(transaction.getAmount(), transaction.getCurrency());
     BigDecimal newValueInUsd =
-            currencyRateService.getAmountInUsd(dto.getAmount(), dto.getCurrency());
+        currencyRateService.getAmountInUsd(dto.getAmount(), dto.getCurrency());
 
     Transaction updatedTransaction = transactionService.updateTransaction(transaction, dto);
 

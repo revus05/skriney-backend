@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -57,7 +56,7 @@ public class BankAccount {
 
   public BankAccount() {}
 
-  public BankAccount(CreateBankAccountRequestDTO dto,  User user) {
+  public BankAccount(CreateBankAccountRequestDTO dto, User user) {
     this.title = dto.getTitle();
     this.balanceInUsd = BigDecimal.ZERO;
     this.user = user;

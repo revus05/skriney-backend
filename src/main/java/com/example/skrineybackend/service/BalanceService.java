@@ -6,6 +6,9 @@ import com.example.skrineybackend.entity.CurrencyRate;
 import com.example.skrineybackend.entity.Transaction;
 import com.example.skrineybackend.enums.BalancePeriod;
 import com.example.skrineybackend.repository.BankAccountRepo;
+import com.example.skrineybackend.repository.CurrencyRateRepo;
+import com.example.skrineybackend.repository.TransactionRepo;
+import jakarta.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
@@ -13,10 +16,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-
-import com.example.skrineybackend.repository.CurrencyRateRepo;
-import com.example.skrineybackend.repository.TransactionRepo;
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +27,10 @@ public class BalanceService {
   private final CurrencyRateRepo currencyRateRepo;
 
   public List<DailyBalanceDTO> getUserBalanceTimeline(
-          String userUuid, List<Transaction> transactions, Instant startDateTime, @Nullable BankAccount bankAccount) {
+      String userUuid,
+      List<Transaction> transactions,
+      Instant startDateTime,
+      @Nullable BankAccount bankAccount) {
 
     BigDecimal currentBalance;
     if (bankAccount != null) {
@@ -64,14 +66,19 @@ public class BalanceService {
 
     for (Transaction tx : transactions) {
       LocalDate date = tx.getCreatedAt().atZone(ZoneId.systemDefault()).toLocalDate();
-      BigDecimal[] sums = daySummaryMap.computeIfAbsent(date, d -> new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO});
+      BigDecimal[] sums =
+          daySummaryMap.computeIfAbsent(
+              date, d -> new BigDecimal[] {BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO});
 
-      BigDecimal rate = currencyRateRepo
-              .findTopByBaseCurrencyAndTargetCurrencyOrderByRateDateDesc("USD", tx.getCurrency().name())
+      BigDecimal rate =
+          currencyRateRepo
+              .findTopByBaseCurrencyAndTargetCurrencyOrderByRateDateDesc(
+                  "USD", tx.getCurrency().name())
               .orElse(new CurrencyRate())
               .getRate();
 
-      int CURRENCY_SCALE = java.util.Currency.getInstance(tx.getCurrency().name()).getDefaultFractionDigits();
+      int CURRENCY_SCALE =
+          java.util.Currency.getInstance(tx.getCurrency().name()).getDefaultFractionDigits();
 
       BigDecimal amountInUsd = tx.getAmount().divide(rate, CURRENCY_SCALE, RoundingMode.HALF_EVEN);
       if (amountInUsd.signum() > 0) {
@@ -89,13 +96,7 @@ public class BalanceService {
       LocalDate date = entry.getKey();
       BigDecimal[] sums = entry.getValue();
 
-      result.add(new DailyBalanceDTO(
-              date,
-              sums[0],
-              sums[1],
-              sums[2],
-              runningBalance
-      ));
+      result.add(new DailyBalanceDTO(date, sums[0], sums[1], sums[2], runningBalance));
 
       runningBalance = runningBalance.subtract(sums[2]);
     }
@@ -103,13 +104,9 @@ public class BalanceService {
     Collections.reverse(result);
 
     if (result.isEmpty()) {
-      result.add(new DailyBalanceDTO(
-              LocalDate.now(),
-              BigDecimal.ZERO,
-              BigDecimal.ZERO,
-              BigDecimal.ZERO,
-              currentBalance
-      ));
+      result.add(
+          new DailyBalanceDTO(
+              LocalDate.now(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, currentBalance));
     }
 
     return result;
@@ -129,33 +126,32 @@ public class BalanceService {
 
   public BigDecimal getUserTotalBalanceInUsd(String userUuid) {
     List<BankAccount> bankAccounts =
-        bankAccountRepo
-          .findAllByUser_UuidOrderByCreatedAtAsc(userUuid);
+        bankAccountRepo.findAllByUser_UuidOrderByCreatedAtAsc(userUuid);
 
     BigDecimal balanceInUsd = BigDecimal.ZERO;
 
-    for(BankAccount bankAccount : bankAccounts) {
+    for (BankAccount bankAccount : bankAccounts) {
       balanceInUsd = balanceInUsd.add(bankAccount.getBalanceInUsd());
     }
 
     return balanceInUsd;
   }
 
-
   public BigDecimal getUserTotalIncome(String userUuid) {
     List<Transaction> incomeTransactions = transactionRepo.findAllUserIncome(userUuid);
 
     BigDecimal TotalIncomeInUsd = BigDecimal.ZERO;
 
-    for(Transaction tx : incomeTransactions) {
-      BigDecimal rate = currencyRateRepo
-              .findTopByBaseCurrencyAndTargetCurrencyOrderByRateDateDesc("USD", tx.getCurrency().name())
+    for (Transaction tx : incomeTransactions) {
+      BigDecimal rate =
+          currencyRateRepo
+              .findTopByBaseCurrencyAndTargetCurrencyOrderByRateDateDesc(
+                  "USD", tx.getCurrency().name())
               .orElse(new CurrencyRate())
               .getRate();
 
       int CURRENCY_SCALE =
-              java.util.Currency.getInstance(tx.getCurrency().name())
-                      .getDefaultFractionDigits();
+          java.util.Currency.getInstance(tx.getCurrency().name()).getDefaultFractionDigits();
 
       BigDecimal amountInUsd = tx.getAmount().divide(rate, CURRENCY_SCALE, RoundingMode.HALF_EVEN);
 
@@ -170,15 +166,16 @@ public class BalanceService {
 
     BigDecimal TotalExpensesInUsd = BigDecimal.ZERO;
 
-    for(Transaction tx : incomeTransactions) {
-      BigDecimal rate = currencyRateRepo
-              .findTopByBaseCurrencyAndTargetCurrencyOrderByRateDateDesc("USD", tx.getCurrency().name())
+    for (Transaction tx : incomeTransactions) {
+      BigDecimal rate =
+          currencyRateRepo
+              .findTopByBaseCurrencyAndTargetCurrencyOrderByRateDateDesc(
+                  "USD", tx.getCurrency().name())
               .orElse(new CurrencyRate())
               .getRate();
 
       int CURRENCY_SCALE =
-              java.util.Currency.getInstance(tx.getCurrency().name())
-                      .getDefaultFractionDigits();
+          java.util.Currency.getInstance(tx.getCurrency().name()).getDefaultFractionDigits();
 
       BigDecimal amountInUsd = tx.getAmount().divide(rate, CURRENCY_SCALE, RoundingMode.HALF_EVEN);
 

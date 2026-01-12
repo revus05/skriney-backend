@@ -41,7 +41,8 @@ public class TransactionGrpcService extends TransactionServiceGrpc.TransactionSe
                 ? request.getCategoryUuid()
                 : user.getSettings().getDefaultCategory().getUuid());
 
-    TransactionDTO transaction = transactionApplicationService.createTransaction(dto, user.getUuid());
+    TransactionDTO transaction =
+        transactionApplicationService.createTransaction(dto, user.getUuid());
 
     CreateTransactionResponse response =
         CreateTransactionResponse.newBuilder().setTransactionUuid(transaction.getUuid()).build();

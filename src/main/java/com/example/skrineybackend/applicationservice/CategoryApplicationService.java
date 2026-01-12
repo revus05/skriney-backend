@@ -15,7 +15,6 @@ import com.example.skrineybackend.service.CategoryService;
 import com.example.skrineybackend.service.TransactionService;
 import com.example.skrineybackend.service.UserSettingsService;
 import jakarta.transaction.Transactional;
-
 import java.time.Instant;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -88,12 +87,11 @@ public class CategoryApplicationService {
     return categoryService.getCategoryStats(transactions);
   }
 
-
   private Category getCategoryIfUserAuthorizedAndOwnsIt(String categoryUuid, String userUuid) {
     userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
 
     return categoryRepo
-            .findByUuidAndUser_Uuid(categoryUuid, userUuid)
-            .orElseThrow(() -> new NoCategoryFoundException("Категория не найдена"));
+        .findByUuidAndUser_Uuid(categoryUuid, userUuid)
+        .orElseThrow(() -> new NoCategoryFoundException("Категория не найдена"));
   }
 }

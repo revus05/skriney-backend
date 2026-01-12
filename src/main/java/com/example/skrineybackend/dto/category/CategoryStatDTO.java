@@ -20,7 +20,9 @@ public class CategoryStatDTO {
   private Map<Currency, BigDecimal> currencyBalances;
 
   public CategoryStatDTO(
-      String categoryUuid, BigDecimal totalBalanceInUsd, Map<Currency, BigDecimal> currencyBalances) {
+      String categoryUuid,
+      BigDecimal totalBalanceInUsd,
+      Map<Currency, BigDecimal> currencyBalances) {
     this.uuid = categoryUuid;
     this.totalBalanceInUsd = totalBalanceInUsd;
     this.currencyBalances = currencyBalances;

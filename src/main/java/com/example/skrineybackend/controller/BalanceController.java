@@ -43,7 +43,8 @@ public class BalanceController {
   public Response getUserTotalBalance() {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     BalanceSummaryDTO balanceSummaryDTO =
-        balanceApplicationService.getUserTotalBalanceInUsd(((UserDetails) auth.getPrincipal()).getUsername());
+        balanceApplicationService.getUserTotalBalanceInUsd(
+            ((UserDetails) auth.getPrincipal()).getUsername());
     return new Response("Баланс успешно получен", HttpStatus.OK, balanceSummaryDTO);
   }
 }

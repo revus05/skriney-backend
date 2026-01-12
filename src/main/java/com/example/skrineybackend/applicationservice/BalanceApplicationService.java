@@ -11,49 +11,50 @@ import com.example.skrineybackend.repository.BankAccountRepo;
 import com.example.skrineybackend.repository.UserRepo;
 import com.example.skrineybackend.service.BalanceService;
 import com.example.skrineybackend.service.TransactionService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.time.Instant;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class BalanceApplicationService {
-    private final BalanceService balanceService;
-    private final TransactionService transactionService;
+  private final BalanceService balanceService;
+  private final TransactionService transactionService;
 
-    private final UserRepo userRepo;
-    private final BankAccountRepo bankAccountRepo;
+  private final UserRepo userRepo;
+  private final BankAccountRepo bankAccountRepo;
 
-    public List<DailyBalanceDTO> getUserBalanceTimeline(
-            String userUuid, BalancePeriod period, String bankAccountUuid) {
-        BankAccount bankAccount = null;
+  public List<DailyBalanceDTO> getUserBalanceTimeline(
+      String userUuid, BalancePeriod period, String bankAccountUuid) {
+    BankAccount bankAccount = null;
 
-        if (bankAccountUuid != null) {
-            bankAccount = getBankAccountIfUserAuthorizedAndOwnsIt(bankAccountUuid, userUuid);
-        }
-
-        Instant startDateTime = balanceService.getStartDateTimeFromPeriod(period);
-
-        List<Transaction> transactions =
-                transactionService.getTransactions(userUuid, bankAccountUuid, startDateTime);
-
-        return balanceService.getUserBalanceTimeline(userUuid, transactions,startDateTime, bankAccount);
+    if (bankAccountUuid != null) {
+      bankAccount = getBankAccountIfUserAuthorizedAndOwnsIt(bankAccountUuid, userUuid);
     }
 
-    public BalanceSummaryDTO getUserTotalBalanceInUsd(String userUuid) {
-        return new BalanceSummaryDTO(
-                balanceService.getUserTotalBalanceInUsd(userUuid),
-                balanceService.getUserTotalIncome(userUuid),
-                balanceService.getUserTotalExpenses(userUuid));
-    }
+    Instant startDateTime = balanceService.getStartDateTimeFromPeriod(period);
 
-    private BankAccount getBankAccountIfUserAuthorizedAndOwnsIt(String bankAccountUuid, String userUuid) {
-        userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
+    List<Transaction> transactions =
+        transactionService.getTransactions(userUuid, bankAccountUuid, startDateTime);
 
-        return bankAccountRepo
-                .findByUuidAndUser_Uuid(bankAccountUuid, userUuid)
-                .orElseThrow(() -> new NoBankAccountFoundException("Счет не найден"));
-    }
+    return balanceService.getUserBalanceTimeline(
+        userUuid, transactions, startDateTime, bankAccount);
+  }
+
+  public BalanceSummaryDTO getUserTotalBalanceInUsd(String userUuid) {
+    return new BalanceSummaryDTO(
+        balanceService.getUserTotalBalanceInUsd(userUuid),
+        balanceService.getUserTotalIncome(userUuid),
+        balanceService.getUserTotalExpenses(userUuid));
+  }
+
+  private BankAccount getBankAccountIfUserAuthorizedAndOwnsIt(
+      String bankAccountUuid, String userUuid) {
+    userRepo.findById(userUuid).orElseThrow(() -> new UnauthorizedException("Не авторизован"));
+
+    return bankAccountRepo
+        .findByUuidAndUser_Uuid(bankAccountUuid, userUuid)
+        .orElseThrow(() -> new NoBankAccountFoundException("Счет не найден"));
+  }
 }

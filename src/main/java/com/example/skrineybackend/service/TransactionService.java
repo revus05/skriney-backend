@@ -27,7 +27,11 @@ public class TransactionService {
   private final CategoryRepo categoryRepo;
 
   public Transaction createTransaction(
-      CreateTransactionRequestDTO dto, BankAccount bankAccount, Category category, User user, BigDecimal amountInUsd)
+      CreateTransactionRequestDTO dto,
+      BankAccount bankAccount,
+      Category category,
+      User user,
+      BigDecimal amountInUsd)
       throws InvalidTransactionAmount {
     if (dto.getAmount().compareTo(BigDecimal.ZERO) == 0) {
       throw new InvalidTransactionAmount("Сумма транзакции не может быть равна 0");

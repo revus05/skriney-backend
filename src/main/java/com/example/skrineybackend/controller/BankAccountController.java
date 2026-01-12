@@ -38,7 +38,8 @@ public class BankAccountController {
   public Response getAllBankAccounts() {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     List<BankAccountDTO> bankAccounts =
-        bankAccountApplicationService.getAllBankAccounts(((UserDetails) auth.getPrincipal()).getUsername());
+        bankAccountApplicationService.getAllBankAccounts(
+            ((UserDetails) auth.getPrincipal()).getUsername());
     return new Response("Счета пользователя успешно получены", HttpStatus.OK, bankAccounts);
   }
 
@@ -47,8 +48,8 @@ public class BankAccountController {
   public Response createBankAccount(@Valid @RequestBody CreateBankAccountRequestDTO requestBody) {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     BankAccountDTO createdBankAccount =
-      bankAccountApplicationService.createBankAccount(
-          ((UserDetails) auth.getPrincipal()).getUsername(), requestBody);
+        bankAccountApplicationService.createBankAccount(
+            ((UserDetails) auth.getPrincipal()).getUsername(), requestBody);
     return new Response("Счет успешно создан", HttpStatus.CREATED, createdBankAccount);
   }
 

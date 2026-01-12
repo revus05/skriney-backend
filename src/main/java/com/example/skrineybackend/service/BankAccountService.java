@@ -28,7 +28,8 @@ public class BankAccountService {
     bankAccountRepo.delete(bankAccount);
   }
 
-  public BankAccount updateBankAccount(BankAccount bankAccount, UpdateBankAccountRequestDTO updateBankAccountRequestDTO) {
+  public BankAccount updateBankAccount(
+      BankAccount bankAccount, UpdateBankAccountRequestDTO updateBankAccountRequestDTO) {
     if (updateBankAccountRequestDTO.getEmoji() != null) {
       bankAccount.setEmoji(updateBankAccountRequestDTO.getEmoji());
     }

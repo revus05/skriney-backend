@@ -161,7 +161,7 @@ public class UserSettingsService {
 
   public void updateDefaultCategoryAfterDeletion(String deletedCategoryUuid) {
     Optional<UserSettings> optionalUserSettings =
-            userSettingsRepo.findByDefaultCategoryUuid(deletedCategoryUuid);
+        userSettingsRepo.findByDefaultCategoryUuid(deletedCategoryUuid);
 
     if (optionalUserSettings.isEmpty()) {
       return;
@@ -170,9 +170,9 @@ public class UserSettingsService {
     UserSettings userSettings = optionalUserSettings.get();
 
     List<Category> remainingCategories =
-            categoryRepo.findAllByUser_UuidOrderByCreatedAt(userSettings.getUser().getUuid()).stream()
-                    .filter(c -> !c.getUuid().equals(deletedCategoryUuid))
-                    .toList();
+        categoryRepo.findAllByUser_UuidOrderByCreatedAt(userSettings.getUser().getUuid()).stream()
+            .filter(c -> !c.getUuid().equals(deletedCategoryUuid))
+            .toList();
 
     Category newDefault = remainingCategories.isEmpty() ? null : remainingCategories.get(0);
     userSettings.setDefaultCategory(newDefault);
