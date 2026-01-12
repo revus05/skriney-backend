@@ -53,14 +53,16 @@ public class BankAccountApplicationService {
         BankAccount createdBankAccount = bankAccountService.createBankAccount(requestBody, user);
 
         if (!requestBody.getInitialBalance().equals(BigDecimal.ZERO) && requestBody.getCurrency() != null) {
+            BigDecimal initialBalanceInUsd = currencyRateService.getAmountInUsd(requestBody.getInitialBalance(), requestBody.getCurrency());
+
             CreateTransactionRequestDTO createInitialTransactionDTO = new CreateTransactionRequestDTO(requestBody.getInitialBalance(), requestBody.getCurrency(), null, createdBankAccount.getUuid(), null);
 
-            transactionService.createTransaction(createInitialTransactionDTO, createdBankAccount, null, user);
+            transactionService.createTransaction(createInitialTransactionDTO, createdBankAccount, null, user, initialBalanceInUsd);
 
             createdBankAccount.setBalanceInUsd(
                 createdBankAccount
                     .getBalanceInUsd()
-                    .add(currencyRateService.getAmountInUsd(requestBody.getInitialBalance(), requestBody.getCurrency())));
+                    .add(initialBalanceInUsd));
         }
 
         if (user.getBankAccounts().isEmpty()) {

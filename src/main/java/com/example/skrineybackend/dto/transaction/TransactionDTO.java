@@ -19,6 +19,9 @@ public class TransactionDTO {
   @Schema(description = "Transaction amount", requiredMode = Schema.RequiredMode.REQUIRED)
   private BigDecimal amount;
 
+  @Schema(description = "Transaction amount in USD", requiredMode = Schema.RequiredMode.REQUIRED)
+  private BigDecimal amountInUsd;
+
   @Schema(description = "Transaction category", requiredMode = Schema.RequiredMode.REQUIRED)
   private Currency currency;
 
@@ -51,6 +54,7 @@ public class TransactionDTO {
   public TransactionDTO(Transaction transaction) {
     this.uuid = transaction.getUuid();
     this.amount = transaction.getAmount();
+    this.amountInUsd = transaction.getAmountInUsd();
     this.currency = transaction.getCurrency();
     this.description = transaction.getDescription();
     if (transaction.getBankAccount() != null) {

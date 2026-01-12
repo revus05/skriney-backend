@@ -27,13 +27,13 @@ public class TransactionService {
   private final CategoryRepo categoryRepo;
 
   public Transaction createTransaction(
-      CreateTransactionRequestDTO dto, BankAccount bankAccount, Category category, User user)
+      CreateTransactionRequestDTO dto, BankAccount bankAccount, Category category, User user, BigDecimal amountInUsd)
       throws InvalidTransactionAmount {
     if (dto.getAmount().compareTo(BigDecimal.ZERO) == 0) {
       throw new InvalidTransactionAmount("Сумма транзакции не может быть равна 0");
     }
 
-    return transactionRepo.save(new Transaction(dto, bankAccount, category, user));
+    return transactionRepo.save(new Transaction(dto, bankAccount, category, user, amountInUsd));
   }
 
   public List<Transaction> getTransactions(String userUuid) {

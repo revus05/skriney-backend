@@ -55,13 +55,15 @@ public class TransactionApplicationService {
             .findByUuidAndUser_Uuid(dto.getCategoryUuid(), userUuid)
             .orElseThrow(() -> new NoCategoryFoundException("Нет такой категории"));
 
+    BigDecimal amountInUsd = currencyRateService.getAmountInUsd(dto.getAmount(), dto.getCurrency());
+
     Transaction createdTransaction =
-        transactionService.createTransaction(dto, bankAccount, category, user);
+        transactionService.createTransaction(dto, bankAccount, category, user, amountInUsd);
 
     bankAccount.setBalanceInUsd(
         bankAccount
             .getBalanceInUsd()
-            .add(currencyRateService.getAmountInUsd(dto.getAmount(), dto.getCurrency())));
+            .add(createdTransaction.getAmountInUsd()));
 
     return new TransactionDTO(createdTransaction);
   }

@@ -27,6 +27,9 @@ public class Transaction {
   private BigDecimal amount;
 
   @Column(nullable = false)
+  private BigDecimal amountInUsd;
+
+  @Column(nullable = false)
   private Currency currency;
 
   @Column() private String description;
@@ -57,12 +60,14 @@ public class Transaction {
       CreateTransactionRequestDTO createTransactionRequestDTO,
       BankAccount bankAccount,
       Category category,
-      User user) {
+      User user,
+      BigDecimal amountInUsd) {
     this.amount = createTransactionRequestDTO.getAmount();
     this.currency = createTransactionRequestDTO.getCurrency();
     this.description = createTransactionRequestDTO.getDescription();
     this.bankAccount = bankAccount;
     this.category = category;
     this.user = user;
+    this.amountInUsd = amountInUsd;
   }
 }
