@@ -13,6 +13,8 @@ RUN mvn dependency:go-offline
 # Копируем исходники
 COPY src ./src
 
+RUN mvn spotless:apply
+
 # Сборка приложения
 RUN mvn clean package -DskipTests
 
