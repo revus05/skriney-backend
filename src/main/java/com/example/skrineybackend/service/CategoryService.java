@@ -55,7 +55,6 @@ public class CategoryService {
     }
 
     List<CategoryStatDTO> result = new ArrayList<>();
-    System.out.println(categoryAmount.size());
     for (Map.Entry<Category, BigDecimal> entry : categoryAmount.entrySet()) {
       result.add(
           new CategoryStatDTO(
